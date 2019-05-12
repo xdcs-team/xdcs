@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "pl.edu.agh.xdcs.api";
+option java_outer_classname = "AgentApi";
+
+package xdcs.agent;
+
+enum AgentType {
+    PLN = 0;
+    EUR = 1;
+    USD = 2;
+    GBP = 3;
+    CHF = 4;
+}
+
+message AgentRequest {
+    double number = 1;
+}
+
+message AgentResponse {
+    double number = 1;
+}
+
+service Agent {
+    rpc HandleAgent (AgentRequest) returns (AgentResponse) {}
+}
