@@ -1,0 +1,48 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "pl.edu.agh.xdcs.api";
+
+package xdcs.agent;
+
+enum ParameterDirection {
+    IN = 0;
+    OUT = 1;
+    IN_OUT = 2;
+}
+
+enum ParameterType {
+    SIMPLE = 0;
+    POINTER = 1;
+}
+
+message KernelParameter {
+    ParameterDirection direction = 1;
+    bytes value = 2;
+    int32 position = 3;
+    ParameterType type = 4;
+    string name = 5;
+}
+
+message KernelTask {
+    string program = 1;
+    string funcName = 2;
+    int32 threads = 3;
+    repeated KernelParameter parameters = 4;
+}
+
+message KernelRunnerResponse {
+    repeated KernelRunnerResponseParameter parameter = 1;
+}
+
+message KernelRunnerResponseParameter {
+    string name = 1;
+    bytes value = 2;
+}
+
+service KernelRunner {
+    rpc RunTask(KernelTask) returns (KernelRunnerResponse) {}
+}
+
+
+
