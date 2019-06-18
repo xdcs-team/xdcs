@@ -4,10 +4,13 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build": "ng build",
+    "build": "npm run generate && ng build",
     "test": "ng test",
     "lint": "ng lint",
-    "e2e": "ng e2e"
+    "e2e": "ng e2e",
+    "war": "cd ./dist/xdcs-frontend && jar cvf ../xdcs-frontend.war .",
+    "generate": "ng-openapi-gen -i ./api/api.yaml -o ./src/api",
+    "clean": "rm -r ./dist ./src/api"
   },
   "private": true,
   "dependencies": {
@@ -22,7 +25,8 @@
     "core-js": "^2.5.4",
     "rxjs": "~6.3.3",
     "tslib": "^1.9.0",
-    "zone.js": "~0.8.26"
+    "zone.js": "~0.8.26",
+    "ng-openapi-gen": "~0.4.0"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "~0.13.0",
