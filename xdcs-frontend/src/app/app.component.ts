@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { ApiService } from '../api/services/api.service';
 
 @Component({
   selector: 'app-root',
@@ -7,4 +8,14 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   title = 'xdcs-frontend';
+  private apiService: ApiService;
+
+  constructor(apiService: ApiService) {
+    this.apiService = apiService;
+  }
+
+  public test() {
+    const agentList = this.apiService.getAgentList()
+      .subscribe(agents => console.log(agents));
+  }
 }

@@ -1,0 +1,6 @@
+{
+  "/xdcs/rest/*": {
+    "target": "http://xdcs-server:8080",
+    "secure": false
+  }
+}
