@@ -1,0 +1,3 @@
+<jboss-web>
+    <context-root>/xdcs</context-root>
+</jboss-web>
