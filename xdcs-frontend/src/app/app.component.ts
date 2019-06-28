@@ -15,7 +15,7 @@ export class AppComponent {
   }
 
   public test() {
-    const agentList = this.apiService.getAgentList()
+    this.apiService.getAgentList()
       .subscribe(agents => console.log(agents));
   }
 }
