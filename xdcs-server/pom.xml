@@ -26,6 +26,10 @@
             <artifactId>xdcs-rest-api</artifactId>
         </dependency>
         <dependency>
+            <groupId>pl.edu.agh.xdcs</groupId>
+            <artifactId>xdcs-agent-api</artifactId>
+        </dependency>
+        <dependency>
             <groupId>javax</groupId>
             <artifactId>javaee-api</artifactId>
         </dependency>

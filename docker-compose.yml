@@ -21,6 +21,7 @@ services:
     image: xdcs/xdcs-server
     ports:
       - "32080:8080"
+      - "32081:8081"
       - "32090:9990"
       - "32087:8787"
 
