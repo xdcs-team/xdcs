@@ -7,11 +7,11 @@ import java.util.Optional;
 /**
  * @author Kamil Jarosz
  */
-public class AnyUtils {
+class AnyUtils {
     private static final String GRPC_PACKAGE = "xdcs.agent";
     private static final String JAVA_PACKAGE = "pl.edu.agh.xdcs.api";
 
-    public static Optional<Class<?>> typeOf(Any any) {
+    static Optional<Class<?>> typeOf(Any any) {
         String typeUrl = any.getTypeUrl();
         String expectedPrefix = "type.googleapis.com/" + GRPC_PACKAGE + ".";
         if (!typeUrl.startsWith(expectedPrefix)) {
