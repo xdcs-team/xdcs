@@ -1,0 +1,66 @@
+openapi: 3.0.0
+
+info:
+  title: XDCS REST API
+  version: 1.0.0
+
+paths:
+  /agents:
+    get:
+      operationId: getAgentList
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref:  '#/components/schemas/AgentEntryDto'
+
+  /agents/{agentId}:
+    get:
+      operationId: getAgentInfo
+      parameters:
+        - in: path
+          name: agentId
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref:  '#/components/schemas/AgentInfoDto'
+
+
+components:
+  schemas:
+    AgentEntryDto:
+      type: object
+      properties:
+        id:
+          type: string
+        displayName:
+          type: string
+        href:
+          type: string
+
+    AgentInfoDto:
+      allOf:
+        - $ref: '#/components/schemas/AgentEntryDto'
+        - type: object
+          properties:
+            devices:
+              type: array
+              items:
+                $ref: '#/components/schemas/DeviceInfoDto'
+
+    DeviceInfoDto:
+      type: object
+      properties:
+        name:
+          type: string
+

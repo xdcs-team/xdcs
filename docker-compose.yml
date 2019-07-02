@@ -1,0 +1,33 @@
+version: "3.7"
+services:
+  xdcs-frontend-debug:
+    build:
+      context: ./xdcs-frontend
+      dockerfile: Dockerfile.debug
+    image: xdcs/xdcs-frontend-debug
+    ports:
+      - "31080:8080"
+    volumes:
+      - ./:/var/xdcs
+    user: ${UID:-1000}:${GID:-1000}
+    depends_on:
+      - xdcs-server
+
+  xdcs-server:
+    build:
+      context: ./xdcs-server
+      args:
+        debug: "true"
+    image: xdcs/xdcs-server
+    ports:
+      - "32080:8080"
+      - "32090:9990"
+      - "32087:8787"
+
+  xdcs-frontend:
+    build: ./xdcs-frontend
+    image: xdcs/xdcs-frontend
+    ports:
+      - "33080:8080"
+    depends_on:
+      - xdcs-server

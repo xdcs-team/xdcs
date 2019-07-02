@@ -2,89 +2,56 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <parent>
-        <artifactId>xdcs</artifactId>
-        <groupId>pl.edu.agh.xdcs</groupId>
-        <version>0.1.0-SNAPSHOT</version>
-    </parent>
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>xdcs-rest-api</artifactId>
+    <packaging>jar</packaging>
+
+    <parent>
+        <groupId>pl.edu.agh.xdcs</groupId>
+        <artifactId>xdcs</artifactId>
+        <version>0.1.0-SNAPSHOT</version>
+    </parent>
 
     <properties>
-        <swagger-annotations-version>2.0.8</swagger-annotations-version>
-        <default.package>pl.edu.agh.xdcs</default.package>
-        <jackson-version>2.9.9</jackson-version>
-        <javax-version>8.0.1</javax-version>
-        <swagger-annotations-version>2.0.8</swagger-annotations-version>
+        <restapi.package>pl.edu.agh.xdcs.restapi</restapi.package>
     </properties>
 
     <dependencies>
-
-        <dependency>
-            <groupId>io.swagger.core.v3</groupId>
-            <artifactId>swagger-annotations</artifactId>
-            <version>${swagger-annotations-version}</version>
-        </dependency>
         <dependency>
             <groupId>javax</groupId>
             <artifactId>javaee-api</artifactId>
-            <version>${javax-version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.jaxrs</groupId>
-            <artifactId>jackson-jaxrs-base</artifactId>
-            <version>${jackson-version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-core</artifactId>
-            <version>${jackson-version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-annotations</artifactId>
-            <version>${jackson-version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-            <version>${jackson-version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.jaxrs</groupId>
-            <artifactId>jackson-jaxrs-json-provider</artifactId>
-            <version>${jackson-version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.datatype</groupId>
-            <artifactId>jackson-datatype-joda</artifactId>
-            <version>${jackson-version}</version>
         </dependency>
     </dependencies>
 
     <build>
         <plugins>
             <plugin>
-                <groupId>io.swagger.codegen.v3</groupId>
-                <artifactId>swagger-codegen-maven-plugin</artifactId>
+                <groupId>org.openapitools</groupId>
+                <artifactId>openapi-generator-maven-plugin</artifactId>
+                <version>4.0.1</version>
                 <executions>
                     <execution>
                         <goals>
                             <goal>generate</goal>
                         </goals>
                         <configuration>
-                            <inputSpec>${project.basedir}/src/main/resources/swagger.yaml</inputSpec>
-                            <language>jaxrs-resteasy</language>
-                            <apiPackage>${default.package}.restapi</apiPackage>
-                            <modelPackage>${default.package}.restapi.model</modelPackage>
-                            <invokerPackage>${default.package}.restapi.handler</invokerPackage>
+                            <inputSpec>${project.basedir}/src/main/openapi/api.yaml</inputSpec>
+                            <generatorName>jaxrs-spec</generatorName>
+
+                            <apiPackage>${restapi.package}</apiPackage>
+                            <modelPackage>${restapi.package}.model</modelPackage>
+
+                            <configOptions>
+                                <interfaceOnly>true</interfaceOnly>
+                                <java8>true</java8>
+                                <sourceFolder>src/gen/java</sourceFolder>
+                                <dateLibrary>java8</dateLibrary>
+                            </configOptions>
                         </configuration>
                     </execution>
                 </executions>
             </plugin>
         </plugins>
     </build>
-
 </project>
