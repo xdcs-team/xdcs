@@ -1,0 +1,38 @@
+FROM ubuntu:18.04
+
+ARG CUDA_RUN="https://developer.nvidia.com/compute/cuda/10.1/Prod/local_installers/cuda_10.1.168_418.67_linux.run"
+RUN apt-get update && apt-get install -q -y wget
+
+RUN cd /opt && \
+    wget $CUDA_RUN && \
+    chmod +x *.run
+
+RUN apt-get install -q -y \
+    build-essential \
+    libxml2
+
+RUN mkdir /opt/nvidia && \
+    /opt/cuda_10.1.168_418.67_linux.run --extract=/opt/nvidia
+
+RUN apt-get install -q -y module-init-tools kmod
+RUN /opt/nvidia/NVIDIA-Linux-x86_64-418.67.run \
+    -s --skip-module-unload \
+    --no-kernel-module \
+    --no-kernel-module-source \
+    --no-nvidia-modprobe
+
+RUN mv /opt/nvidia/cuda-toolkit /usr/local/cuda-10.1
+RUN ln -s /usr/local/cuda-10.1 /usr/local/cuda
+
+ENV PATH="/usr/local/cuda/bin:${PATH}"
+ENV CPATH="/usr/local/cuda/include:${CPATH}"
+ENV LD_LIBRARY_PATH="/usr/local/cuda/lib64:${LD_LIBRARY_PATH}"
+
+
+WORKDIR /opt/nvidia/cuda-samples/1_Utilities/deviceQuery
+
+
+#ENV DEBIAN_FRONTEND=noninteractive
+#RUN apt-get install -q -y nvidia-384
+#RUN apt-get install -q -y libcuda1-384
+#RUN apt-get install -y cuda

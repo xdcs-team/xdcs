@@ -1,0 +1,23 @@
+FROM nvidia/cuda:10.0-devel
+
+RUN apt-get update && apt-get install -q -y wget unzip
+
+#ARG RUNFILE_VERSION="415.27"
+#ARG RUNFILE_NAME="NVIDIA-Linux-x86_64-${RUNFILE_VERSION}.run"
+#ARG RUNFILE_URL="http://us.download.nvidia.com/XFree86/Linux-x86_64/${RUNFILE_VERSION}/${RUNFILE_NAME}"
+#
+#RUN wget $RUNFILE_URL
+#RUN chmod +x $RUNFILE_NAME
+#RUN apt-get install -q -y module-init-tools kmod
+#RUN ./$RUNFILE_NAME \
+#    -s --skip-module-unload \
+#    --no-kernel-module \
+#    --no-kernel-module-source \
+#    --no-nvidia-modprobe
+
+
+
+RUN cd /opt && wget https://github.com/NVIDIA/cuda-samples/archive/master.zip
+RUN cd /opt && unzip master.zip -d .
+
+WORKDIR /opt/cuda-samples-master/Samples/deviceQuery
