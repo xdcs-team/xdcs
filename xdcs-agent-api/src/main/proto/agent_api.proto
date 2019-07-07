@@ -6,22 +6,53 @@ option java_outer_classname = "AgentApi";
 
 package xdcs.agent;
 
-enum AgentType {
-    PLN = 0;
-    EUR = 1;
-    USD = 2;
-    GBP = 3;
-    CHF = 4;
+import "google/protobuf/any.proto";
+
+enum TaskType {
+    OPEN_CL = 0;
+    CUDA = 1;
 }
 
-message AgentRequest {
-    double number = 1;
+message Task {
+    TaskType type = 1;
 }
 
-message AgentResponse {
-    double number = 1;
+message TaskExecutionResult {
+    bool success = 1;
 }
+
+message AgentRegistrationRequest {
+    string displayName = 1;
+}
+
+message AgentRegistrationResponse {
+    bool success = 1;
+    google.protobuf.Any any = 2;
+}
+
+message TunneledMessage {
+    bytes data = 1;
+}
+
+service Server {
+    rpc RegisterAgent (AgentRegistrationRequest) returns (stream AgentRegistrationResponse) {
+
+    }
+
+    rpc TaskExecution (stream google.protobuf.Any) returns (stream google.protobuf.Any) {
+
+    }
+}
+
+service TunnelBroker {
+    rpc Tunnel (stream TunneledMessage) returns (stream TunneledMessage) {
+
+    }
+}
+
 
 service Agent {
-    rpc HandleAgent (AgentRequest) returns (AgentResponse) {}
+    rpc ExecuteTask (Task) returns (TaskExecutionResult) {
+
+    }
 }
