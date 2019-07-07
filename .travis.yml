@@ -1,0 +1,64 @@
+language: generic
+dist: xenial
+sudo: true
+jdk:
+  - openjdk8
+node_js:
+  - '12'
+python:
+  - '3.7'
+
+cache:
+  - npm
+  - pip
+  - directories:
+      - $HOME/.m2
+
+stages:
+  - Build
+  - Docker
+
+jobs:
+  include:
+    - name: "Build & test server"
+      stage: Build
+      script:
+        - mvn -T 1C clean compile
+        - mvn -T 1C test
+
+    - name: "Build frontend"
+      stage: Build
+      install:
+        - nvm install 12
+        - npm install @angular/cli
+      script:
+        - cd xdcs-frontend
+        - npm install
+        - npm run build
+
+    - name: "Build & test agent"
+      stage: Build
+      install:
+        - pyenv global system 3.7
+        - pip3.7 install --user pybuilder --pre
+      script:
+        - cd xdcs-agent
+        - pyb install_build_dependencies
+        - pyb package
+        - pyb run_unit_tests
+        - pyb publish
+
+    - name: "Build Dockerfile for server"
+      stage: Docker
+      script:
+        - docker build . -f Dockerfile.server
+
+    - name: "Build Dockerfile for frontend"
+      stage: Docker
+      script:
+        - docker build . -f Dockerfile.frontend
+
+    - name: "Build Dockerfile for agent"
+      stage: Docker
+      script:
+        - docker build . -f Dockerfile.agent

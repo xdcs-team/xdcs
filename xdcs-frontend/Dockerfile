@@ -1,5 +1,11 @@
-FROM tomcat:9
+FROM node:12
 
-RUN rm -rf /usr/local/tomcat/webapps/ROOT
+RUN npm install -g @angular/cli
 
-COPY ./dist/xdcs-frontend.war /usr/local/tomcat/webapps/ROOT.war
+VOLUME /var/xdcs
+WORKDIR /var/xdcs/xdcs-frontend
+
+EXPOSE 8080
+
+CMD npm install && npm run generate && ng build && \
+  ng serve --host 0.0.0.0 --port 8080 --proxy-config proxy.conf.json

@@ -3,12 +3,11 @@ FROM jboss/wildfly:17.0.0.Final
 COPY ./target/xdcs-server.war /opt/jboss/wildfly/standalone/deployments/
 
 EXPOSE 8080
+EXPOSE 8081
 EXPOSE 9990
 EXPOSE 8787
 
-ARG debug
-
-RUN if [[ ! "x$debug" = "x" ]]; then /opt/jboss/wildfly/bin/add-user.sh deploy deploy; fi
+RUN /opt/jboss/wildfly/bin/add-user.sh deploy deploy
 
 ENV JAVA_OPTS="-server \
     -Xms64m -Xmx512m \
