@@ -1,0 +1,14 @@
+FROM maven:3-jdk-8 AS builder
+
+WORKDIR /var/xdcs
+COPY . /var/xdcs/
+RUN mvn -T 6 -DskipTests=true clean install
+
+################################################################################
+
+FROM jboss/wildfly:17.0.0.Final
+
+COPY --from=builder /var/xdcs/xdcs-server/target/xdcs-server.war /opt/jboss/wildfly/standalone/deployments/
+
+EXPOSE 8080
+EXPOSE 8081

@@ -1,0 +1,14 @@
+.dockerignore
+.gitignore
+.travis.yml
+
+*/target/
+*/dist/
+*/node_modules/
+
+README.md
+docker-compose.yml
+
+*.iml
+.idea/
+*/.idea/

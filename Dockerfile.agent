@@ -1,0 +1,23 @@
+FROM python:3.7 AS builder
+
+RUN pip install pybuilder --pre
+
+COPY xdcs-agent /var/xdcs/xdcs-agent
+COPY xdcs-agent-api/src /var/xdcs/xdcs-agent-api/src
+
+WORKDIR /var/xdcs/xdcs-agent
+
+RUN pyb install_build_dependencies && \
+    pyb publish
+
+################################################################################
+
+FROM python:3.7
+
+COPY --from=builder /var/xdcs/xdcs-agent/target/dist/xdcs-agent-*/dist/xdcs-agent-*.tar.gz \
+    /var/xdcs-agent/xdcs-agent.tar.gz
+
+WORKDIR /var/xdcs-agent
+RUN pip install xdcs-agent.tar.gz && rm xdcs-agent.tar.gz
+
+CMD xdcs-agent

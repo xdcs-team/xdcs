@@ -2,15 +2,21 @@ version: "3.7"
 services:
   xdcs-frontend:
     build:
-      dockerfile: Dockerfile.frontend
+      context: ./xdcs-frontend
+      dockerfile: Dockerfile
     ports:
       - "31080:8080"
+    volumes:
+      - ./:/var/xdcs
+    user: ${UID:-1000}:${GID:-1000}
     depends_on:
       - xdcs-server
 
   xdcs-server:
     build:
-      dockerfile: Dockerfile.server
+      context: ./xdcs-server
     ports:
       - "32080:8080"
       - "32081:8081"
+      - "32090:9990"
+      - "32087:8787"
