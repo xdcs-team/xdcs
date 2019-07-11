@@ -1,0 +1,306 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "pl.edu.agh.xdcs.api";
+
+package xdcs.agent;
+
+message ProcessorInfoRequest {
+
+}
+
+message ProcessorInfo {
+    /**
+     * Number of CPUs in the system.
+     */
+    uint32 cpu_count = 1;
+
+    /**
+     * Processor name, e.g. 'amdk6'. May be the same
+     * as cpu_machine.
+     */
+    string cpu_name = 2;
+
+    /**
+     * Machine type, e.g. 'i386'.
+     */
+    string cpu_machine = 3;
+
+    /**
+     * Predicted CPU architecture, one of:
+     * "X86_32", "X86_64", "ARM_8", "ARM_7", "PPC_32",
+     * "PPC_64", "SPARC_32", "SPARC_64", "S390X"
+     */
+    string cpu_arch = 4;
+
+    /**
+     * Predicted word size, e.g. 64.
+     */
+    uint32 cpu_bits = 5;
+
+    /**
+     * CPU vendor identification, e.g. "GenuineIntel".
+     */
+    string cpu_vendor_id = 6;
+
+    /**
+     * Full human-readable CPU brand name. It may include thins like:
+     * CPU name, base clock, model number.
+     */
+    string cpu_brand = 7;
+
+    /**
+     * Advertised CPU clock, human-readable.
+     */
+    string cpu_clock = 8;
+
+    /**
+     * Actual CPU clock, human-readable.
+     */
+    string cpu_clock_actual = 9;
+
+    /**
+     * Array of CPU flags.
+     */
+    repeated string cpu_flags = 10;
+
+    /**
+     * L1 instruction cache size, human-readable.
+     */
+    string cpu_cache_l1_instr = 11;
+
+    /**
+     * L1 data cache size, human-readable.
+     */
+    string cpu_cache_l1 = 12;
+
+    /**
+     * L2 cache size, human-readable.
+     */
+    string cpu_cache_l2 = 13;
+
+    /**
+     * L3 cache size, human-readable.
+     */
+    string cpu_cache_l3 = 14;
+}
+
+message SystemInfoRequest {
+
+}
+
+/**
+ * See https://docs.python.org/3/library/sys.html#sys.version_info
+ */
+message PythonVersionInfo {
+    uint32 major = 1;
+    uint32 minor = 2;
+    uint32 micro = 3;
+    string releaselevel = 4;
+    uint32 serial = 5;
+
+    /**
+     * Human-readable version string.
+     */
+    string version_str = 6;
+}
+
+message SystemInfo {
+    PythonVersionInfo python_version = 1;
+
+    /**
+     * The name of the operating system dependent module imported,
+     * e.g.: 'posix', 'nt', 'java'.
+     */
+    string system_family = 2;
+
+    /**
+     * Same as system_family but human-readable.
+     */
+    string system_family_name = 3;
+
+    /**
+     * Human-readable platform description.
+     */
+    string platform = 4;
+
+    /**
+     * Environment variables.
+     */
+    map<string, string> env = 5;
+
+    /**
+     * Operating system name.
+     */
+    string uname_sysname = 6;
+
+    /**
+     * Name of machine on network.
+     */
+    string uname_nodename = 7;
+
+    /**
+     * Operating system release.
+     */
+    string uname_release = 8;
+
+    /**
+     * Operating system version.
+     */
+    string uname_version = 9;
+
+    /**
+     * Hardware identifier.
+     */
+    string uname_machine = 10;
+
+    /**
+     * Linux distribution name.
+     */
+    string dist_name = 11;
+
+    /**
+     * Human-readable Linux distribution description.
+     * Contains its name and other details.
+     */
+    string dist_desc = 12;
+
+    /**
+     * Linux distribution version.
+     */
+    string dist_version = 13;
+
+    /**
+     * Linux distribution ID.
+     */
+    string dist_id = 14;
+}
+
+message SoftwareInfoRequest {
+
+}
+
+message SoftwareInfo {
+    /**
+     * List of executable files available in the path.
+     */
+    repeated string programs = 1;
+}
+
+message GPUInfoRequest {
+
+}
+
+message OpenCLDevice {
+    string version = 1;
+    string type = 2;
+    repeated string extensions = 3;
+
+    uint64 global_memory = 4;
+    uint64 local_memory = 5;
+
+    uint32 address_bits = 6;
+    uint32 max_work_item_dims = 7;
+    uint32 max_work_group_size = 8;
+    uint32 max_compute_units = 9;
+
+    string driver_version = 10;
+}
+
+message OpenCLPlatform {
+    repeated OpenCLDevice devices = 1;
+
+    string name = 2;
+    string profile = 3;
+    string vendor = 4;
+    string version = 5;
+    repeated string extensions = 6;
+}
+
+message CUDAVersion {
+    uint32 major = 1;
+    uint32 minor = 2;
+    uint32 revision = 3;
+}
+
+/**
+ * For details, see
+ * https://docs.nvidia.com/cuda/cuda-runtime-api/structcudaDeviceProp.html
+ */
+message CUDADevice {
+    string name = 1;
+    string pci_bus_id = 2;
+    uint32 pci_device_id = 3;
+    uint32 pci_domain_id = 4;
+
+    /**
+     * Compute capability as defined by Nvidia.
+     */
+    uint32 compute_capability_major = 5;
+    uint32 compute_capability_minor = 6;
+
+    /**
+     * Free memory in bytes.
+     */
+    uint64 free_memory = 7;
+
+    /**
+     * Total memory in bytes.
+     */
+    uint64 total_memory = 28;
+
+    uint64 max_threads_per_block = 8;
+    uint64 max_block_dim_x = 9;
+    uint64 max_block_dim_y = 10;
+    uint64 max_block_dim_z = 11;
+    uint64 max_grid_dim_x = 12;
+    uint64 max_grid_dim_y = 13;
+    uint64 max_grid_dim_z = 14;
+    uint64 clock_rate = 15;
+    uint64 multiprocessor_count = 16;
+    uint64 shared_memory_per_block = 17;
+    uint64 total_constant_memory = 18;
+    bool integrated = 19;
+    bool concurrent_kernels = 20;
+    bool uses_tcc = 21;
+    uint64 mem_clock_rate = 22;
+    uint64 mem_bus_width = 23;
+    uint64 l2_cache_size = 24;
+    uint64 max_threads_per_multiprocessor = 25;
+    uint64 async_engine_count = 26;
+
+    map<string, uint64> other_attrs = 27;
+}
+
+message CUDAInfo {
+    bool cuda_available = 1;
+
+    string pycuda_version_text = 2;
+    CUDAVersion pycuda_cuda_version = 3;
+    CUDAVersion driver_version = 4;
+
+    repeated CUDADevice devices = 5;
+}
+
+message GPUInfo {
+    repeated OpenCLPlatform opencl_platforms = 1;
+    CUDAInfo cuda_info = 2;
+}
+
+service AgentInfo {
+    rpc GetProcessorInfo (ProcessorInfoRequest) returns (ProcessorInfo) {
+
+    }
+
+    rpc GetSystemInfo (SystemInfoRequest) returns (SystemInfo) {
+
+    }
+
+    rpc GetSoftwareInfo (SoftwareInfoRequest) returns (SoftwareInfo) {
+
+    }
+
+    rpc GetGPUInfo (GPUInfoRequest) returns (GPUInfo) {
+
+    }
+}

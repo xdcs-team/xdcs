@@ -1,3 +1,4 @@
+import fnmatch
 import os
 import shutil
 import sys
@@ -31,6 +32,13 @@ def initialize(project):
     project.build_depends_on('grpcio')
     project.build_depends_on('grpcio-tools')
 
+    project.depends_on('py-cpuinfo')
+    project.depends_on('pyopencl')
+
+    # This dependency should be optional
+    # as it requires CUDA to be installed.
+    # project.depends_on('pycuda')
+
     project.set_property('distutils_packages', [
         "xdcs"])
     project.set_property('distutils_console_scripts', [
@@ -51,8 +59,17 @@ def compile_grpc():
                  '-I=src/main/proto',
                  '--python_out=' + gen_python,
                  '--grpc_python_out=' + gen_python,
-                 './src/main/proto/xdcs_api/agent_api.proto',
+                 *find_proto_files('./src/main/proto/xdcs_api/'),
                  '-I{}'.format(proto_include)])
+
+
+def find_proto_files(path):
+    result = []
+    for root, dirs, files in os.walk(path):
+        for file in files:
+            if fnmatch.fnmatch(file, '*.proto'):
+                result.append(os.path.join(root, file))
+    return result
 
 
 @task
