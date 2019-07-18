@@ -2,7 +2,6 @@ syntax = "proto3";
 
 option java_multiple_files = true;
 option java_package = "pl.edu.agh.xdcs.api";
-option java_outer_classname = "AgentApi";
 
 package xdcs.agent;
 
