@@ -4,6 +4,7 @@ COPY ./target/xdcs-server.war /opt/jboss/wildfly/standalone/deployments/
 
 EXPOSE 8080
 EXPOSE 8081
+EXPOSE 8082
 EXPOSE 9990
 EXPOSE 8787
 
@@ -14,5 +15,10 @@ ENV JAVA_OPTS="-server \
     -XX:MetaspaceSize=96M -XX:MaxMetaspaceSize=256m \
     -Djava.net.preferIPv4Stack=true \
     -agentlib:jdwp=transport=dt_socket,address=*:8787,server=y,suspend=n"
+
+COPY debug-configure.cli /tmp/debug-configure.cli
+RUN cd /opt/jboss/wildfly/bin && /opt/jboss/wildfly/bin/jboss-cli.sh --file=/tmp/debug-configure.cli
+
+RUN rm -rf /opt/jboss/wildfly/standalone/configuration/standalone_xml_history/current
 
 CMD ["/opt/jboss/wildfly/bin/standalone.sh", "-b", "0.0.0.0", "-bmanagement", "0.0.0.0"]

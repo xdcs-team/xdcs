@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "pl.edu.agh.xdcs.api";
+
+package xdcs.agent;
+
+message HeartbeatRequest {
+
+}
+
+message HeartbeatResponse {
+
+}
+
+service Heartbeat {
+    rpc Heartbeat (HeartbeatRequest) returns (HeartbeatResponse) {
+
+    }
+}

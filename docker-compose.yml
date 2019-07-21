@@ -3,6 +3,7 @@ services:
   xdcs-frontend:
     build:
       dockerfile: Dockerfile.frontend
+      context: .
     ports:
       - "31080:8080"
     depends_on:
@@ -11,6 +12,8 @@ services:
   xdcs-server:
     build:
       dockerfile: Dockerfile.server
+      context: .
     ports:
       - "32080:8080"
       - "32081:8081"
+      - "32082:8082"
