@@ -29,12 +29,8 @@ message AgentRegistrationResponse {
     google.protobuf.Any any = 2;
 }
 
-message TunneledMessage {
-    bytes data = 1;
-}
-
 service Server {
-    rpc RegisterAgent (AgentRegistrationRequest) returns (stream AgentRegistrationResponse) {
+    rpc RegisterAgent (AgentRegistrationRequest) returns (AgentRegistrationResponse) {
 
     }
 
@@ -42,13 +38,6 @@ service Server {
 
     }
 }
-
-service TunnelBroker {
-    rpc Tunnel (stream TunneledMessage) returns (stream TunneledMessage) {
-
-    }
-}
-
 
 service Agent {
     rpc ExecuteTask (Task) returns (TaskExecutionResult) {

@@ -7,6 +7,8 @@ import javax.enterprise.event.Observes;
 import javax.enterprise.inject.spi.CDI;
 
 /**
+ * A bean used to eagerly initialize all beans annotated with {@link Eager}.
+ *
  * @author Kamil Jarosz
  */
 @ApplicationScoped

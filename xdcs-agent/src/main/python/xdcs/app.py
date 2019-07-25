@@ -1,18 +1,22 @@
-import time
+from concurrent import futures
 
 import grpc
+import time
 
-from xdcs.tunneling.TunnelBrokerClient import TunnelBrokerClient
-
-
-def test_server():
-    channel = grpc.insecure_channel('127.0.0.1:32081')
-    TunnelBrokerClient().start_tunneling(channel)
-    time.sleep(1)
-    print("Closing")
-    time.sleep(0.1)
-    channel.close()
+from xdcs.servicers.Servicers import Servicers
+from xdcs.utils.rforward import rforward
+from xdcs_api.agent_api_pb2 import AgentRegistrationRequest
+from xdcs_api.agent_api_pb2_grpc import ServerStub
 
 
 def run(out):
-    test_server()
+    server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
+    Servicers.register_all(server)
+    server.add_insecure_port('0.0.0.0:' + str(12122))
+    server.start()
+    with rforward(12122, '127.0.0.1', 32082):
+        channel = grpc.insecure_channel('127.0.0.1:32081')
+        server_stub = ServerStub(channel)
+        print("Requesting register")
+        server_stub.RegisterAgent(AgentRegistrationRequest(displayName=('asdf')))
+        print("Done")
