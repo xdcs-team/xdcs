@@ -24,6 +24,7 @@
         <slf4j.version>1.7.26</slf4j.version>
         <swagger-annotations.version>1.5.21</swagger-annotations.version>
         <jackson.version>2.9.9</jackson.version>
+        <jackson-databind.version>2.9.9.1</jackson-databind.version>
     </properties>
 
     <modules>
@@ -127,7 +128,7 @@
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-databind</artifactId>
-                <version>${jackson.version}</version>
+                <version>${jackson-databind.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.fasterxml.jackson.jaxrs</groupId>
