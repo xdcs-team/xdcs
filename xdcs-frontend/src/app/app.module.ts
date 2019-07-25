@@ -29,6 +29,7 @@ import { JwtModule } from '@auth0/angular-jwt';
 import { TOKEN_INTERCEPTOR_PROVIDER, TokenInterceptor } from './auth/token-interceptor';
 import { NoDataComponent } from './element/no-data/no-data.component';
 import { AUTH_ERROR_INTERCEPTOR_PROVIDER, AuthErrorInterceptor } from './auth/auth-error-interceptor';
+import { SubmitTaskComponent } from './view/submit-task/submit-task.component';
 import { TaskDefConfigComponent } from './element/task-def-config/task-def-config.component';
 
 @NgModule({
@@ -48,6 +49,7 @@ import { TaskDefConfigComponent } from './element/task-def-config/task-def-confi
     TaskDefinitionComponent,
     NoDataComponent,
     TaskDefConfigComponent,
+    SubmitTaskComponent,
   ],
   imports: [
     BrowserModule,

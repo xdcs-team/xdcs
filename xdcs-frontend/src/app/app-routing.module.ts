@@ -5,6 +5,7 @@ import { HomeComponent } from './view/home/home.component';
 import { TaskDefinitionsComponent } from './view/task-definitions/task-definitions.component';
 import { TaskDefinitionComponent } from './view/task-definition/task-definition.component';
 import { AuthGuard } from './auth/auth.guard';
+import {SubmitTaskComponent} from './view/submit-task/submit-task.component';
 
 export const routes: Routes = [
   { path: 'sign-in', component: SignInComponent },
@@ -21,6 +22,7 @@ export const routes: Routes = [
           { path: 'definition/:id', component: TaskDefinitionComponent },
         ]
       },
+      { path: 'submit', component: SubmitTaskComponent },
     ]
   }
 ];
