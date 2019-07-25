@@ -1,17 +1,20 @@
 @import "../global_mixins";
 
 .theme(@theme-name) {
+  .colors(@theme-name);
+  .fonts(@theme-name);
+
   .container {
-    .width-bound();
-    .margin-centered();
+    .container-bound();
   }
 
   body {
-    .colors(@theme-name);
-    .fonts(@theme-name);
     background-color: @cl-background;
     font-family: @fnt-family-main;
     font-size: @fnt-size-main;
     color: @cl-font-main;
+
+    margin: 0;
+    padding: 0;
   }
 }
