@@ -12,6 +12,8 @@ import { ApiModule } from '../api/api.module';
 import { NodeCardComponent } from './element/node-card/node-card.component';
 import { NodeCardsComponent } from './element/node-cards/node-cards.component';
 import { NavbarComponent } from './element/navbar/navbar.component';
+import { SignInComponent } from './view/sign-in/sign-in.component';
+import { HomeComponent } from './view/home/home.component';
 
 @NgModule({
   declarations: [
@@ -20,6 +22,8 @@ import { NavbarComponent } from './element/navbar/navbar.component';
     NavbarComponent,
     NodeCardComponent,
     NodeCardsComponent,
+    SignInComponent,
+    HomeComponent,
   ],
   imports: [
     NgbModule,
