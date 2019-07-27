@@ -1,12 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { ApiService } from '../../api/services/api.service';
 import { AgentEntryDto } from '../../api/models/agent-entry-dto';
+import { NavbarItem } from '../services/navbar.service';
 
 @Component({
   selector: 'app-agents',
   templateUrl: './agents.component.html',
-  styleUrls: ['./agents.component.less']
+  styleUrls: ['./agents.component.less'],
 })
+@NavbarItem('Agents')
 export class AgentsComponent implements OnInit {
   private apiService: ApiService;
 
