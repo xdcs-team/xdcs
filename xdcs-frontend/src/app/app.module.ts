@@ -9,11 +9,15 @@ import { HttpClientModule } from '@angular/common/http';
 import { AgentsComponent } from './agents/agents.component';
 import { environment } from '../environments/environment';
 import { ApiModule } from '../api/api.module';
+import { NodeCardComponent } from './element/node-card/node-card.component';
+import { NodeCardsComponent } from './element/node-cards/node-cards.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     AgentsComponent,
+    NodeCardComponent,
+    NodeCardsComponent,
   ],
   imports: [
     NgbModule,

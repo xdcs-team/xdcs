@@ -1,0 +1,21 @@
+<div class="card" (mouseover)="hover=true" (mouseleave)="hover=false">
+  <div class="card-body transition-smooth" [ngClass]="hover ? 'shadow' : 'shadow-sm'">
+    <div class="row">
+      <div class="col-auto status-col">
+        <div [ngSwitch]="data.status">
+          <div *ngSwitchCase="NodeStatus.Online">
+            <div class="status online"></div>
+          </div>
+          <div *ngSwitchCase="NodeStatus.Offline">
+            <div class="status offline"></div>
+          </div>
+        </div>
+      </div>
+      <div class="col details-col">
+        <h5 class="card-title">{{data.name}}</h5>
+        <p class="card-text" style="margin-bottom: 0;">{{data.address}}</p>
+      </div>
+    </div>
+    <a [routerLink]="data.routerLink" class="stretched-link"></a>
+  </div>
+</div>

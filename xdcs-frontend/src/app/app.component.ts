@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { ApiService } from '../api/services/api.service';
+import { NodeStatus } from './element/node-card/node-card.component';
 
 @Component({
   selector: 'app-root',
@@ -7,8 +8,10 @@ import { ApiService } from '../api/services/api.service';
   styleUrls: ['./app.component.less']
 })
 export class AppComponent {
-  title = 'xdcs-frontend';
   private apiService: ApiService;
+
+  title = 'xdcs-frontend';
+  NodeStatus = NodeStatus;
 
   constructor(apiService: ApiService) {
     this.apiService = apiService;
