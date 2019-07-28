@@ -1,0 +1,10 @@
+<div>
+  <app-task-summary-item
+    taskTitle="Example task in progress"></app-task-summary-item>
+  <app-task-summary-item
+    taskTitle="Example finished task"
+    [status]="TaskExecutionStatus.Finished"></app-task-summary-item>
+  <app-task-summary-item
+    taskTitle="Example errored task"
+    [status]="TaskExecutionStatus.Errored"></app-task-summary-item>
+</div>
