@@ -14,7 +14,7 @@ export class NodeCardsComponent implements OnInit {
   }
 
   ngOnInit() {
-    for (let i = 0; i < 17; ++i) {
+    for (let i = 0; i < 7; ++i) {
       this.cards.push({
         name: 'Node ' + i,
         address: '127.0.1.' + i,

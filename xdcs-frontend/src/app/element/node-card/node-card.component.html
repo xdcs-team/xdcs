@@ -3,17 +3,23 @@
     <div class="row">
       <div class="col-auto status-col">
         <div [ngSwitch]="data.status">
-          <div *ngSwitchCase="NodeStatus.Online">
-            <div class="status online"></div>
-          </div>
-          <div *ngSwitchCase="NodeStatus.Offline">
-            <div class="status offline"></div>
-          </div>
+          <fa-icon
+            *ngSwitchCase="NodeStatus.Online"
+            [icon]="faCircle"
+            [fixedWidth]="true"
+            class="icon-success"
+            size="sm"></fa-icon>
+          <fa-icon
+            *ngSwitchCase="NodeStatus.Offline"
+            [icon]="faCircle"
+            [fixedWidth]="true"
+            class="icon-error"
+            size="sm"></fa-icon>
         </div>
       </div>
       <div class="col details-col">
         <h5 class="card-title">{{data.name}}</h5>
-        <p class="card-text" style="margin-bottom: 0;">{{data.address}}</p>
+        <p class="card-text">{{data.address}}</p>
       </div>
     </div>
     <a [routerLink]="data.routerLink" class="stretched-link"></a>

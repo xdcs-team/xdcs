@@ -1,4 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { faCircle } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
   selector: 'app-node-card',
@@ -9,6 +10,7 @@ export class NodeCardComponent implements OnInit {
   private hover: boolean;
 
   private NodeStatus = NodeStatus;
+  private faCircle = faCircle;
 
   @Input()
   data: NodeCardData;
@@ -17,9 +19,11 @@ export class NodeCardComponent implements OnInit {
   routerLink: string;
 
   constructor() {
+
   }
 
   ngOnInit() {
+
   }
 }
 
