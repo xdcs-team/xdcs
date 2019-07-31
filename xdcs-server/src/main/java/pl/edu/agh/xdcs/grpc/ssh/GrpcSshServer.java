@@ -11,6 +11,7 @@ import org.apache.sshd.server.session.SessionFactory;
 import org.slf4j.Logger;
 import pl.edu.agh.xdcs.grpc.events.AgentConnectedEvent;
 import pl.edu.agh.xdcs.grpc.events.AgentDisconnectedEvent;
+import pl.edu.agh.xdcs.grpc.ssh.configurators.GrpcSshConfigurator;
 import pl.edu.agh.xdcs.util.Eager;
 
 import javax.annotation.PostConstruct;
@@ -19,8 +20,10 @@ import javax.annotation.Resource;
 import javax.enterprise.concurrent.ManagedScheduledExecutorService;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Event;
+import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.nio.file.Paths;
 
@@ -43,7 +46,7 @@ public class GrpcSshServer {
     private Event<AgentDisconnectedEvent> agentDisconnectedEvent;
 
     @Inject
-    private GrpcSshConfigurator grpcSshConfigurator;
+    private Instance<GrpcSshConfigurator> configurators;
 
     private SshServer server;
 
@@ -58,7 +61,7 @@ public class GrpcSshServer {
         server.setScheduledExecutorService(scheduledExecutorService);
         server.setKeyPairProvider(new SimpleGeneratorHostKeyProvider(Paths.get("serverkey")));
         server.setPasswordAuthenticator(AcceptAllPasswordAuthenticator.INSTANCE);
-        grpcSshConfigurator.configure(server);
+        configurators.forEach(configurator -> configurator.configure(server));
         server.setSessionFactory(new SessionFactory(server));
         server.setForwardingFilter(new GrpcSshForwardingFilter());
         server.addSessionListener(new SessionListener() {
@@ -81,8 +84,13 @@ public class GrpcSshServer {
                     Throwable reason) {
                 if (reason != null) return;
 
+                String agentId = session.getUsername();
+                InetAddress agentAddress = ((InetSocketAddress) session.getRemoteAddress()).getAddress();
+
+                logger.info("Agent '" + agentId + "' connected from " + agentAddress);
                 agentConnectedEvent.fire(AgentConnectedEvent.builder()
-                        .agentAddress(((InetSocketAddress) session.getRemoteAddress()).getAddress())
+                        .agentId(agentId)
+                        .agentAddress(agentAddress)
                         .tunnelEndpoint(boundAddress.toInetSocketAddress())
                         .build());
             }

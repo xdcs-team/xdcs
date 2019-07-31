@@ -32,23 +32,8 @@
                 <xs:choice minOccurs="0" maxOccurs="unbounded">
                     <xs:element name="file">
                         <xs:complexType>
-                            <xs:attribute name="format" type="xdcs:PubKeyFormat"/>
-                            <xs:attribute name="path" type="xs:anyURI"/>
-                        </xs:complexType>
-                    </xs:element>
-                    <xs:element name="files">
-                        <xs:complexType>
-                            <xs:attribute name="format" type="xdcs:PubKeyFormat"/>
-                            <xs:attribute name="path" type="xs:anyURI"/>
-                        </xs:complexType>
-                    </xs:element>
-                    <xs:element name="inline-key">
-                        <xs:complexType>
-                            <xs:simpleContent>
-                                <xs:extension base="xs:string">
-                                    <xs:attribute name="format" type="xdcs:PubKeyFormat"/>
-                                </xs:extension>
-                            </xs:simpleContent>
+                            <xs:attribute name="path" type="xs:anyURI" use="required"/>
+                            <xs:attribute name="required" type="xs:boolean" default="true"/>
                         </xs:complexType>
                     </xs:element>
                     <xs:element name="allow-all">
@@ -59,31 +44,20 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:simpleType name="PubKeyFormat">
-        <xs:restriction base="xs:string">
-            <xs:enumeration value="OpenSSH"/>
-            <xs:enumeration value="SSH2"/>
-            <xs:enumeration value="RSA"/>
-            <xs:enumeration value="base64"/>
-        </xs:restriction>
-    </xs:simpleType>
-
     <xs:complexType name="SecurityPasswordPolicy">
         <xs:complexContent>
             <xs:extension base="xdcs:SecurityPolicy">
                 <xs:choice minOccurs="0" maxOccurs="unbounded">
                     <xs:element name="inline-pass">
                         <xs:complexType>
-                            <xs:sequence>
-                                <xs:element name="username" type="xs:string"/>
-                                <xs:element name="password" type="xs:string"/>
-                            </xs:sequence>
+                            <xs:attribute name="username" type="xs:string" use="required"/>
+                            <xs:attribute name="password" type="xs:string" use="required"/>
                         </xs:complexType>
                     </xs:element>
                     <xs:element name="file">
                         <xs:complexType>
-                            <xs:attribute name="format" type="xdcs:PasswordFileFormat"/>
-                            <xs:attribute name="path" type="xs:anyURI"/>
+                            <xs:attribute name="format" type="xdcs:PasswordFileFormat" use="required"/>
+                            <xs:attribute name="path" type="xs:anyURI" use="required"/>
                         </xs:complexType>
                     </xs:element>
                     <xs:element name="allow-all">

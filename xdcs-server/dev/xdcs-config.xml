@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config xmlns="urn:xdcs:config:1.0">
+    <agent-security>
+        <policies>
+            <password-policy>
+                <inline-pass username="admin" password="admin"/>
+            </password-policy>
+            <public-key-policy>
+                <file path="file:///opt/jboss/wildfly/key.pub"/>
+            </public-key-policy>
+        </policies>
+    </agent-security>
+</config>
