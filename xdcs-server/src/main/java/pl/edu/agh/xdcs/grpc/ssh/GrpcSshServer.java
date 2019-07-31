@@ -42,6 +42,9 @@ public class GrpcSshServer {
     @Inject
     private Event<AgentDisconnectedEvent> agentDisconnectedEvent;
 
+    @Inject
+    private GrpcSshConfigurator grpcSshConfigurator;
+
     private SshServer server;
 
     private int port = Integer.parseInt(System.getProperty("xdcs.agent.port.ssh", "8082"));
@@ -55,6 +58,7 @@ public class GrpcSshServer {
         server.setScheduledExecutorService(scheduledExecutorService);
         server.setKeyPairProvider(new SimpleGeneratorHostKeyProvider(Paths.get("serverkey")));
         server.setPasswordAuthenticator(AcceptAllPasswordAuthenticator.INSTANCE);
+        grpcSshConfigurator.configure(server);
         server.setSessionFactory(new SessionFactory(server));
         server.setForwardingFilter(new GrpcSshForwardingFilter());
         server.addSessionListener(new SessionListener() {
@@ -92,8 +96,14 @@ public class GrpcSshServer {
     }
 
     @PreDestroy
-    public void destroy() throws IOException {
+    public void destroy() {
         logger.info("Shutting down GRPC server");
-        server.stop(true);
+        try {
+            server.stop(true);
+        } catch (IOException e) {
+            String message = "IO error occurred when stopping SSH server";
+            logger.error(message, e);
+            throw new RuntimeException(message, e);
+        }
     }
 }

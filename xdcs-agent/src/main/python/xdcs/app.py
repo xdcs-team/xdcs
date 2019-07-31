@@ -20,3 +20,5 @@ def run(out):
         print("Requesting register")
         server_stub.RegisterAgent(AgentRegistrationRequest(displayName=('asdf')))
         print("Done")
+
+        time.sleep(10)

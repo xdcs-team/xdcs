@@ -26,6 +26,7 @@ public class HeartbeatCheck {
         ManagedChannel channel = event.getSession().getChannel();
         InetAddress agentAddress = event.getSession().getAgentAddress();
 
+        // cannot inject it as SessionContext may not be available yet
         HeartbeatGrpc.HeartbeatFutureStub heartbeat = HeartbeatGrpc.newFutureStub(channel);
         logger.debug("Agent heartbeat check for " + agentAddress);
         try {

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jaxb:bindings
+        xmlns:xs="http://www.w3.org/2001/XMLSchema"
+        xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
+        jaxb:version="2.0">
+    <jaxb:globalBindings>
+        <jaxb:javaType
+                name="java.net.URI" xmlType="xs:anyURI"
+                parseMethod="pl.edu.agh.xdcs.config.adapters.XmlURIAdapter.parse"
+                printMethod="java.lang.String.valueOf"/>
+
+        <jaxb:javaType
+                name="java.time.LocalDateTime" xmlType="xs:dateTime"
+                parseMethod="java.time.LocalDateTime.parse"
+                printMethod="java.lang.String.valueOf"/>
+        <jaxb:javaType
+                name="java.time.LocalDate" xmlType="xs:date"
+                parseMethod="java.time.LocalDate.parse"
+                printMethod="java.lang.String.valueOf"/>
+        <jaxb:javaType
+                name="java.time.LocalTime" xmlType="xs:time"
+                parseMethod="java.time.LocalTime.parse"
+                printMethod="java.lang.String.valueOf"/>
+        <jaxb:javaType
+                name="java.time.Duration" xmlType="xs:duration"
+                parseMethod="java.time.Duration.parse"
+                printMethod="java.lang.String.valueOf"/>
+    </jaxb:globalBindings>
+</jaxb:bindings>

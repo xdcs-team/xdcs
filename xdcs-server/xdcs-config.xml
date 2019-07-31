@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cfg:config xmlns:cfg="urn:xdcs:config:1.0">
+    <cfg:agent-security>
+        <cfg:policies>
+        </cfg:policies>
+    </cfg:agent-security>
+</cfg:config>

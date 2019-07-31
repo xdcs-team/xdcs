@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jaxb:bindings
+        xmlns:xs="http://www.w3.org/2001/XMLSchema"
+        xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
+        jaxb:version="2.0">
+    <jaxb:bindings schemaLocation="../xsd/config_1.0.xsd" version="1.0" node="/xs:schema">
+        <jaxb:bindings node="xs:complexType[@name='AgentSecurityConfiguration']">
+            <jaxb:bindings node="xs:all/xs:element[@name='policies']">
+                <jaxb:property name="policiesConfig"/>
+            </jaxb:bindings>
+        </jaxb:bindings>
+
+        <jaxb:bindings node="xs:complexType[@name='SecurityPublicKeyPolicy']">
+            <jaxb:bindings node="xs:complexContent/xs:extension/xs:choice">
+                <jaxb:property name="directives"/>
+            </jaxb:bindings>
+        </jaxb:bindings>
+
+        <jaxb:bindings node="xs:complexType[@name='SecurityPasswordPolicy']">
+            <jaxb:bindings node="xs:complexContent/xs:extension/xs:choice">
+                <jaxb:property name="directives"/>
+            </jaxb:bindings>
+        </jaxb:bindings>
+    </jaxb:bindings>
+</jaxb:bindings>
