@@ -27,7 +27,8 @@ class _ReverseForwardContext:
         client.connect(
             self.server_addr, self.server_port,
             username='user',
-            password='pass',
+            pkey=paramiko.RSAKey.from_private_key_file('./dev/key'),
+            look_for_keys=False,
         )
         logger.debug("Connected to server's sshd")
 
