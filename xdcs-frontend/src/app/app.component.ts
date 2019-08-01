@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import { ApiService } from '../api/services/api.service';
-import { NodeStatus } from './element/node-card/node-card.component';
 
 @Component({
   selector: 'app-root',
@@ -11,7 +10,6 @@ export class AppComponent {
   private apiService: ApiService;
 
   title = 'xdcs-frontend';
-  NodeStatus = NodeStatus;
 
   constructor(apiService: ApiService) {
     this.apiService = apiService;

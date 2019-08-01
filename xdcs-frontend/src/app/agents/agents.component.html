@@ -1,6 +1,9 @@
-<h2>Agents</h2>
-<ul class="heroes">
-  <li *ngFor="let agent of agents">
-    ID: {{agent.id}}, name: {{agent.displayName}}
-  </li>
-</ul>
+<app-navbar [containerBound]="true"></app-navbar>
+<div class="container">
+  <h2>Agents</h2>
+  <ul class="heroes">
+    <li *ngFor="let agent of agents">
+      ID: {{agent.id}}, name: {{agent.displayName}}
+    </li>
+  </ul>
+</div>

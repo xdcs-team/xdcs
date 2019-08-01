@@ -4,10 +4,12 @@
 @screen-sm-min: 768px;
 @screen-md-min: 992px;
 @screen-lg-min: 1200px;
+@screen-xlg-min: 1600px;
 
 @screen-xs-max: (@screen-sm-min - 1);
 @screen-sm-max: (@screen-md-min - 1);
 @screen-md-max: (@screen-lg-min - 1);
+@screen-lg-max: (@screen-xlg-min - 1);
 
 @phone: ~"only screen and (min-width: @{screen-xs-min})";
 @phone-strict: ~"only screen and (min-width: @{screen-xs-min}) and (max-width: @{screen-xs-max})";
@@ -16,3 +18,5 @@
 @desktop: ~"only screen and (min-width: @{screen-md-min})";
 @desktop-strict: ~"only screen and (min-width: @{screen-md-min}) and (max-width: @{screen-md-max})";
 @large: ~"only screen and (min-width: @{screen-lg-min})";
+@large-strict: ~"only screen and (min-width: @{screen-lg-min}) and (max-width: @{screen-lg-max})";
+@xlarge: ~"only screen and (min-width: @{screen-xlg-min})";

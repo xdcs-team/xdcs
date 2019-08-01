@@ -1,4 +1,4 @@
-<div class="container-bound">
+<div>
   <nav class="navbar navbar-expand-lg navbar-light">
     <a class="navbar-brand" routerLink="/">XDCS</a>
 
@@ -10,7 +10,7 @@
           [class]="route.path === router.url ? 'active' : ''">
           <a class="nav-link"
              *ngIf="getItemName(route)"
-             [routerLink]="route.path">{{getItemName(route)}}</a>
+             [routerLink]="'/' + route.path">{{getItemName(route)}}</a>
         </li>
       </ul>
 

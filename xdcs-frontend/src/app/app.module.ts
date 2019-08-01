@@ -21,6 +21,11 @@ import { OcticonDirective } from './directives/octicon.directive';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { GlobalAlertsComponent } from './element/global-alerts/global-alerts.component';
 import { API_INTERCEPTOR_PROVIDER, ApiInterceptor } from './api/error-handler';
+import { CodeEditorComponent } from './element/code-editor/code-editor.component';
+import { AceEditorModule } from 'ng2-ace-editor';
+import { TaskDefinitionsComponent } from './view/task-definitions/task-definitions.component';
+import { TaskDefinitionComponent } from './view/task-definition/task-definition.component';
+import { AngularSplitModule } from 'angular-split';
 
 @NgModule({
   declarations: [
@@ -35,6 +40,9 @@ import { API_INTERCEPTOR_PROVIDER, ApiInterceptor } from './api/error-handler';
     TaskSummaryListComponent,
     OcticonDirective,
     GlobalAlertsComponent,
+    CodeEditorComponent,
+    TaskDefinitionsComponent,
+    TaskDefinitionComponent,
   ],
   imports: [
     BrowserModule,
@@ -46,6 +54,8 @@ import { API_INTERCEPTOR_PROVIDER, ApiInterceptor } from './api/error-handler';
     CollapseModule.forRoot(),
     AlertModule.forRoot(),
     FontAwesomeModule,
+    AceEditorModule,
+    AngularSplitModule,
   ],
   providers: [
     HttpClientModule,
