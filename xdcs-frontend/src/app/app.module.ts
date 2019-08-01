@@ -16,9 +16,11 @@ import { SignInComponent } from './view/sign-in/sign-in.component';
 import { HomeComponent } from './view/home/home.component';
 import { TaskSummaryItemComponent } from './element/task-summary-item/task-summary-item.component';
 import { TaskSummaryListComponent } from './element/task-summary-list/task-summary-list.component';
-import { CollapseModule } from 'ngx-bootstrap';
+import { AlertModule, CollapseModule } from 'ngx-bootstrap';
 import { OcticonDirective } from './directives/octicon.directive';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { GlobalAlertsComponent } from './element/global-alerts/global-alerts.component';
+import { API_INTERCEPTOR_PROVIDER, ApiInterceptor } from './api/error-handler';
 
 @NgModule({
   declarations: [
@@ -32,6 +34,7 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
     TaskSummaryItemComponent,
     TaskSummaryListComponent,
     OcticonDirective,
+    GlobalAlertsComponent,
   ],
   imports: [
     BrowserModule,
@@ -41,10 +44,13 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
     ApiModule.forRoot({ rootUrl: environment.serverUrl }),
     BrowserAnimationsModule,
     CollapseModule.forRoot(),
+    AlertModule.forRoot(),
     FontAwesomeModule,
   ],
   providers: [
     HttpClientModule,
+    ApiInterceptor,
+    API_INTERCEPTOR_PROVIDER,
   ],
   bootstrap: [AppComponent]
 })
