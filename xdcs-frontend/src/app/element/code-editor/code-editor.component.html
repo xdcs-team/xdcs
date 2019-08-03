@@ -1,0 +1,14 @@
+<div class="wrapper" #wrapper>
+  <ace-editor
+    #editor
+    class="ace"
+    [(text)]="text"
+    [mode]="'java'"
+    [theme]="'tomorrow'"
+    [options]="options"
+    [readOnly]="false"
+    [autoUpdateContent]="true"
+    [durationBeforeCallback]="1000"
+    (textChanged)="onChange($event)"
+    style="overflow: auto; height: 100%"></ace-editor>
+</div>

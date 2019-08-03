@@ -27,9 +27,9 @@
               "src/assets"
             ],
             "styles": [
-              "./node_modules/@primer/octicons/build/build.css",
-              "./node_modules/bootstrap/dist/css/bootstrap.min.css",
-              "./node_modules/ngx-bootstrap/datepicker/bs-datepicker.css",
+              "node_modules/@primer/octicons/build/build.css",
+              "node_modules/bootstrap/dist/css/bootstrap.min.css",
+              "node_modules/ngx-bootstrap/datepicker/bs-datepicker.css",
               "src/styles.less"
             ],
             "scripts": [],
@@ -87,9 +87,9 @@
             "tsConfig": "src/tsconfig.spec.json",
             "karmaConfig": "src/karma.conf.js",
             "styles": [
-              "./node_modules/@primer/octicons/build/build.css",
-              "./node_modules/bootstrap/dist/css/bootstrap.css",
-              "./node_modules/ngx-bootstrap/datepicker/bs-datepicker.css",
+              "node_modules/@primer/octicons/build/build.css",
+              "node_modules/bootstrap/dist/css/bootstrap.css",
+              "node_modules/ngx-bootstrap/datepicker/bs-datepicker.css",
               "src/styles.less"
             ],
             "scripts": [],

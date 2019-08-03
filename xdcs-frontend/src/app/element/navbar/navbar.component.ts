@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { Route, Router, Routes } from '@angular/router';
 import { routes } from '../../app-routing.module';
 import { navbarItemNames } from '../../services/navbar.service';
@@ -10,6 +10,9 @@ import { navbarItemNames } from '../../services/navbar.service';
 })
 export class NavbarComponent implements OnInit {
   private routes: Routes = routes;
+
+  @Input()
+  containerBound = false;
 
   constructor(private router: Router) {
 
