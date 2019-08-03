@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { NavbarItem } from '../../services/navbar.service';
 
 @Component({
@@ -8,12 +8,8 @@ import { NavbarItem } from '../../services/navbar.service';
   host: { class: 'd-flex flex-column' }
 })
 @NavbarItem('Task Definition')
-export class TaskDefinitionComponent implements OnInit {
+export class TaskDefinitionComponent {
   constructor() {
-
-  }
-
-  ngOnInit() {
 
   }
 }

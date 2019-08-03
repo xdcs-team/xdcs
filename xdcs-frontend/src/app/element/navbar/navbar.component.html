@@ -1,6 +1,8 @@
-<div>
-  <nav class="navbar navbar-expand-lg navbar-light">
-    <a class="navbar-brand" routerLink="/">XDCS</a>
+<div class="shadow">
+  <nav class="navbar navbar-expand-lg navbar-dark">
+    <a class="navbar-brand" routerLink="/">
+      <img class="logo" src="assets/logo.svg" alt="XDCS"/>
+    </a>
 
     <div class="collapse navbar-collapse">
       <ul class="navbar-nav mr-auto">
@@ -16,11 +18,11 @@
 
       <form class="form-inline my-2 my-lg-0">
         <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
-        <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+        <button class="btn btn-success my-2 my-sm-0" type="submit">Search</button>
       </form>
       <a routerLink="/sign-in"
          [queryParams]="{redirect: router.url}"
-         class="btn btn-outline-primary nav-button"
+         class="btn btn-primary nav-button"
          role="button">Sign In</a>
     </div>
   </nav>
