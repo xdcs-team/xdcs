@@ -17,7 +17,7 @@
                placeholder="Password">
       </div>
       <button type="submit" class="btn btn-primary float-right">Sign In</button>
-      <a [routerLink]="route.snapshot.queryParamMap.get('redirect')"
+      <a [href]="'#' + route.snapshot.queryParamMap.get('redirect')"
          class="btn btn-outline-secondary float-right">Cancel</a>
     </form>
   </div>
