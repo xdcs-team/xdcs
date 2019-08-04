@@ -8,5 +8,5 @@ import javax.ws.rs.core.Application;
  */
 @ApplicationPath("/rest")
 public class RestApplication extends Application {
-
+    public static final String CONTEXT_ROOT = "/xdcs";
 }
