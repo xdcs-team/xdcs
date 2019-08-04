@@ -1,4 +1,4 @@
-<app-navbar [containerBound]="true"></app-navbar>
+<app-navbar [showLinks]="false"></app-navbar>
 <div class="card margin-centered shadow-lg">
   <div class="card-body">
     <form>
@@ -7,17 +7,29 @@
         <input type="email"
                class="form-control"
                id="input-username"
-               placeholder="Username">
+               placeholder="Username"
+               autocomplete="off"
+               autofocus
+               #username>
       </div>
       <div class="form-group">
         <label for="input-password">Password</label>
         <input type="password"
                class="form-control"
                id="input-password"
-               placeholder="Password">
+               placeholder="Password"
+               autocomplete="off"
+               #password>
       </div>
-      <button type="submit" class="btn btn-primary float-right">Sign In</button>
+      <button
+        type="submit"
+        class="btn btn-primary float-right"
+        [disabled]="disabled"
+        (click)="signIn()">
+        Sign In
+      </button>
       <a [href]="'#' + route.snapshot.queryParamMap.get('redirect')"
+         [class.disabled]="disabled"
          class="btn btn-outline-secondary float-right">Cancel</a>
     </form>
   </div>

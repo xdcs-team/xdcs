@@ -46,11 +46,9 @@ public class AuthEndpointsImpl implements AuthEndpoints {
             return badRequest("Invalid client_id");
         }
 
-        if (redirectUri == null) {
-            return badRequest("Empty redirect_uri");
-        }
-
-        if (!redirectUri.startsWith(uriInfo.getBaseUri().toString()) && !redirectUri.startsWith("/")) {
+        if (redirectUri != null &&
+                !redirectUri.startsWith(uriInfo.getBaseUri().toString()) &&
+                !redirectUri.startsWith("/")) {
             return badRequest("Invalid redirect_uri");
         }
 
@@ -96,9 +94,18 @@ public class AuthEndpointsImpl implements AuthEndpoints {
             Response errorResponse = validateParameters(responseType, clientId, redirectUri);
             if (errorResponse != null) return errorResponse;
             String code = authenticationService.authenticate(username, password);
-            return Response.status(Response.Status.FOUND).location(UriBuilder.fromUri(redirectUri)
-                    .queryParam("code", code)
-                    .build()).build();
+
+            if (redirectUri != null) {
+                return Response.status(Response.Status.FOUND)
+                        .header("Location", UriBuilder.fromUri(redirectUri)
+                                .queryParam("code", code)
+                                .build()
+                                .toString()).build();
+            } else {
+                return Response.ok(CodeGrant.builder()
+                        .code(code)
+                        .build()).build();
+            }
         } catch (AuthenticationException e) {
             return badRequest("Authorization failed: " + e.getMessage());
         }

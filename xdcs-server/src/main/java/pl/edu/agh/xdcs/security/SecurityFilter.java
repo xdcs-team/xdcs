@@ -47,7 +47,8 @@ public class SecurityFilter implements ContainerRequestFilter {
             return;
         }
 
-        Optional<String> username = authenticationService.getUsername(token);
+        Optional<String> username = authenticationService.validateToken(token)
+                .map(Token::getUsername);
         if (!username.isPresent()) {
             requestContext.abortWith(ACCESS_DENIED);
             return;

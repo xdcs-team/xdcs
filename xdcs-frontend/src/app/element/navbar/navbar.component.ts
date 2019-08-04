@@ -1,7 +1,10 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { Route, Router, Routes } from '@angular/router';
-import { routes } from '../../app-routing.module';
+import { Route, Router } from '@angular/router';
 import { navbarItemNames } from '../../services/navbar.service';
+import { TaskDefinitionsComponent } from '../../view/task-definitions/task-definitions.component';
+import { AgentsComponent } from '../../agents/agents.component';
+import { TaskDefinitionComponent } from '../../view/task-definition/task-definition.component';
+import { AuthService } from '../../auth/auth.service';
 
 @Component({
   selector: 'app-navbar',
@@ -9,12 +12,26 @@ import { navbarItemNames } from '../../services/navbar.service';
   styleUrls: ['./navbar.component.less'],
 })
 export class NavbarComponent implements OnInit {
-  private routes: Routes = routes;
+  private routes = [
+    {
+      path: '/agents',
+      component: AgentsComponent
+    },
+    {
+      path: '/task/definitions',
+      component: TaskDefinitionsComponent
+    },
+    {
+      path: '/task/definition',
+      component: TaskDefinitionComponent
+    }
+  ];
 
   @Input()
-  containerBound = false;
+  showLinks = true;
 
-  constructor(private router: Router) {
+  constructor(private router: Router,
+              private authService: AuthService) {
 
   }
 
@@ -24,5 +41,13 @@ export class NavbarComponent implements OnInit {
 
   private getItemName(route: Route): string {
     return navbarItemNames.get(route.component);
+  }
+
+  logOut() {
+    this.authService.logOut();
+  }
+
+  isAuthenticated() {
+    return this.authService.isAuthenticated();
   }
 }

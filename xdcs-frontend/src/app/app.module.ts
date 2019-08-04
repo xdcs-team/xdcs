@@ -26,6 +26,8 @@ import { AceEditorModule } from 'ng2-ace-editor';
 import { TaskDefinitionsComponent } from './view/task-definitions/task-definitions.component';
 import { TaskDefinitionComponent } from './view/task-definition/task-definition.component';
 import { AngularSplitModule } from 'angular-split';
+import { JwtModule } from '@auth0/angular-jwt';
+import { TOKEN_INTERCEPTOR_PROVIDER, TokenInterceptor } from './auth/token-interceptor';
 
 @NgModule({
   declarations: [
@@ -56,11 +58,18 @@ import { AngularSplitModule } from 'angular-split';
     FontAwesomeModule,
     AceEditorModule,
     AngularSplitModule,
+    JwtModule.forRoot({
+      config: {
+        tokenGetter: () => undefined,
+      },
+    }),
   ],
   providers: [
     HttpClientModule,
     ApiInterceptor,
     API_INTERCEPTOR_PROVIDER,
+    TokenInterceptor,
+    TOKEN_INTERCEPTOR_PROVIDER,
   ],
   bootstrap: [AppComponent]
 })

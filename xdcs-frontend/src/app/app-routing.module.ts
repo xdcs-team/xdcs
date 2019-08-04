@@ -5,13 +5,26 @@ import { SignInComponent } from './view/sign-in/sign-in.component';
 import { HomeComponent } from './view/home/home.component';
 import { TaskDefinitionsComponent } from './view/task-definitions/task-definitions.component';
 import { TaskDefinitionComponent } from './view/task-definition/task-definition.component';
+import { AuthGuard } from './auth/auth.guard';
 
 export const routes: Routes = [
-  { path: '', component: HomeComponent },
-  { path: 'agents', component: AgentsComponent },
   { path: 'sign-in', component: SignInComponent },
-  { path: 'task/definitions', component: TaskDefinitionsComponent },
-  { path: 'task/definition', component: TaskDefinitionComponent },
+  {
+    path: '',
+    canActivate: [AuthGuard],
+    children: [
+      { path: '', redirectTo: 'home', pathMatch: 'full' },
+      { path: 'home', component: HomeComponent },
+      { path: 'agents', component: AgentsComponent },
+      {
+        path: 'task',
+        children: [
+          { path: 'definitions', component: TaskDefinitionsComponent },
+          { path: 'definition', component: TaskDefinitionComponent },
+        ]
+      },
+    ]
+  }
 ];
 
 @NgModule({
@@ -19,4 +32,5 @@ export const routes: Routes = [
   exports: [RouterModule]
 })
 export class AppRoutingModule {
+
 }

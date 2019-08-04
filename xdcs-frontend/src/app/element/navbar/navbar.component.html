@@ -5,7 +5,7 @@
     </a>
 
     <div class="collapse navbar-collapse">
-      <ul class="navbar-nav mr-auto">
+      <ul *ngIf="showLinks" class="navbar-nav mr-auto">
         <li
           *ngFor="let route of routes"
           class="nav-item"
@@ -16,14 +16,11 @@
         </li>
       </ul>
 
-      <form class="form-inline my-2 my-lg-0">
-        <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
-        <button class="btn btn-success my-2 my-sm-0" type="submit">Search</button>
-      </form>
-      <a routerLink="/sign-in"
-         [queryParams]="{redirect: router.url}"
-         class="btn btn-primary nav-button"
-         role="button">Sign In</a>
+      <a *ngIf="isAuthenticated()"
+         href="javascript:void(0)"
+         (click)="logOut()"
+         class="btn btn-outline-light nav-button"
+         role="button">Log Out</a>
     </div>
   </nav>
 </div>
