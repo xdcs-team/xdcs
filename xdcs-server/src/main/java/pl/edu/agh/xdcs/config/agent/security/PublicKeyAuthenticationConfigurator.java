@@ -1,4 +1,4 @@
-package pl.edu.agh.xdcs.grpc.ssh.configurators;
+package pl.edu.agh.xdcs.config.agent.security;
 
 import org.apache.sshd.server.SshServer;
 import org.apache.sshd.server.auth.pubkey.AcceptAllPublickeyAuthenticator;
@@ -7,14 +7,15 @@ import org.apache.sshd.server.config.keys.AuthorizedKeysAuthenticator;
 import pl.edu.agh.xdcs.config.AgentSecurityConfiguration;
 import pl.edu.agh.xdcs.config.Configured;
 import pl.edu.agh.xdcs.config.SecurityPublicKeyPolicy;
+import pl.edu.agh.xdcs.config.util.ReferencedFileLoader;
 import pl.edu.agh.xdcs.grpc.ssh.authenticators.AnyPublicKeyAuthenticator;
+import pl.edu.agh.xdcs.grpc.ssh.configurators.GrpcSshConfigurator;
 import pl.edu.agh.xdcs.util.ObjectMatcher;
 
 import javax.inject.Inject;
 import java.nio.file.Files;
 import java.nio.file.LinkOption;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 
 /**
  * @author Kamil Jarosz
@@ -29,6 +30,9 @@ public class PublicKeyAuthenticationConfigurator implements GrpcSshConfigurator 
             .build();
 
     @Inject
+    private ReferencedFileLoader fileLoader;
+
+    @Inject
     @Configured
     private AgentSecurityConfiguration agentSecurityConfiguration;
 
@@ -37,7 +41,7 @@ public class PublicKeyAuthenticationConfigurator implements GrpcSshConfigurator 
     }
 
     private PublickeyAuthenticator parseDirective(SecurityPublicKeyPolicy.File directive) {
-        Path path = Paths.get(directive.getPath());
+        Path path = fileLoader.toPath(directive.getPath());
 
         if (directive.isRequired() && !Files.exists(path, LinkOption.NOFOLLOW_LINKS)) {
             throw new RuntimeException("File does not exist: " + path);

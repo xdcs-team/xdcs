@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <title>Sign in</title>
+</head>
+<body>
+<form action="{{callback}}" method="post" onsubmit="document.getElementById('submit').disabled=true">
+    <div>
+        <label for="username" class="control-label">Username</label>
+        <input tabindex="1" id="username" name="username" value="" type="text" autofocus autocomplete="off"/>
+    </div>
+    <div>
+        <label for="password" class="control-label">Password</label>
+        <input tabindex="2" id="password" name="password" type="password" autocomplete="off"/>
+    </div>
+    <div>
+        <input tabindex="3" id="submit" type="submit" value="Sign In"/>
+    </div>
+</form>
+</body>
+</html>

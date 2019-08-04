@@ -1,4 +1,4 @@
-package pl.edu.agh.xdcs.restapi.util;
+package pl.edu.agh.xdcs.util;
 
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
@@ -6,11 +6,14 @@ import com.google.common.cache.LoadingCache;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import pl.edu.agh.xdcs.RestApplication;
 
+import javax.enterprise.inject.Instance;
+import javax.inject.Inject;
 import javax.ws.rs.ApplicationPath;
+import javax.ws.rs.core.Application;
 import javax.ws.rs.core.UriBuilder;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
@@ -26,11 +29,13 @@ public class UriResolver {
     private static final Logger logger = LoggerFactory.getLogger(UriResolver.class);
 
     private static final String CONTEXT_ROOT = "/xdcs";
-    private static final String APPLICATION_PATH = RestApplication.class.getAnnotation(ApplicationPath.class).value();
     private static final Pattern CLASS_NAME_PATTERN = Pattern.compile(
             "class " + Pattern.quote(Absurd.class.getName()) + " cannot be cast to class (?<classname>[^ ]+).*");
 
-    private static final LoadingCache<MethodReferenceIdentifier, UriBuilder> methodUriTemplateCache = CacheBuilder.newBuilder()
+    @Inject
+    private Instance<Application> applications;
+
+    private final LoadingCache<MethodReferenceIdentifier, UriBuilder> methodUriTemplateCache = CacheBuilder.newBuilder()
             .build(new CacheLoader<MethodReferenceIdentifier, UriBuilder>() {
                 @Override
                 public UriBuilder load(MethodReferenceIdentifier id) {
@@ -39,7 +44,7 @@ public class UriResolver {
             });
 
     @SuppressWarnings("unchecked")
-    private static <T> UriBuilder resolve(Function<T, ?> f) {
+    private <T> UriBuilder resolve(Function<T, ?> f) {
         Class<?> requiredInterface;
         try {
             f.apply((T) Absurd.INSTANCE);
@@ -85,7 +90,7 @@ public class UriResolver {
         return resolve(method);
     }
 
-    private static <A> String resolveFromCache(Object key, Function<A, ?> f, Object... args) {
+    private <A> String resolveFromCache(Object key, Function<A, ?> f, Object... args) {
         try {
             UriBuilder builder = methodUriTemplateCache.get(MethodReferenceIdentifier.builder()
                     .f(f)
@@ -97,32 +102,61 @@ public class UriResolver {
         }
     }
 
-    private static UriBuilder resolve(Method method) {
+    private UriBuilder resolve(Method method) {
         return UriBuilder.fromPath("/")
                 .path(CONTEXT_ROOT)
-                .path(APPLICATION_PATH)
+                .path(getApplicationPath(method.getDeclaringClass()))
                 .path(method.getDeclaringClass())
                 .path(method);
     }
 
+    private String getApplicationPath(Class<?> resourceClass) {
+        Class<?> applicationClass = null;
+        int matchedLength = 0;
+        for (Application app : applications) {
+            String rPackage = resourceClass.getPackage().getName();
+            String aPackage = app.getClass().getPackage().getName();
+
+            int len = StringUtils.getCommonPrefix(aPackage, rPackage).length();
+            if (len > matchedLength) {
+                applicationClass = app.getClass();
+                matchedLength = len;
+            }
+        }
+
+        if (applicationClass == null) {
+            throw new RuntimeException("Application not found for " + resourceClass);
+        }
+
+        while (applicationClass.getAnnotation(ApplicationPath.class) == null) {
+            applicationClass = applicationClass.getSuperclass();
+        }
+
+        return applicationClass.getAnnotation(ApplicationPath.class).value();
+    }
+
     public <A, R> String of(Functions.Function1<A, R> f, Object... args) {
-        return UriResolver.resolveFromCache(f, f::apply, args);
+        return this.resolveFromCache(f, f::apply, args);
     }
 
     public <A, B, R> String of(Functions.Function2<A, B, R> f, Object... args) {
-        return UriResolver.<A>resolveFromCache(f, thiz -> f.apply(thiz, null), args);
+        return this.<A>resolveFromCache(f, thiz -> f.apply(thiz, null), args);
     }
 
     public <A, B, C, R> String of(Functions.Function3<A, B, C, R> f, Object... args) {
-        return UriResolver.<A>resolveFromCache(f, thiz -> f.apply(thiz, null, null), args);
+        return this.<A>resolveFromCache(f, thiz -> f.apply(thiz, null, null), args);
     }
 
     public <A, B, C, D, R> String of(Functions.Function4<A, B, C, D, R> f, Object... args) {
-        return UriResolver.<A>resolveFromCache(f, thiz -> f.apply(thiz, null, null, null), args);
+        return this.<A>resolveFromCache(f, thiz -> f.apply(thiz, null, null, null), args);
     }
 
     public <A, B, C, D, E, R> String of(Functions.Function5<A, B, C, D, E, R> f, Object... args) {
-        return UriResolver.<A>resolveFromCache(f, thiz -> f.apply(thiz, null, null, null, null), args);
+        return this.<A>resolveFromCache(f, thiz -> f.apply(thiz, null, null, null, null), args);
+    }
+
+    public <A, B, C, D, E, F, R> String of(Functions.Function6<A, B, C, D, E, F, R> f, Object... args) {
+        return this.<A>resolveFromCache(f, thiz -> f.apply(thiz, null, null, null, null, null), args);
     }
 
     private static final class Absurd {

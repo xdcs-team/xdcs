@@ -1,4 +1,4 @@
-package pl.edu.agh.xdcs.grpc.ssh.configurators;
+package pl.edu.agh.xdcs.config.agent.security;
 
 import org.apache.sshd.server.SshServer;
 import org.apache.sshd.server.auth.password.AcceptAllPasswordAuthenticator;
@@ -7,9 +7,11 @@ import pl.edu.agh.xdcs.config.AgentSecurityConfiguration;
 import pl.edu.agh.xdcs.config.Configured;
 import pl.edu.agh.xdcs.config.PasswordFileFormat;
 import pl.edu.agh.xdcs.config.SecurityPasswordPolicy;
+import pl.edu.agh.xdcs.config.util.ReferencedFileLoader;
 import pl.edu.agh.xdcs.grpc.ssh.authenticators.AnyPasswordAuthenticator;
 import pl.edu.agh.xdcs.grpc.ssh.authenticators.BarePasswordAuthenticator;
 import pl.edu.agh.xdcs.grpc.ssh.authenticators.ShadowFilePasswordAuthenticator;
+import pl.edu.agh.xdcs.grpc.ssh.configurators.GrpcSshConfigurator;
 import pl.edu.agh.xdcs.util.ObjectMatcher;
 
 import javax.inject.Inject;
@@ -21,6 +23,9 @@ import java.nio.charset.StandardCharsets;
  * @author Kamil Jarosz
  */
 public class PasswordAuthenticationConfigurator implements GrpcSshConfigurator {
+    @Inject
+    private ReferencedFileLoader fileLoader;
+
     private ObjectMatcher<PasswordAuthenticator> passwordDirectiveMatcher = ObjectMatcher.<PasswordAuthenticator>newMatcher()
             .match(SecurityPasswordPolicy.InlinePass.class, this::parseDirective)
             .match(SecurityPasswordPolicy.AllowAll.class, this::parseDirective)
@@ -36,7 +41,7 @@ public class PasswordAuthenticationConfigurator implements GrpcSshConfigurator {
 
     private PasswordAuthenticator parseDirective(SecurityPasswordPolicy.File directive) {
         if (directive.getFormat() == PasswordFileFormat.SHADOW) {
-            try (InputStream is = directive.getPath().toURL().openConnection().getInputStream()) {
+            try (InputStream is = fileLoader.loadFile(directive.getPath())) {
                 return new ShadowFilePasswordAuthenticator(is);
             } catch (IOException e) {
                 throw new RuntimeException("IO error while reading shadow file", e);
