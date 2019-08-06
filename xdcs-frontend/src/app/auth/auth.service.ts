@@ -21,7 +21,7 @@ export class AuthService {
   }
 
   private isExpired(token) {
-    return this.jwtHelper.isTokenExpired(token);
+    return this.jwtHelper.isTokenExpired(token, 30);
   }
 
   getAccessToken(): Observable<string> {

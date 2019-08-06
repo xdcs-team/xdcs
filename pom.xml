@@ -33,6 +33,7 @@
         <junit5.version>5.5.1</junit5.version>
         <commons-lang3.version>3.9</commons-lang3.version>
         <jjwt.version>0.10.7</jjwt.version>
+        <hibernate.version>5.4.4.Final</hibernate.version>
     </properties>
 
     <modules>
@@ -210,6 +211,11 @@
                 <artifactId>jjwt-jackson</artifactId>
                 <version>${jjwt.version}</version>
                 <scope>runtime</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.hibernate</groupId>
+                <artifactId>hibernate-core</artifactId>
+                <version>${hibernate.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
