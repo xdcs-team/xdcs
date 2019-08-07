@@ -6,6 +6,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 
+import javax.enterprise.context.ApplicationScoped;
 import java.security.Key;
 import java.sql.Date;
 import java.time.Duration;
@@ -15,6 +16,7 @@ import java.util.Optional;
 /**
  * @author Kamil Jarosz
  */
+@ApplicationScoped
 public class TokenIssuer {
     private Key key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
 
