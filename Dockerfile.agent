@@ -2,8 +2,8 @@ FROM python:3.7 AS builder
 
 RUN pip install pybuilder --pre
 
+COPY api /var/xdcs/api
 COPY xdcs-agent /var/xdcs/xdcs-agent
-COPY xdcs-agent-api/src /var/xdcs/xdcs-agent-api/src
 
 WORKDIR /var/xdcs/xdcs-agent
 

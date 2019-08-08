@@ -1,7 +1,11 @@
 FROM maven:3-jdk-8 AS builder
 
 WORKDIR /var/xdcs
-COPY . /var/xdcs/
+COPY api /var/xdcs/api
+COPY pom.xml /var/xdcs/
+COPY xdcs-agent-api /var/xdcs/xdcs-agent-api
+COPY xdcs-rest-api /var/xdcs/xdcs-rest-api
+COPY xdcs-server /var/xdcs/xdcs-server
 RUN mvn -T 1.2C -DskipTests=true clean install
 
 ################################################################################

@@ -5,12 +5,17 @@ import io.grpc.Metadata;
 import io.grpc.ServerCall;
 import io.grpc.ServerCallHandler;
 import io.grpc.ServerInterceptor;
+import io.grpc.Status;
+import org.slf4j.Logger;
+import pl.edu.agh.xdcs.grpc.DefinedHeaders;
 import pl.edu.agh.xdcs.grpc.context.AgentContext;
 import pl.edu.agh.xdcs.grpc.context.RendezvousContext;
 import pl.edu.agh.xdcs.grpc.context.SessionContext;
+import pl.edu.agh.xdcs.security.Token;
 
 import javax.inject.Inject;
 import java.net.SocketAddress;
+import java.util.Objects;
 
 /**
  * A {@link ServerInterceptor} which provides GRPC-related contexts to
@@ -31,6 +36,12 @@ public class GrpcContextInterceptor implements ServerInterceptor {
     @Inject
     private RendezvousContext rendezvousContext;
 
+    @Inject
+    private DefinedHeaders definedHeaders;
+
+    @Inject
+    private Logger logger;
+
     @Override
     public <ReqT, RespT> ServerCall.Listener<ReqT> interceptCall(
             ServerCall<ReqT, RespT> call,
@@ -40,37 +51,37 @@ public class GrpcContextInterceptor implements ServerInterceptor {
         return new ServerCall.Listener<ReqT>() {
             @Override
             public void onMessage(ReqT message) {
-                intercept(call, () -> delegate.onMessage(message));
+                intercept(call, headers, () -> delegate.onMessage(message));
             }
 
             @Override
             public void onHalfClose() {
-                intercept(call, delegate::onHalfClose);
+                intercept(call, headers, delegate::onHalfClose);
             }
 
             @Override
             public void onCancel() {
-                intercept(call, delegate::onCancel);
+                intercept(call, headers, delegate::onCancel);
                 rendezvousContext.evict(call);
             }
 
             @Override
             public void onComplete() {
-                intercept(call, delegate::onComplete);
+                intercept(call, headers, delegate::onComplete);
                 rendezvousContext.evict(call);
             }
 
             @Override
             public void onReady() {
-                intercept(call, delegate::onReady);
+                intercept(call, headers, delegate::onReady);
             }
         };
     }
 
-    private void intercept(ServerCall call, Runnable r) {
+    private void intercept(ServerCall call, Metadata headers, Runnable r) {
         SocketAddress clientAddress = call.getAttributes().get(Grpc.TRANSPORT_ATTR_REMOTE_ADDR);
-        ManagedGrpcSession session = sessionManager.getSession(clientAddress)
-                .orElseThrow(() -> new RuntimeException("Client has not started a session yet"));
+        ManagedGrpcSession session = authorizeAgent(call, headers);
+        if (session == null) return;
 
         agentContext.enter(clientAddress);
         sessionContext.enter(session);
@@ -81,6 +92,33 @@ public class GrpcContextInterceptor implements ServerInterceptor {
             rendezvousContext.exit();
             sessionContext.exit();
             agentContext.exit();
+        }
+    }
+
+    private ManagedGrpcSession authorizeAgent(ServerCall call, Metadata headers) {
+        Token token = headers.get(definedHeaders.authorization());
+        if (token == null) {
+            abortCall(call, "Agent tried to connect but no valid token was provided");
+            return null;
+        }
+
+        ManagedGrpcSession session = sessionManager.getSession(token.getSubject())
+                .orElseThrow(() -> new RuntimeException("Client has not started a session yet"));
+        String sessionId = token.getClaim("session", String.class);
+        if (!Objects.equals(sessionId, session.getSessionId())) {
+            abortCall(call, "Agent tried to connect but token was meant for a different session");
+            return null;
+        }
+
+        return session;
+    }
+
+    private void abortCall(ServerCall call, String message) {
+        try {
+            call.close(Status.UNAUTHENTICATED, new Metadata());
+            logger.warn(message);
+        } catch (IllegalStateException ignored) {
+
         }
     }
 }

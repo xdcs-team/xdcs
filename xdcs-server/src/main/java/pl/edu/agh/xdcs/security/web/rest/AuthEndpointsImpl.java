@@ -1,7 +1,7 @@
-package pl.edu.agh.xdcs.security.rest;
+package pl.edu.agh.xdcs.security.web.rest;
 
 import com.google.common.io.ByteStreams;
-import pl.edu.agh.xdcs.security.AuthenticationService;
+import pl.edu.agh.xdcs.security.web.AuthenticationService;
 import pl.edu.agh.xdcs.util.UriResolver;
 
 import javax.inject.Inject;

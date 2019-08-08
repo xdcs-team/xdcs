@@ -1,4 +1,4 @@
-package pl.edu.agh.xdcs.security.rest;
+package pl.edu.agh.xdcs.security.web.rest;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;

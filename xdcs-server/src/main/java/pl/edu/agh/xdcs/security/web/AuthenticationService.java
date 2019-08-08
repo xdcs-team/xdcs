@@ -1,8 +1,10 @@
-package pl.edu.agh.xdcs.security;
+package pl.edu.agh.xdcs.security.web;
 
 import pl.edu.agh.xdcs.config.Configured;
 import pl.edu.agh.xdcs.config.WebExpirationTimes;
 import pl.edu.agh.xdcs.config.WebSecurityConfiguration;
+import pl.edu.agh.xdcs.security.Token;
+import pl.edu.agh.xdcs.security.TokenIssuer;
 import pl.edu.agh.xdcs.util.ApplicationStartedEvent;
 import pl.edu.agh.xdcs.util.Enabled;
 
@@ -73,7 +75,7 @@ public class AuthenticationService {
 
     public String generateRefreshToken(String code) throws AuthenticationException {
         String username = issuer.validateToken(code, TokenIssuer.TokenType.AUTH_CODE)
-                .map(Token::getUsername)
+                .map(Token::getSubject)
                 .orElse(null);
         if (username == null) {
             stall();
@@ -85,7 +87,7 @@ public class AuthenticationService {
 
     public String generateAccessToken(String refreshToken) throws AuthenticationException {
         String username = issuer.validateToken(refreshToken, TokenIssuer.TokenType.REFRESH)
-                .map(Token::getUsername)
+                .map(Token::getSubject)
                 .orElse(null);
         if (username == null) {
             stall();

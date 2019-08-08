@@ -1,4 +1,4 @@
-package pl.edu.agh.xdcs.security;
+package pl.edu.agh.xdcs.security.web;
 
 /**
  * @author Kamil Jarosz

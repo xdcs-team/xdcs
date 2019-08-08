@@ -1,7 +1,7 @@
-package pl.edu.agh.xdcs.security.authenticators;
+package pl.edu.agh.xdcs.security.web.authenticators;
 
 import org.apache.commons.codec.digest.Crypt;
-import pl.edu.agh.xdcs.security.WebAuthenticator;
+import pl.edu.agh.xdcs.security.web.WebAuthenticator;
 import pl.edu.agh.xdcs.util.ShadowFile;
 
 import java.io.IOException;

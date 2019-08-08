@@ -15,5 +15,6 @@ import java.net.InetAddress;
 @Getter
 @Builder
 public class AgentDisconnectedEvent {
+    private String agentName;
     private InetAddress agentAddress;
 }
