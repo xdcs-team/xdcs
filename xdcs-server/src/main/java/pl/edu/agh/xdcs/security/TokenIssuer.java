@@ -11,6 +11,8 @@ import java.security.Key;
 import java.sql.Date;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.Collections;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -21,10 +23,17 @@ public class TokenIssuer {
     private Key key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
 
     public String issueToken(String user, Duration expirationTime, TokenType type) {
-        Instant expirationDate = Instant.now().plusMillis(expirationTime.toMillis());
+        return issueToken(user, expirationTime, type, Collections.emptyMap());
+    }
+
+    public String issueToken(String user, Duration expirationTime, TokenType type, Map<String, Object> claims) {
+        java.util.Date expirationDate = expirationTime == null ? null :
+                Date.from(Instant.now().plusMillis(expirationTime.toMillis()));
+
         return Jwts.builder().setSubject(user)
-                .setExpiration(Date.from(expirationDate))
+                .setExpiration(expirationDate)
                 .claim("type", type.toString())
+                .addClaims(claims)
                 .signWith(key)
                 .compact();
     }
@@ -40,7 +49,7 @@ public class TokenIssuer {
                 return Optional.empty();
             }
 
-            return Optional.of(new Token(claims));
+            return Optional.of(new Token(token, claims));
         } catch (JwtException e) {
             return Optional.empty();
         }
@@ -50,6 +59,7 @@ public class TokenIssuer {
         AUTH_CODE("auth_code"),
         REFRESH("refresh"),
         ACCESS("access"),
+        AGENT("agent"),
         ;
 
         private String value;

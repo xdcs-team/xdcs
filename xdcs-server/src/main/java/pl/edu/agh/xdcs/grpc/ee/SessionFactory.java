@@ -17,11 +17,12 @@ public class SessionFactory {
     @Resource
     private ManagedExecutorService executorService;
 
-    public ManagedGrpcSession newManagedSession(AgentConnectedEvent agentConnectedEvent) {
+    public ManagedGrpcSession newManagedSession(AgentConnectedEvent event) {
         return ManagedGrpcSession.builder()
-                .tunnelEndpoint(agentConnectedEvent.getTunnelEndpoint())
-                .agentAddress(agentConnectedEvent.getAgentAddress())
-                .channel(createChannel(agentConnectedEvent.getTunnelEndpoint()))
+                .tunnelEndpoint(event.getTunnelEndpoint())
+                .agentAddress(event.getAgentAddress())
+                .agentName(event.getAgentName())
+                .channel(createChannel(event.getTunnelEndpoint()))
                 .build();
     }
 

@@ -12,8 +12,8 @@ COPY xdcs-frontend/package-lock.json /var/xdcs/xdcs-frontend/
 RUN npm install
 
 # Build frontend
+COPY api /var/xdcs/api
 COPY xdcs-frontend /var/xdcs/xdcs-frontend/
-COPY xdcs-rest-api/src /var/xdcs/xdcs-rest-api/src/
 
 RUN npm run build
 

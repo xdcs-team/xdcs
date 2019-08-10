@@ -10,19 +10,16 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
-import java.net.InetAddress;
-import java.net.InetSocketAddress;
-import java.net.SocketAddress;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author Kamil Jarosz
  */
 @ApplicationScoped
 public class SessionManager {
-    private final Map<InetAddress, ManagedGrpcSession> sessionsByAgentAddresses = new HashMap<>();
+    private final Map<String, ManagedGrpcSession> sessionsByNames = new ConcurrentHashMap<>();
 
     @Inject
     private SessionContext sessionContext;
@@ -36,17 +33,13 @@ public class SessionManager {
     @Inject
     private Event<GrpcSessionClosedEvent> sessionClosedEvent;
 
-    public synchronized Optional<ManagedGrpcSession> getSession(SocketAddress clientAddress) {
-        return getSession(((InetSocketAddress) clientAddress).getAddress());
-    }
-
-    public synchronized Optional<ManagedGrpcSession> getSession(InetAddress clientAddress) {
-        return Optional.ofNullable(sessionsByAgentAddresses.get(clientAddress));
+    public Optional<ManagedGrpcSession> getSession(String agentName) {
+        return Optional.ofNullable(sessionsByNames.get(agentName));
     }
 
     public void createSession(@Observes AgentConnectedEvent agentConnectedEvent) {
         ManagedGrpcSession session = sessionFactory.newManagedSession(agentConnectedEvent);
-        sessionsByAgentAddresses.put(session.getAgentAddress(), session);
+        sessionsByNames.put(session.getAgentName(), session);
 
         GrpcSessionCreatedEvent event = GrpcSessionCreatedEvent.builder()
                 .session(session)
@@ -56,9 +49,9 @@ public class SessionManager {
     }
 
     public void sessionClosed(@Observes AgentDisconnectedEvent agentDisconnectedEvent) {
-        getSession(agentDisconnectedEvent.getAgentAddress()).ifPresent(session -> {
+        getSession(agentDisconnectedEvent.getAgentName()).ifPresent(session -> {
             sessionContext.evict(session);
-            sessionsByAgentAddresses.remove(session.getAgentAddress());
+            sessionsByNames.remove(session.getAgentName());
             session.close();
 
             GrpcSessionClosedEvent event = GrpcSessionClosedEvent.builder()

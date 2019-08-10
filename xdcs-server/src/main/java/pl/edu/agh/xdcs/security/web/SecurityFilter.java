@@ -1,6 +1,7 @@
-package pl.edu.agh.xdcs.security;
+package pl.edu.agh.xdcs.security.web;
 
 import pl.edu.agh.xdcs.RestApplication;
+import pl.edu.agh.xdcs.security.Token;
 
 import javax.inject.Inject;
 import javax.ws.rs.ApplicationPath;
@@ -48,7 +49,7 @@ public class SecurityFilter implements ContainerRequestFilter {
         }
 
         Optional<String> username = authenticationService.validateToken(token)
-                .map(Token::getUsername);
+                .map(Token::getSubject);
         if (!username.isPresent()) {
             requestContext.abortWith(ACCESS_DENIED);
             return;

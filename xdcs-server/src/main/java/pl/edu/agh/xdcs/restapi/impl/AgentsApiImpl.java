@@ -1,10 +1,9 @@
 package pl.edu.agh.xdcs.restapi.impl;
 
-import org.apache.commons.codec.digest.Crypt;
 import pl.edu.agh.xdcs.restapi.AgentsApi;
 import pl.edu.agh.xdcs.restapi.model.AgentEntryDto;
 import pl.edu.agh.xdcs.restapi.model.AgentInfoDto;
-import pl.edu.agh.xdcs.security.UserContext;
+import pl.edu.agh.xdcs.security.web.UserContext;
 import pl.edu.agh.xdcs.util.UriResolver;
 
 import javax.inject.Inject;

@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "pl.edu.agh.xdcs.api";
+
+package xdcs.agent;
+
+message AgentTokenGrant {
+    string token = 1;
+}
+
+message ServerCertificate {
+
+}
+
+message SecurityInformation {
+    AgentTokenGrant tokenGrant = 1;
+    ServerCertificate serverCertificate = 2;
+}
+
+message SecurityInformationResponse {
+
+}
+
+service AgentSecurity {
+    rpc AcceptSecurityInformation (SecurityInformation) returns (SecurityInformationResponse) {
+
+    }
+}

@@ -1,4 +1,4 @@
-package pl.edu.agh.xdcs.security.rest;
+package pl.edu.agh.xdcs.security.web.rest;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;

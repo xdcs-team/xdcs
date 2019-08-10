@@ -68,6 +68,7 @@ public class GrpcSshServer {
             @Override
             public void sessionClosed(Session session) {
                 agentDisconnectedEvent.fire(AgentDisconnectedEvent.builder()
+                        .agentName(session.getUsername())
                         .agentAddress(((InetSocketAddress) session.getRemoteAddress()).getAddress())
                         .build());
             }
@@ -84,13 +85,14 @@ public class GrpcSshServer {
                     Throwable reason) {
                 if (reason != null) return;
 
-                String agentId = session.getUsername();
+                String agentName = session.getUsername();
                 InetAddress agentAddress = ((InetSocketAddress) session.getRemoteAddress()).getAddress();
 
-                logger.info("Agent '" + agentId + "' connected from " + agentAddress);
+                logger.info("Agent '" + agentName + "' connected from " + agentAddress);
                 agentConnectedEvent.fire(AgentConnectedEvent.builder()
-                        .agentId(agentId)
+                        .agentId(agentName)
                         .agentAddress(agentAddress)
+                        .agentName(agentName)
                         .tunnelEndpoint(boundAddress.toInetSocketAddress())
                         .build());
             }
