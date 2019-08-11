@@ -8,11 +8,13 @@ import java.io.OutputStream;
  * @author Kamil Jarosz
  */
 public interface ObjectRepositoryTypeHandler<T> {
-    String getTypeName();
-
     Class<T> getRepresentation();
 
     T read(InputStream file) throws IOException;
 
     void write(T object, OutputStream file) throws IOException;
+
+    default boolean closeAfterRead() {
+        return true;
+    }
 }

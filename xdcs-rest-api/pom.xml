@@ -73,6 +73,7 @@
                                 <java8>true</java8>
                                 <sourceFolder>src/gen/java</sourceFolder>
                                 <dateLibrary>java8</dateLibrary>
+                                <returnResponse>true</returnResponse>
                             </configOptions>
                         </configuration>
                     </execution>

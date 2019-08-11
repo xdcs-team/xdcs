@@ -27,8 +27,6 @@ import java.util.regex.Pattern;
  */
 @EqualsAndHashCode
 public class Tree implements ObjectBase {
-    public static final String TYPE_NAME = "tree";
-
     @JsonProperty("entries")
     private List<Entry> entries;
 
@@ -79,6 +77,7 @@ public class Tree implements ObjectBase {
         }
     }
 
+    @SuppressWarnings("OctalInteger")
     @EqualsAndHashCode
     public static class FilePermissions {
         private final int value;
@@ -89,6 +88,24 @@ public class Tree implements ObjectBase {
             }
 
             this.value = value;
+        }
+
+        public static FilePermissions fromValue(int value) {
+            return new FilePermissions(value);
+        }
+
+        public static FilePermissions fromPosixPermissions(Set<PosixFilePermission> perms) {
+            int value = 0;
+            if (perms.contains(PosixFilePermission.OWNER_READ)) value |= 0400;
+            if (perms.contains(PosixFilePermission.OWNER_WRITE)) value |= 0200;
+            if (perms.contains(PosixFilePermission.OWNER_EXECUTE)) value |= 0100;
+            if (perms.contains(PosixFilePermission.GROUP_READ)) value |= 040;
+            if (perms.contains(PosixFilePermission.GROUP_WRITE)) value |= 020;
+            if (perms.contains(PosixFilePermission.GROUP_EXECUTE)) value |= 010;
+            if (perms.contains(PosixFilePermission.OTHERS_READ)) value |= 04;
+            if (perms.contains(PosixFilePermission.OTHERS_WRITE)) value |= 02;
+            if (perms.contains(PosixFilePermission.OTHERS_EXECUTE)) value |= 01;
+            return fromValue(value);
         }
 
         public boolean canOwnerRead() {

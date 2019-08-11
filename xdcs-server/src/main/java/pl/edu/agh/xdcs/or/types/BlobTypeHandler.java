@@ -10,12 +10,8 @@ import java.io.OutputStream;
 /**
  * @author Kamil Jarosz
  */
+@GlobalTypeHandler
 public class BlobTypeHandler implements ObjectRepositoryTypeHandler<Blob> {
-    @Override
-    public String getTypeName() {
-        return Blob.TYPE_NAME;
-    }
-
     @Override
     public Class<Blob> getRepresentation() {
         return Blob.class;

@@ -14,9 +14,11 @@ public class TaskDefinitionDao extends DaoBase<TaskDefinitionEntity> {
     }
 
     @SuppressWarnings("unchecked")
-    public List<TaskDefinitionEntity> listTaskDefinitions() {
+    public List<TaskDefinitionEntity> listTaskDefinitions(int from, int limit) {
         return entityManager
-                .createQuery("select td from TaskDefinitionEntity as td")
+                .createQuery("select td from TaskDefinition as td")
+                .setFirstResult(from)
+                .setMaxResults(limit)
                 .getResultList();
     }
 }

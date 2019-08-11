@@ -23,7 +23,7 @@ public abstract class BaseEntity {
     @Id
     @Column(name = "ID_")
     @Convert(converter = UUIDConverter.class)
-    private UUID id = UUID.randomUUID();
+    private String id = UUID.randomUUID().toString();
 
     @Version
     @Column(name = "REV_")

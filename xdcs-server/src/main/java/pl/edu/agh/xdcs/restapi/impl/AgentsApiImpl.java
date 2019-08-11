@@ -8,6 +8,7 @@ import pl.edu.agh.xdcs.util.UriResolver;
 
 import javax.inject.Inject;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import java.util.Arrays;
 import java.util.List;
@@ -26,20 +27,20 @@ public class AgentsApiImpl implements AgentsApi {
     private UserContext userContext;
 
     @Override
-    public AgentInfoDto getAgentInfo(String agentId) {
-        return new AgentInfoDto()
+    public Response getAgentInfo(String agentId) {
+        return Response.ok(new AgentInfoDto()
                 .displayName("asdf")
                 .id(agentId)
-                .href(uriInfo.getPath());
+                .href(uriInfo.getPath())).build();
     }
 
     @Override
-    public List<AgentEntryDto> getAgentList() {
-        return Arrays.asList(
+    public Response getAgentList() {
+        return Response.ok(Arrays.asList(
                 new AgentEntryDto()
                         .displayName("asdf " + userContext.getUsername())
                         .id("1234")
                         .href(resolver.of(AgentsApi::getAgentInfo, "1234"))
-        );
+        )).build();
     }
 }

@@ -8,8 +8,6 @@ import pl.edu.agh.xdcs.or.ObjectBase;
  */
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Blob implements ObjectBase {
-    public static final String TYPE_NAME = "blob";
-
     @EqualsAndHashCode.Include
     private byte[] data;
 

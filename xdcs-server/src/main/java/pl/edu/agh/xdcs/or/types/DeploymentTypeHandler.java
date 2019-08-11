@@ -11,21 +11,21 @@ import java.io.OutputStream;
  * @author Kamil Jarosz
  */
 @GlobalTypeHandler
-public class TreeTypeHandler implements ObjectRepositoryTypeHandler<Tree> {
+public class DeploymentTypeHandler implements ObjectRepositoryTypeHandler<Deployment> {
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
-    public Class<Tree> getRepresentation() {
-        return Tree.class;
+    public Class<Deployment> getRepresentation() {
+        return Deployment.class;
     }
 
     @Override
-    public Tree read(InputStream file) throws IOException {
-        return objectMapper.readValue(file, Tree.class);
+    public Deployment read(InputStream file) throws IOException {
+        return objectMapper.readValue(file, Deployment.class);
     }
 
     @Override
-    public void write(Tree object, OutputStream file) throws IOException {
+    public void write(Deployment object, OutputStream file) throws IOException {
         objectMapper.writeValue(file, object);
     }
 }

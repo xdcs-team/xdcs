@@ -65,8 +65,15 @@ public class ObjectRepository {
     public <T extends ObjectBase> T cat(String objectId, Class<T> type) {
         Path objectPath = resolver.resolve(objectId);
         ObjectRepositoryTypeHandler<T> handler = getHandler(type);
-        try (InputStream is = Files.newInputStream(objectPath)) {
-            return handler.read(is);
+        try {
+            InputStream is = Files.newInputStream(objectPath);
+            try {
+                return handler.read(is);
+            } finally {
+                if (handler.closeAfterRead()) {
+                    is.close();
+                }
+            }
         } catch (NoSuchFileException e) {
             throw new ObjectRepositoryInconsistencyException(objectId, e);
         } catch (IOException e) {
