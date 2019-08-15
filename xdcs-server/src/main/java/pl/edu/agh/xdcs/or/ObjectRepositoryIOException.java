@@ -6,11 +6,19 @@ import java.io.IOException;
  * @author Kamil Jarosz
  */
 public class ObjectRepositoryIOException extends ObjectRepositoryException {
-    public ObjectRepositoryIOException(String objectId, IOException e) {
-        super("IO error occurred while reading " + objectId, e);
+    private final IOException cause;
+
+    public ObjectRepositoryIOException(String objectId, IOException cause) {
+        super("IO error occurred while reading " + objectId, cause);
+        this.cause = cause;
     }
 
-    public ObjectRepositoryIOException(IOException e) {
-        super("IO error occurred while dealing with the filesystem", e);
+    public ObjectRepositoryIOException(IOException cause) {
+        super("IO error occurred while dealing with the filesystem", cause);
+        this.cause = cause;
+    }
+
+    public IOException getIOException() {
+        return cause;
     }
 }

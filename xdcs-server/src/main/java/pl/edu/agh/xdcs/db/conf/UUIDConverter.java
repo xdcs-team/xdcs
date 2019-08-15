@@ -8,21 +8,22 @@ import java.util.UUID;
 /**
  * @author Kamil Jarosz
  */
-public class UUIDConverter implements AttributeConverter<UUID, BigInteger> {
+public class UUIDConverter implements AttributeConverter<String, BigInteger> {
     @Override
-    public BigInteger convertToDatabaseColumn(UUID attribute) {
+    public BigInteger convertToDatabaseColumn(String attribute) {
+        UUID uuid = UUID.fromString(attribute);
         ByteBuffer buf = ByteBuffer.allocate(17);
         buf.put((byte) 0);
-        buf.putLong(attribute.getMostSignificantBits());
-        buf.putLong(attribute.getLeastSignificantBits());
+        buf.putLong(uuid.getMostSignificantBits());
+        buf.putLong(uuid.getLeastSignificantBits());
         return new BigInteger(buf.array());
     }
 
     @Override
-    public UUID convertToEntityAttribute(BigInteger dbData) {
+    public String convertToEntityAttribute(BigInteger dbData) {
         ByteBuffer buf = ByteBuffer.allocate(16);
         buf.put(dbData.toByteArray(), 1, 16);
         buf.rewind();
-        return new UUID(buf.getLong(), buf.getLong());
+        return new UUID(buf.getLong(), buf.getLong()).toString();
     }
 }

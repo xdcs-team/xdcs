@@ -18,7 +18,7 @@
         <protobuf.version>3.7.1</protobuf.version>
         <protoc.version>3.7.1</protoc.version>
         <junit.version>4.12</junit.version>
-        <mockito.version>2.25.1</mockito.version>
+        <mockito.version>3.0.0</mockito.version>
         <guava.version>27.1-jre</guava.version>
         <lombok.version>1.18.8</lombok.version>
         <slf4j.version>1.7.26</slf4j.version>

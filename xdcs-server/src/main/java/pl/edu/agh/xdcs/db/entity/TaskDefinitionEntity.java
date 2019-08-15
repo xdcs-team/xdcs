@@ -6,12 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 /**
@@ -22,13 +18,9 @@ import javax.persistence.Table;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity
+@Entity(name = "TaskDefinition")
 @Table(name = "XDCS_TASK_DEF_")
 public class TaskDefinitionEntity extends BaseEntity {
     @Column(name = "NAME_")
     private String name;
-
-    @JoinColumn(name = "TREE_ROOT_")
-    @OneToOne(fetch = FetchType.EAGER, cascade = {CascadeType.ALL})
-    private ObjectRefEntity objectRepositoryRoot;
 }

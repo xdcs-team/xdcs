@@ -13,7 +13,9 @@ class _ReverseForwardContext:
     def __init__(self,
                  local_port: int,
                  server_addr: str,
-                 server_port: int) -> None:
+                 server_port: int,
+                 asynchronous: bool) -> None:
+        self.asynchronous = asynchronous
         self.local_port = local_port
         self.server_addr = server_addr
         self.server_port = server_port
@@ -36,16 +38,19 @@ class _ReverseForwardContext:
         remote_port = self.transport.request_port_forward("127.0.0.1", 0)
         logger.debug("Now forwarding remote port %d to local port %d", remote_port, self.local_port)
 
-        self.thread = threading.Thread(target=self._transport_thread, args=())
-        self.thread.setDaemon(True)
-        self.thread.start()
+        if self.asynchronous:
+            self.thread = threading.Thread(target=self._transport_thread, args=())
+            self.thread.setDaemon(True)
+            self.thread.start()
+        else:
+            self._transport_thread()
 
     def _transport_thread(self):
-        while True:
+        channel = None
+        while channel is None:
             channel = self.transport.accept(1000)
-            if channel is None:
-                continue
-            self._handle_opened_channel(channel)
+
+        self._handle_opened_channel(channel)
 
     def _handle_opened_channel(self, channel):
         sock = socket.socket()
@@ -67,5 +72,6 @@ class _ReverseForwardContext:
 def rforward(
         local_port: int,
         server_addr: str,
-        server_port: int) -> _ReverseForwardContext:
-    return _ReverseForwardContext(local_port, server_addr, server_port)
+        server_port: int,
+        asynchronous: bool = True) -> _ReverseForwardContext:
+    return _ReverseForwardContext(local_port, server_addr, server_port, asynchronous)

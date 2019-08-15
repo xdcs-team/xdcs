@@ -18,7 +18,7 @@ import javax.persistence.Table;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity
+@Entity(name = "ObjectRef")
 @Table(name = "XDCS_OR_REF")
 public class ObjectRefEntity extends BaseEntity {
     @Column(name = "REF_OBJ_ID_", length = 40)
