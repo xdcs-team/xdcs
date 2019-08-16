@@ -1,4 +1,4 @@
-package pl.edu.agh.xdcs.grpc.ee;
+package pl.edu.agh.xdcs.grpc.session;
 
 import pl.edu.agh.xdcs.grpc.context.SessionContext;
 import pl.edu.agh.xdcs.grpc.events.AgentConnectedEvent;
@@ -19,7 +19,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 @ApplicationScoped
 public class SessionManager {
-    private final Map<String, ManagedGrpcSession> sessionsByNames = new ConcurrentHashMap<>();
+    private final Map<String, GrpcSession> sessionsByNames = new ConcurrentHashMap<>();
 
     @Inject
     private SessionContext sessionContext;
@@ -33,12 +33,12 @@ public class SessionManager {
     @Inject
     private Event<GrpcSessionClosedEvent> sessionClosedEvent;
 
-    public Optional<ManagedGrpcSession> getSession(String agentName) {
+    public Optional<GrpcSession> getSession(String agentName) {
         return Optional.ofNullable(sessionsByNames.get(agentName));
     }
 
     public void createSession(@Observes AgentConnectedEvent agentConnectedEvent) {
-        ManagedGrpcSession session = sessionFactory.newManagedSession(agentConnectedEvent);
+        GrpcSession session = sessionFactory.newManagedSession(agentConnectedEvent);
         sessionsByNames.put(session.getAgentName(), session);
 
         GrpcSessionCreatedEvent event = GrpcSessionCreatedEvent.builder()

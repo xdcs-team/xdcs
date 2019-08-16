@@ -2,7 +2,6 @@ import { Component, Input, OnInit } from '@angular/core';
 import { Route, Router } from '@angular/router';
 import { navbarItemNames } from '../../services/navbar.service';
 import { TaskDefinitionsComponent } from '../../view/task-definitions/task-definitions.component';
-import { AgentsComponent } from '../../agents/agents.component';
 import { TaskDefinitionComponent } from '../../view/task-definition/task-definition.component';
 import { AuthService } from '../../auth/auth.service';
 
@@ -13,10 +12,6 @@ import { AuthService } from '../../auth/auth.service';
 })
 export class NavbarComponent implements OnInit {
   private routes = [
-    {
-      path: '/agents',
-      component: AgentsComponent
-    },
     {
       path: '/task/definitions',
       component: TaskDefinitionsComponent

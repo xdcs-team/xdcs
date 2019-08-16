@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { AgentsComponent } from './agents/agents.component';
 import { SignInComponent } from './view/sign-in/sign-in.component';
 import { HomeComponent } from './view/home/home.component';
 import { TaskDefinitionsComponent } from './view/task-definitions/task-definitions.component';
@@ -15,7 +14,6 @@ export const routes: Routes = [
     children: [
       { path: '', redirectTo: 'home', pathMatch: 'full' },
       { path: 'home', component: HomeComponent },
-      { path: 'agents', component: AgentsComponent },
       {
         path: 'task',
         children: [

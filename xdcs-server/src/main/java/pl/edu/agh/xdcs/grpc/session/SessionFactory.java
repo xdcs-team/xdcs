@@ -1,4 +1,4 @@
-package pl.edu.agh.xdcs.grpc.ee;
+package pl.edu.agh.xdcs.grpc.session;
 
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
@@ -17,8 +17,8 @@ public class SessionFactory {
     @Resource
     private ManagedExecutorService executorService;
 
-    public ManagedGrpcSession newManagedSession(AgentConnectedEvent event) {
-        return ManagedGrpcSession.builder()
+    public GrpcSession newManagedSession(AgentConnectedEvent event) {
+        return GrpcSession.builder()
                 .tunnelEndpoint(event.getTunnelEndpoint())
                 .agentAddress(event.getAgentAddress())
                 .agentName(event.getAgentName())

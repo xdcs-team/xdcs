@@ -4,3 +4,4 @@
     [data]="data">
   </app-node-card>
 </div>
+<app-no-data *ngIf="cards.length == 0 && queried"></app-no-data>

@@ -2,7 +2,7 @@ package pl.edu.agh.xdcs.grpc.events;
 
 import lombok.Builder;
 import lombok.Getter;
-import pl.edu.agh.xdcs.grpc.ee.ManagedGrpcSession;
+import pl.edu.agh.xdcs.grpc.session.GrpcSession;
 
 /**
  * @author Kamil Jarosz
@@ -10,5 +10,5 @@ import pl.edu.agh.xdcs.grpc.ee.ManagedGrpcSession;
 @Getter
 @Builder
 public class GrpcSessionCreatedEvent {
-    private ManagedGrpcSession session;
+    private GrpcSession session;
 }

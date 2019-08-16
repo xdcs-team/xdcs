@@ -2,18 +2,13 @@
   <div class="card-body transition-smooth" [ngClass]="hover ? 'shadow' : 'shadow-sm'">
     <div class="row">
       <div class="col-auto status-col">
-        <div [ngSwitch]="data.status">
+        <div>
           <fa-icon
-            *ngSwitchCase="NodeStatus.Online"
             [icon]="faCircle"
             [fixedWidth]="true"
-            class="icon-success"
-            size="sm"></fa-icon>
-          <fa-icon
-            *ngSwitchCase="NodeStatus.Offline"
-            [icon]="faCircle"
-            [fixedWidth]="true"
-            class="icon-error"
+            [ngClass]="data.status == NodeStatus.Online ? 'icon-success' :
+                       data.status == NodeStatus.Offline ? 'icon-error' :
+                       'icon-greyed-out'"
             size="sm"></fa-icon>
         </div>
       </div>
