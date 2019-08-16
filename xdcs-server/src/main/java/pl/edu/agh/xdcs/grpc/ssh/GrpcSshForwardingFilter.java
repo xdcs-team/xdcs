@@ -3,7 +3,6 @@ package pl.edu.agh.xdcs.grpc.ssh;
 import org.apache.sshd.common.session.Session;
 import org.apache.sshd.common.util.net.SshdSocketAddress;
 import org.apache.sshd.server.forward.ForwardingFilter;
-import org.apache.sshd.server.forward.TcpForwardingFilter;
 
 /**
  * @author Kamil Jarosz

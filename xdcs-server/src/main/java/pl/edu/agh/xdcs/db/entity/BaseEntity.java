@@ -6,7 +6,6 @@ import pl.edu.agh.xdcs.db.conf.UUIDConverter;
 
 import javax.persistence.Column;
 import javax.persistence.Convert;
-import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Version;

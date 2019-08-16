@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
  * @author Kamil Jarosz
  */
 class FilesystemWorkspace implements Workspace {
-    private Path root;
+    private final Path root;
 
     FilesystemWorkspace(Path root) {
         this.root = root;

@@ -40,7 +40,7 @@ public class ObjectMatcher<R> {
     }
 
     public static class ObjectMatcherBuilder<R> {
-        private Map<Class<?>, Function<?, ?>> handlers = new HashMap<>();
+        private final Map<Class<?>, Function<?, ?>> handlers = new HashMap<>();
         private Function<Object, R> otherHandler = o -> {
             throw new RuntimeException("No matcher for " + o);
         };

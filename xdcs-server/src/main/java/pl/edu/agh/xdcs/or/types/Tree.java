@@ -56,7 +56,7 @@ public class Tree implements ObjectBase {
         S_IFDIR("04"),
         ;
 
-        private String val;
+        private final String val;
 
         FileType(String val) {
             this.val = val;

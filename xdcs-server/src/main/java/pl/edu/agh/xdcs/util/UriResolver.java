@@ -63,12 +63,12 @@ public class UriResolver {
                 requiredInterface = Class.forName(requiredClassName);
             } catch (ClassNotFoundException notFoundException) {
                 logger.error("Required class not found: " + requiredClassName, notFoundException);
-                throw new RuntimeException(notFoundException);
+                throw new UriResolverException(notFoundException);
             }
         }
 
         if (!requiredInterface.isInterface()) {
-            throw new RuntimeException("Class " + requiredInterface + " is not an interface; " +
+            throw new UriResolverException("Class " + requiredInterface + " is not an interface; " +
                     "an interface is required to resolve its method's URI");
         }
 
@@ -98,7 +98,7 @@ public class UriResolver {
                     .build());
             return builder.build(args).toString();
         } catch (ExecutionException e) {
-            throw new RuntimeException(e);
+            throw new UriResolverException(e);
         }
     }
 
@@ -125,7 +125,7 @@ public class UriResolver {
         }
 
         if (applicationClass == null) {
-            throw new RuntimeException("Application not found for " + resourceClass);
+            throw new UriResolverException("Application not found for " + resourceClass);
         }
 
         while (applicationClass.getAnnotation(ApplicationPath.class) == null) {
@@ -164,7 +164,7 @@ public class UriResolver {
     }
 
     private static final class MethodInfoCarrier extends Error {
-        private Method method;
+        private final Method method;
 
         private MethodInfoCarrier(Method method) {
             this.method = method;

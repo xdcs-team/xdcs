@@ -13,7 +13,7 @@ import java.util.List;
  * @author Kamil Jarosz
  */
 public class ObjectRepositoryWorkspaceWriter {
-    private ObjectRepository or;
+    private final ObjectRepository or;
 
     private ObjectRepositoryWorkspaceWriter(ObjectRepository or) {
         this.or = or;
