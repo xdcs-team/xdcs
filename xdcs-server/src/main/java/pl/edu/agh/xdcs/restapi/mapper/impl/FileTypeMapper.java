@@ -18,9 +18,9 @@ public class FileTypeMapper implements SimpleMapper<FileDescription.FileType, Fi
                 return FileDescription.FileType.DIRECTORY;
             case LINK:
                 return FileDescription.FileType.SYMLINK;
+            default:
+                throw new UnsatisfiedMappingException();
         }
-
-        throw new UnsatisfiedMappingException();
     }
 
     @Override
@@ -32,8 +32,8 @@ public class FileTypeMapper implements SimpleMapper<FileDescription.FileType, Fi
                 return FileDto.TypeEnum.DIRECTORY;
             case SYMLINK:
                 return FileDto.TypeEnum.LINK;
+            default:
+                throw new UnsatisfiedMappingException();
         }
-
-        throw new UnsatisfiedMappingException();
     }
 }

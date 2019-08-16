@@ -71,11 +71,9 @@ public class TaskDefinitionsApiImpl implements TaskDefinitionsApi {
                     .readFileDescription(path)
                     .orElseThrow(NotFoundException::new);
             return Response.ok(fileDescriptionMapper.toRestEntity(description)).build();
+        } catch (NoSuchFileException e) {
+            return Response.status(Response.Status.NOT_FOUND).build();
         } catch (IOException e) {
-            if (e instanceof NoSuchFileException) {
-                return Response.status(Response.Status.NOT_FOUND).build();
-            }
-
             return RestUtils.serverError(e);
         }
     }
@@ -92,11 +90,9 @@ public class TaskDefinitionsApiImpl implements TaskDefinitionsApi {
             InputStream file = ws.openFile(path)
                     .orElseThrow(NotFoundException::new);
             return Response.ok(file, MediaType.APPLICATION_OCTET_STREAM).build();
+        } catch (NoSuchFileException e) {
+            return Response.status(Response.Status.NOT_FOUND).build();
         } catch (IOException e) {
-            if (e instanceof NoSuchFileException) {
-                return Response.status(Response.Status.NOT_FOUND).build();
-            }
-
             return RestUtils.serverError(e);
         }
     }
@@ -123,11 +119,9 @@ public class TaskDefinitionsApiImpl implements TaskDefinitionsApi {
         try (InputStream content = new FileInputStream(body)) {
             TaskDefinitionEntity definition = taskDefinitionService.getTaskDefinition(taskDefinitionId);
             taskDefinitionService.getWorkspace(definition).saveFile(path, content);
+        } catch (NoSuchFileException e) {
+            return Response.status(Response.Status.NOT_FOUND).build();
         } catch (IOException e) {
-            if (e instanceof NoSuchFileException) {
-                return Response.status(Response.Status.NOT_FOUND).build();
-            }
-
             return RestUtils.serverError(e);
         }
 

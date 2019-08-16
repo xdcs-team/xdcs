@@ -1,18 +1,11 @@
 package pl.edu.agh.xdcs.grpc;
 
 import io.grpc.BindableService;
-import io.grpc.ManagedChannel;
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
 import javassist.util.proxy.MethodHandler;
 import javassist.util.proxy.ProxyFactory;
 import org.slf4j.Logger;
-import pl.edu.agh.xdcs.api.AgentGrpc;
-import pl.edu.agh.xdcs.api.HeartbeatGrpc;
-import pl.edu.agh.xdcs.api.HeartbeatRequest;
-import pl.edu.agh.xdcs.api.Task;
-import pl.edu.agh.xdcs.api.TaskExecutionResult;
-import pl.edu.agh.xdcs.api.TaskType;
 import pl.edu.agh.xdcs.grpc.ee.GrpcContextInterceptor;
 import pl.edu.agh.xdcs.util.Eager;
 
@@ -45,7 +38,7 @@ public class GrpcServer {
 
     private Server server;
 
-    private int port = Integer.parseInt(System.getProperty("xdcs.agent.port.grpc", "8081"));
+    private final int port = Integer.parseInt(System.getProperty("xdcs.agent.port.grpc", "8081"));
 
     @PostConstruct
     public void init() {
@@ -56,7 +49,7 @@ public class GrpcServer {
         try {
             server.start();
         } catch (IOException e) {
-            throw new RuntimeException("Could not start GRPC server", e);
+            throw new GrpcServerException("Could not start GRPC server", e);
         }
     }
 
@@ -80,7 +73,7 @@ public class GrpcServer {
             try {
                 return !method.equals(BindableService.class.getMethod("bindService"));
             } catch (NoSuchMethodException e) {
-                throw new RuntimeException(e);
+                throw new GrpcServerException(e);
             }
         });
 
@@ -93,14 +86,14 @@ public class GrpcServer {
                 logger.warn("Bindable service delegate threw an exception, rethrowing it", e);
                 throw e.getTargetException();
             } catch (IllegalAccessException | IllegalArgumentException e) {
-                throw new RuntimeException("Exception occurred while invoking delegate method", e);
+                throw new GrpcServerException("Exception occurred while invoking delegate method", e);
             }
         };
 
         try {
             return (BindableService) factory.create(new Class<?>[0], new Object[0], handler);
         } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException | InstantiationException e) {
-            throw new RuntimeException("Cannot create a proxy", e);
+            throw new GrpcServerException("Cannot create a proxy", e);
         }
     }
 

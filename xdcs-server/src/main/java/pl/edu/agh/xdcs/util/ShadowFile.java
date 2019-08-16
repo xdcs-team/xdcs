@@ -33,7 +33,9 @@ public class ShadowFile {
         tokenizer.wordChars('\n' + 1, Character.MAX_CODE_POINT);
         tokenizer.whitespaceChars(':', ':');
 
-        while (parseLine(passwords, tokenizer)) ;
+        while (parseLine(passwords, tokenizer)) {
+            // continue parsing
+        }
 
         return passwords;
     }

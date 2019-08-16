@@ -50,7 +50,7 @@ public class GrpcSshServer {
 
     private SshServer server;
 
-    private int port = Integer.parseInt(System.getProperty("xdcs.agent.port.ssh", "8082"));
+    private final int port = Integer.parseInt(System.getProperty("xdcs.agent.port.ssh", "8082"));
 
     @PostConstruct
     public void init() {

@@ -26,7 +26,7 @@ public class PasswordAuthenticationConfigurator implements GrpcSshConfigurator {
     @Inject
     private ReferencedFileLoader fileLoader;
 
-    private ObjectMatcher<PasswordAuthenticator> passwordDirectiveMatcher = ObjectMatcher.<PasswordAuthenticator>newMatcher()
+    private final ObjectMatcher<PasswordAuthenticator> passwordDirectiveMatcher = ObjectMatcher.<PasswordAuthenticator>newMatcher()
             .match(SecurityPasswordPolicy.InlinePass.class, this::parseDirective)
             .match(SecurityPasswordPolicy.AllowAll.class, this::parseDirective)
             .match(SecurityPasswordPolicy.File.class, this::parseDirective)

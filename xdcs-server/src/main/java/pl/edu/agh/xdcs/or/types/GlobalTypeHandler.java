@@ -14,7 +14,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 public @interface GlobalTypeHandler {
-    public class Literal {
+    class Literal {
         public static GlobalTypeHandler instance() {
             return new GlobalTypeHandler() {
                 @Override

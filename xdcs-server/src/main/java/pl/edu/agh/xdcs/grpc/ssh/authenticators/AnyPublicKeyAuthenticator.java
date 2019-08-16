@@ -1,8 +1,6 @@
 package pl.edu.agh.xdcs.grpc.ssh.authenticators;
 
 import org.apache.sshd.server.auth.AsyncAuthException;
-import org.apache.sshd.server.auth.password.PasswordAuthenticator;
-import org.apache.sshd.server.auth.password.PasswordChangeRequiredException;
 import org.apache.sshd.server.auth.pubkey.PublickeyAuthenticator;
 import org.apache.sshd.server.session.ServerSession;
 
