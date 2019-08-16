@@ -1,4 +1,4 @@
-package pl.edu.agh.xdcs.grpc.ee;
+package pl.edu.agh.xdcs.grpc.session;
 
 import io.grpc.ManagedChannel;
 import lombok.Builder;
@@ -11,7 +11,7 @@ import java.util.UUID;
  * @author Kamil Jarosz
  */
 @Builder
-public class ManagedGrpcSession implements AutoCloseable {
+public class GrpcSession implements AutoCloseable {
     private final String sessionId = UUID.randomUUID().toString();
     private final InetSocketAddress tunnelEndpoint;
     private final InetAddress agentAddress;

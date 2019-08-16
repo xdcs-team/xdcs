@@ -1,4 +1,4 @@
-package pl.edu.agh.xdcs.grpc.ee;
+package pl.edu.agh.xdcs.grpc.session;
 
 import pl.edu.agh.xdcs.grpc.context.SessionContext;
 import pl.edu.agh.xdcs.grpc.scope.SessionScoped;
@@ -10,12 +10,12 @@ import javax.inject.Inject;
 /**
  * @author Kamil Jarosz
  */
-public class ManagedGrpcSessionProducer {
+public class GrpcSessionProducer {
     @Inject
     private BeanManager beanManager;
 
     @Produces
-    public ManagedGrpcSession getCurrentSession() {
+    public GrpcSession getCurrentSession() {
         SessionContext context = (SessionContext) beanManager.getContext(SessionScoped.class);
         return context.getCurrentKey()
                 .orElseThrow(Error::new);

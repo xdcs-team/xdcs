@@ -2,28 +2,30 @@ openapi: 3.0.0
 
 info:
   title: XDCS REST API
-  version: 1.0.0
+  version: 0.1.0-SNAPSHOT
 
 paths:
-  /agents:
+  /nodes:
     get:
-      operationId: getAgentList
+      tags:
+        - Nodes
+      operationId: getNodes
       responses:
         200:
           description: OK
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/AgentEntryDto'
+                $ref: '#/components/schemas/NodesDto'
 
-  /agents/{agentId}:
+  /nodes/{nodeId}:
     get:
-      operationId: getAgentInfo
+      tags:
+        - Nodes
+      operationId: getNode
       parameters:
         - in: path
-          name: agentId
+          name: nodeId
           required: true
           schema:
             type: string
@@ -33,7 +35,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/AgentInfoDto'
+                $ref: '#/components/schemas/NodeDto'
 
   /task-definitions:
     get:
@@ -282,31 +284,28 @@ paths:
 
 components:
   schemas:
-    AgentEntryDto:
+    NodesDto:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/NodeDto'
+
+    NodeDto:
       type: object
       properties:
         id:
           type: string
-        displayName:
-          type: string
-        href:
-          type: string
-
-    AgentInfoDto:
-      allOf:
-        - $ref: '#/components/schemas/AgentEntryDto'
-        - type: object
-          properties:
-            devices:
-              type: array
-              items:
-                $ref: '#/components/schemas/DeviceInfoDto'
-
-    DeviceInfoDto:
-      type: object
-      properties:
         name:
           type: string
+        address:
+          type: string
+        status:
+          type: string
+          enum:
+            - online
+            - offline
 
     TaskDefinitionDto:
       type: object

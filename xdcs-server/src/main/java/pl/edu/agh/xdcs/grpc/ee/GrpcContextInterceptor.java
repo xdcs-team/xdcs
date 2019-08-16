@@ -11,6 +11,8 @@ import pl.edu.agh.xdcs.grpc.DefinedHeaders;
 import pl.edu.agh.xdcs.grpc.context.AgentContext;
 import pl.edu.agh.xdcs.grpc.context.RendezvousContext;
 import pl.edu.agh.xdcs.grpc.context.SessionContext;
+import pl.edu.agh.xdcs.grpc.session.GrpcSession;
+import pl.edu.agh.xdcs.grpc.session.SessionManager;
 import pl.edu.agh.xdcs.security.Token;
 
 import javax.inject.Inject;
@@ -80,7 +82,7 @@ public class GrpcContextInterceptor implements ServerInterceptor {
 
     private void intercept(ServerCall call, Metadata headers, Runnable r) {
         SocketAddress clientAddress = call.getAttributes().get(Grpc.TRANSPORT_ATTR_REMOTE_ADDR);
-        ManagedGrpcSession session = authorizeAgent(call, headers);
+        GrpcSession session = authorizeAgent(call, headers);
         if (session == null) return;
 
         agentContext.enter(clientAddress);
@@ -95,14 +97,14 @@ public class GrpcContextInterceptor implements ServerInterceptor {
         }
     }
 
-    private ManagedGrpcSession authorizeAgent(ServerCall call, Metadata headers) {
+    private GrpcSession authorizeAgent(ServerCall call, Metadata headers) {
         Token token = headers.get(definedHeaders.authorization());
         if (token == null) {
             abortCall(call, "Agent tried to connect but no valid token was provided");
             return null;
         }
 
-        ManagedGrpcSession session = sessionManager.getSession(token.getSubject())
+        GrpcSession session = sessionManager.getSession(token.getSubject())
                 .orElseThrow(() -> new RuntimeException("Client has not started a session yet"));
         String sessionId = token.getClaim("session", String.class);
         if (!Objects.equals(sessionId, session.getSessionId())) {

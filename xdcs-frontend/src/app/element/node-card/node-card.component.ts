@@ -35,6 +35,7 @@ export class NodeCardData {
 }
 
 export enum NodeStatus {
+  Unknown,
   Offline,
   Online,
 }

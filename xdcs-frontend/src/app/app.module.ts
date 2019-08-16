@@ -6,7 +6,6 @@ import { FormsModule } from '@angular/forms';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { HttpClientModule } from '@angular/common/http';
-import { AgentsComponent } from './agents/agents.component';
 import { environment } from '../environments/environment';
 import { ApiModule } from '../api/api.module';
 import { NodeCardComponent } from './element/node-card/node-card.component';
@@ -28,11 +27,11 @@ import { TaskDefinitionComponent } from './view/task-definition/task-definition.
 import { AngularSplitModule } from 'angular-split';
 import { JwtModule } from '@auth0/angular-jwt';
 import { TOKEN_INTERCEPTOR_PROVIDER, TokenInterceptor } from './auth/token-interceptor';
+import { NoDataComponent } from './element/no-data/no-data.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    AgentsComponent,
     NavbarComponent,
     NodeCardComponent,
     NodeCardsComponent,
@@ -45,6 +44,7 @@ import { TOKEN_INTERCEPTOR_PROVIDER, TokenInterceptor } from './auth/token-inter
     CodeEditorComponent,
     TaskDefinitionsComponent,
     TaskDefinitionComponent,
+    NoDataComponent,
   ],
   imports: [
     BrowserModule,

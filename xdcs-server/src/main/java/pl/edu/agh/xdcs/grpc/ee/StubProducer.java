@@ -2,6 +2,7 @@ package pl.edu.agh.xdcs.grpc.ee;
 
 import pl.edu.agh.xdcs.api.HeartbeatGrpc;
 import pl.edu.agh.xdcs.grpc.scope.SessionScoped;
+import pl.edu.agh.xdcs.grpc.session.GrpcSession;
 
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
@@ -12,7 +13,7 @@ import javax.inject.Inject;
 @SessionScoped
 public class StubProducer {
     @Inject
-    private ManagedGrpcSession session;
+    private GrpcSession session;
 
     @Produces
     public HeartbeatGrpc.HeartbeatBlockingStub getHeartbeatBlockingStub() {
