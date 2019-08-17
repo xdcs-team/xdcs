@@ -14,7 +14,7 @@ public class FilesystemRepository {
 
     private FilesystemRepository(Path root) {
         this.root = root;
-        this.objectRepository = ObjectRepository.forPath(root);
+        this.objectRepository = ObjectRepository.forPath(root.resolve("objects"));
     }
 
     public static FilesystemRepository forPath(Path root) {

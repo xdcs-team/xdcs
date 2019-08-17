@@ -304,8 +304,10 @@ components:
         status:
           type: string
           enum:
-            - online
             - offline
+            - unavailable
+            - ready
+            - busy
 
     TaskDefinitionDto:
       type: object

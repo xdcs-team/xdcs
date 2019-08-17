@@ -90,7 +90,6 @@ public class GrpcSshServer {
 
                 logger.info("Agent '" + agentName + "' connected from " + agentAddress);
                 agentConnectedEvent.fire(AgentConnectedEvent.builder()
-                        .agentId(agentName)
                         .agentAddress(agentAddress)
                         .agentName(agentName)
                         .tunnelEndpoint(boundAddress.toInetSocketAddress())

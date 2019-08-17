@@ -1,8 +1,11 @@
 package pl.edu.agh.xdcs.agents;
 
-import javax.annotation.PostConstruct;
+import pl.edu.agh.xdcs.grpc.events.AgentConnectedEvent;
+import pl.edu.agh.xdcs.grpc.events.AgentDisconnectedEvent;
+import pl.edu.agh.xdcs.grpc.events.AgentRegisteredEvent;
+
 import javax.enterprise.context.ApplicationScoped;
-import java.net.InetAddress;
+import javax.enterprise.event.Observes;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
@@ -15,27 +18,33 @@ import java.util.concurrent.ConcurrentMap;
 public class AgentManager {
     private final ConcurrentMap<String, Agent> agents = new ConcurrentHashMap<>();
 
-    @PostConstruct
-    private void init() {
-        agents.put("hello", Agent.builder()
-                .name("hello")
-                .label("Hello")
-                .address(InetAddress.getLoopbackAddress())
-                .status(Agent.Status.ONLINE)
-                .build());
-        agents.put("goodbye", Agent.builder()
-                .name("goodbye")
-                .label("Goodbye")
-                .address(InetAddress.getLoopbackAddress())
-                .status(Agent.Status.OFFLINE)
-                .build());
-    }
-
     public Optional<Agent> getAgent(String name) {
         return Optional.ofNullable(agents.getOrDefault(name, null));
     }
 
     public Collection<Agent> getAllAgents() {
         return agents.values();
+    }
+
+    private Agent getOrCreateAgent(String name) {
+        return agents.computeIfAbsent(name, Agent::new);
+    }
+
+    private void connectAgent(@Observes AgentConnectedEvent event) {
+        Agent agent = getOrCreateAgent(event.getAgentName());
+        agent.setAddress(event.getAgentAddress());
+        agent.setStatus(Agent.Status.UNAVAILABLE);
+    }
+
+    private void registerAgent(@Observes AgentRegisteredEvent event) {
+        Agent agent = event.getAgent();
+        agent.setDisplayName(event.getDisplayName());
+        agent.setStatus(Agent.Status.READY);
+    }
+
+    private void disconnectAgent(@Observes AgentDisconnectedEvent event) {
+        Agent agent = getOrCreateAgent(event.getAgentName());
+        agent.setAddress(event.getAgentAddress());
+        agent.setStatus(Agent.Status.OFFLINE);
     }
 }

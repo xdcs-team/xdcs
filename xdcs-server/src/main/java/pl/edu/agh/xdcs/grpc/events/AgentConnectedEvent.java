@@ -16,7 +16,6 @@ import java.net.InetSocketAddress;
 @Getter
 @Builder
 public class AgentConnectedEvent {
-    private String agentId;
     private InetAddress agentAddress;
     private String agentName;
     private InetSocketAddress tunnelEndpoint;

@@ -1,5 +1,7 @@
 package pl.edu.agh.xdcs.grpc.session;
 
+import pl.edu.agh.xdcs.agents.Agent;
+import pl.edu.agh.xdcs.agents.AgentManager;
 import pl.edu.agh.xdcs.grpc.context.SessionContext;
 import pl.edu.agh.xdcs.grpc.scope.SessionScoped;
 
@@ -10,6 +12,7 @@ import javax.inject.Inject;
 /**
  * @author Kamil Jarosz
  */
+@SessionScoped
 public class GrpcSessionProducer {
     @Inject
     private BeanManager beanManager;
@@ -18,6 +21,12 @@ public class GrpcSessionProducer {
     public GrpcSession getCurrentSession() {
         SessionContext context = (SessionContext) beanManager.getContext(SessionScoped.class);
         return context.getCurrentKey()
+                .orElseThrow(Error::new);
+    }
+
+    @Produces
+    public Agent getCurrentAgent(AgentManager agentManager) {
+        return agentManager.getAgent(getCurrentSession().getAgentName())
                 .orElseThrow(Error::new);
     }
 }

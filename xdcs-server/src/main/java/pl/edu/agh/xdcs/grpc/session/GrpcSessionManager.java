@@ -18,14 +18,8 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author Kamil Jarosz
  */
 @ApplicationScoped
-public class SessionManager {
+public class GrpcSessionManager {
     private final Map<String, GrpcSession> sessionsByNames = new ConcurrentHashMap<>();
-
-    @Inject
-    private SessionContext sessionContext;
-
-    @Inject
-    private SessionFactory sessionFactory;
 
     @Inject
     private Event<GrpcSessionCreatedEvent> sessionCreatedEvent;
@@ -37,28 +31,28 @@ public class SessionManager {
         return Optional.ofNullable(sessionsByNames.get(agentName));
     }
 
-    public void createSession(@Observes AgentConnectedEvent agentConnectedEvent) {
-        GrpcSession session = sessionFactory.newManagedSession(agentConnectedEvent);
+    private void createSession(@Observes AgentConnectedEvent event, GrpcSessionFactory sessionFactory) {
+        GrpcSession session = sessionFactory.newManagedSession(event);
         sessionsByNames.put(session.getAgentName(), session);
 
-        GrpcSessionCreatedEvent event = GrpcSessionCreatedEvent.builder()
+        GrpcSessionCreatedEvent sessionEvent = GrpcSessionCreatedEvent.builder()
                 .session(session)
                 .build();
-        sessionCreatedEvent.fire(event);
-        sessionCreatedEvent.fireAsync(event);
+        sessionCreatedEvent.fire(sessionEvent);
+        sessionCreatedEvent.fireAsync(sessionEvent);
     }
 
-    public void sessionClosed(@Observes AgentDisconnectedEvent agentDisconnectedEvent) {
-        getSession(agentDisconnectedEvent.getAgentName()).ifPresent(session -> {
+    private void sessionClosed(@Observes AgentDisconnectedEvent event, SessionContext sessionContext) {
+        getSession(event.getAgentName()).ifPresent(session -> {
             sessionContext.evict(session);
             sessionsByNames.remove(session.getAgentName());
             session.close();
 
-            GrpcSessionClosedEvent event = GrpcSessionClosedEvent.builder()
+            GrpcSessionClosedEvent sessionEvent = GrpcSessionClosedEvent.builder()
                     .session(session)
                     .build();
-            sessionClosedEvent.fire(event);
-            sessionClosedEvent.fireAsync(event);
+            sessionClosedEvent.fire(sessionEvent);
+            sessionClosedEvent.fireAsync(sessionEvent);
         });
     }
 }

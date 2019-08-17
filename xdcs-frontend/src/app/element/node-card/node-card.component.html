@@ -6,14 +6,16 @@
           <fa-icon
             [icon]="faCircle"
             [fixedWidth]="true"
-            [ngClass]="data.status == NodeStatus.Online ? 'icon-success' :
+            [ngClass]="data.status == NodeStatus.Ready ? 'icon-success' :
                        data.status == NodeStatus.Offline ? 'icon-error' :
+                       data.status == NodeStatus.Unavailable ? 'icon-warn icon-pulse-1' :
+                       data.status == NodeStatus.Busy ? 'icon-warn' :
                        'icon-greyed-out'"
             size="sm"></fa-icon>
         </div>
       </div>
       <div class="col details-col">
-        <h5 class="card-title">{{data.name}}</h5>
+        <h5 class="card-title" [ngClass]="!data.name ? 'unknown-name' : ''">{{data.name}}</h5>
         <p class="card-text">{{data.address}}</p>
       </div>
     </div>

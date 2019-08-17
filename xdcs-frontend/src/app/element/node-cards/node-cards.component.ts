@@ -3,6 +3,7 @@ import { NodeCardData, NodeStatus } from '../node-card/node-card.component';
 import { NodesService } from '../../../api/services/nodes.service';
 import { NodesDto } from '../../../api/models/nodes-dto';
 import { NodeDto } from '../../../api/models/node-dto';
+import { first } from 'rxjs/operators';
 
 @Component({
   selector: 'app-node-cards',
@@ -21,6 +22,7 @@ export class NodeCardsComponent implements OnInit {
 
   ngOnInit() {
     this.nodesService.getNodes()
+      .pipe(first())
       .subscribe((nodes: NodesDto) => {
         this.queried = true;
         this.cards = nodes.items.map(node => this.mapNodeToCard(node));
@@ -31,17 +33,21 @@ export class NodeCardsComponent implements OnInit {
     return {
       name: node.name,
       address: node.address,
-      status: this.mapStatus(node.status),
+      status: this.mapNodeStatus(node.status),
       routerLink: '/nodes/' + node.id,
     };
   }
 
-  private mapStatus(status: 'online' | 'offline'): NodeStatus {
+  private mapNodeStatus(status: 'offline' | 'unavailable' | 'ready' | 'busy'): NodeStatus {
     switch (status) {
-      case 'online':
-        return NodeStatus.Online;
+      case 'ready':
+        return NodeStatus.Ready;
       case 'offline':
         return NodeStatus.Offline;
+      case 'unavailable':
+        return NodeStatus.Unavailable;
+      case 'busy':
+        return NodeStatus.Busy;
       default:
         return NodeStatus.Unknown;
     }

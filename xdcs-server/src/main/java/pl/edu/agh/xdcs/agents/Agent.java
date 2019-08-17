@@ -1,37 +1,30 @@
 package pl.edu.agh.xdcs.agents;
 
-import lombok.Builder;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 
 import java.net.InetAddress;
 
 /**
  * @author Kamil Jarosz
  */
-@Builder
+@Getter
+@RequiredArgsConstructor
 public class Agent {
     private final String name;
-    private final String label;
-    private final InetAddress address;
-    private final Status status;
 
-    public String getName() {
-        return name;
-    }
-
-    public String getLabel() {
-        return label;
-    }
-
-    public InetAddress getAddress() {
-        return address;
-    }
-
-    public Status getStatus() {
-        return status;
-    }
+    @Setter
+    private String displayName;
+    @Setter
+    private InetAddress address;
+    @Setter
+    private Status status;
 
     public enum Status {
-        ONLINE,
+        UNAVAILABLE,
+        READY,
+        BUSY,
         OFFLINE,
     }
 }

@@ -13,7 +13,7 @@ import java.net.InetSocketAddress;
  * @author Kamil Jarosz
  */
 @ApplicationScoped
-public class SessionFactory {
+public class GrpcSessionFactory {
     @Resource
     private ManagedExecutorService executorService;
 
