@@ -12,7 +12,7 @@ export class AuthGuard implements CanActivate {
 
   canActivate(): boolean {
     if (!this.auth.isAuthenticated()) {
-      this.auth.redirectToSignIn();
+      this.auth.logOutAndRedirectToSignIn();
       return false;
     }
 
