@@ -10,10 +10,14 @@ import pl.edu.agh.xdcs.restapi.model.NodeDto;
 public class NodeStatusMapper {
     public NodeDto.StatusEnum toRest(Agent.Status status) {
         switch (status) {
-            case ONLINE:
-                return NodeDto.StatusEnum.ONLINE;
+            case READY:
+                return NodeDto.StatusEnum.READY;
             case OFFLINE:
                 return NodeDto.StatusEnum.OFFLINE;
+            case UNAVAILABLE:
+                return NodeDto.StatusEnum.UNAVAILABLE;
+            case BUSY:
+                return NodeDto.StatusEnum.BUSY;
             default:
                 throw new UnsatisfiedMappingException();
         }

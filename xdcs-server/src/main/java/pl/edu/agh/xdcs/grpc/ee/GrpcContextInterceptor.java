@@ -12,7 +12,7 @@ import pl.edu.agh.xdcs.grpc.context.AgentContext;
 import pl.edu.agh.xdcs.grpc.context.RendezvousContext;
 import pl.edu.agh.xdcs.grpc.context.SessionContext;
 import pl.edu.agh.xdcs.grpc.session.GrpcSession;
-import pl.edu.agh.xdcs.grpc.session.SessionManager;
+import pl.edu.agh.xdcs.grpc.session.GrpcSessionManager;
 import pl.edu.agh.xdcs.security.Token;
 
 import javax.inject.Inject;
@@ -27,7 +27,7 @@ import java.util.Objects;
  */
 public class GrpcContextInterceptor implements ServerInterceptor {
     @Inject
-    private SessionManager sessionManager;
+    private GrpcSessionManager sessionManager;
 
     @Inject
     private AgentContext agentContext;

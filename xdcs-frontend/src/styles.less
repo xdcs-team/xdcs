@@ -43,6 +43,22 @@ a, a:hover, a:visited, a:link, a:active, a:focus {
   color: #b0b0b0;
 }
 
+.icon-pulse-1 {
+  animation: pulse 1s infinite ease-in-out;
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
 app-root {
   min-height: 100vh;
 }

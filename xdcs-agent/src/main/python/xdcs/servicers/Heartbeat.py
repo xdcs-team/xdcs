@@ -1,5 +1,5 @@
-from xdcs_api.agent_heartbeat_pb2 import HeartbeatResponse
-from xdcs_api.agent_heartbeat_pb2_grpc import HeartbeatServicer
+from xdcs_api.heartbeat_pb2 import HeartbeatResponse
+from xdcs_api.heartbeat_pb2_grpc import HeartbeatServicer
 
 
 class Heartbeat(HeartbeatServicer):

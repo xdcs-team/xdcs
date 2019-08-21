@@ -26,7 +26,7 @@ public abstract class BaseEntity {
 
     @Version
     @Column(name = "REV_")
-    private long revision;
+    private Long revision;
 
     @Override
     public final boolean equals(Object o) {

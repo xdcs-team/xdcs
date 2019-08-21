@@ -1,6 +1,7 @@
 import { AfterContentChecked, Component, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from '../../auth/auth.service';
+import { first } from 'rxjs/operators';
 
 @Component({
   selector: 'app-sign-in',
@@ -32,14 +33,14 @@ export class SignInComponent implements AfterContentChecked {
     this.disabled = true;
     this.authService.authenticate(
       this.username.nativeElement.value,
-      this.password.nativeElement.value)
-      .subscribe(
-        data => this.redirect(),
-        error => {
-          alert('Error: ' + JSON.stringify(error));
-          this.disabled = false;
-        }
-      );
+      this.password.nativeElement.value
+    ).pipe(first()).subscribe(
+      data => this.redirect(),
+      error => {
+        alert('Error: ' + JSON.stringify(error));
+        this.disabled = false;
+      }
+    );
   }
 
   private redirect() {

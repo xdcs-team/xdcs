@@ -18,7 +18,7 @@ public class NodeMapper {
     public NodeDto toNode(Agent agent) {
         NodeDto dto = new NodeDto();
         dto.setId(agent.getName());
-        dto.setName(agent.getLabel());
+        dto.setName(agent.getDisplayName());
         dto.address(agent.getAddress().getHostAddress());
         dto.status(statusMapper.toRest(agent.getStatus()));
         return dto;
