@@ -20,7 +20,7 @@ export class AuthService {
 
   }
 
-  private isExpired(token) {
+  private isExpired(token: string): boolean {
     return this.jwtHelper.isTokenExpired(token, 30);
   }
 
@@ -37,7 +37,7 @@ export class AuthService {
   private refreshToken(): Observable<string> {
     const refreshToken = localStorage.getItem('refresh_token');
     if (refreshToken == null || this.isExpired(refreshToken)) {
-      this.redirectToSignIn();
+      this.logOutAndRedirectToSignIn();
       return null;
     }
 
@@ -78,13 +78,10 @@ export class AuthService {
     );
   }
 
-  logOut() {
+  logOutAndRedirectToSignIn(): void {
     localStorage.removeItem('refresh_token');
     localStorage.removeItem('access_token');
-    this.redirectToSignIn();
-  }
 
-  redirectToSignIn() {
     const redirectParam = this.route.snapshot.queryParamMap.get('redirect');
     const redirect = redirectParam ?
       redirectParam :
@@ -94,8 +91,8 @@ export class AuthService {
       queryParams: { redirect }
     });
   }
-}
 
-class TokenGrant {
-
+  isAuthUrl(url: string): boolean {
+    return url.startsWith('/xdcs/auth');
+  }
 }

@@ -28,6 +28,7 @@ import { AngularSplitModule } from 'angular-split';
 import { JwtModule } from '@auth0/angular-jwt';
 import { TOKEN_INTERCEPTOR_PROVIDER, TokenInterceptor } from './auth/token-interceptor';
 import { NoDataComponent } from './element/no-data/no-data.component';
+import { AUTH_ERROR_INTERCEPTOR_PROVIDER, AuthErrorInterceptor } from './auth/auth-error-interceptor';
 
 @NgModule({
   declarations: [
@@ -70,6 +71,8 @@ import { NoDataComponent } from './element/no-data/no-data.component';
     API_INTERCEPTOR_PROVIDER,
     TokenInterceptor,
     TOKEN_INTERCEPTOR_PROVIDER,
+    AuthErrorInterceptor,
+    AUTH_ERROR_INTERCEPTOR_PROVIDER,
   ],
   bootstrap: [AppComponent]
 })

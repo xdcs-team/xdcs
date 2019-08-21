@@ -12,16 +12,16 @@ export const TOKEN_INTERCEPTOR_PROVIDER: Provider = {
 
 @Injectable()
 export class TokenInterceptor implements HttpInterceptor {
-  constructor(private authService: AuthService) {
+  constructor(private auth: AuthService) {
 
   }
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    if (req.url.startsWith('/xdcs/auth')) {
+    if (this.auth.isAuthUrl(req.url)) {
       return next.handle(req);
     }
 
-    return this.authService.getAccessToken().pipe(
+    return this.auth.getAccessToken().pipe(
       mergeMap(accessToken => {
         return next.handle(req.clone({
           setHeaders: {
