@@ -9,6 +9,7 @@
                 <file path="./key.pub"/>
             </public-key-policy>
         </policies>
+        <jwt-key path="./jwt-agent.key"/>
     </agent-security>
     <web-security>
         <password-policy>
@@ -19,5 +20,6 @@
             <access-token>PT5M</access-token>
             <refresh-token>P7D</refresh-token>
         </expiration-times>
+        <jwt-key path="./jwt-web.key"/>
     </web-security>
 </config>
