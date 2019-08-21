@@ -4,6 +4,7 @@ import threading
 
 import paramiko
 
+from xdcs.app import xdcs
 from xdcs.utils.sockutils import couple_socks
 
 logger = logging.getLogger(__name__)
@@ -24,12 +25,17 @@ class _ReverseForwardContext:
     def __enter__(self):
         logger.debug("Connecting to " + self.server_addr + ":" + str(self.server_port))
 
+        server_auth_name = xdcs().config('server.auth.name')
+        server_auth_key = xdcs().config('server.auth.key', None)
+        server_auth_password = xdcs().config('server.auth.password', None)
+
         client = paramiko.SSHClient()
         client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
         client.connect(
             self.server_addr, self.server_port,
-            username='user',
-            pkey=paramiko.RSAKey.from_private_key_file('./dev/key'),
+            username=server_auth_name,
+            pkey=paramiko.RSAKey.from_private_key_file(server_auth_key),
+            password=server_auth_password,
             look_for_keys=False,
         )
         logger.debug("Connected to server's sshd")

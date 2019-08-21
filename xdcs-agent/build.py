@@ -31,6 +31,7 @@ def initialize(project):
     project.build_depends_on('protobuf')
     project.build_depends_on('grpcio')
     project.build_depends_on('grpcio-tools')
+    project.build_depends_on('toml')
 
     project.depends_on('py-cpuinfo')
     project.depends_on('pyopencl')
