@@ -14,7 +14,9 @@ class AgentSecurity(AgentSecurityServicer):
         xdcs().set_token(token)
         token_interceptor = interceptors.header_adder_interceptor('authorization', token)
 
-        channel = grpc.insecure_channel('127.0.0.1:32081')
+        server_host = xdcs().config('server.host')
+        server_port = xdcs().config('server.port.grpc')
+        channel = grpc.insecure_channel(server_host + ':' + str(server_port))
         intercepted_channel = grpc.intercept_channel(channel, token_interceptor)
         xdcs().set_channel(intercepted_channel)
 

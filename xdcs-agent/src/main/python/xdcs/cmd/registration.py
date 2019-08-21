@@ -11,7 +11,7 @@ class RegistrationFailedException(Exception):
 class RegisterAgentCmd(Command):
     def execute(self):
         request = AgentRegistrationRequest()
-        request.displayName = 'test display name'
+        request.displayName = xdcs().config('agent.name')
 
         stub = AgentRegistrationStub(xdcs().channel())
         response = stub.Register(request)
