@@ -9,8 +9,8 @@ EXPOSE 8787
 RUN /opt/jboss/wildfly/bin/add-user.sh deploy deploy
 
 ENV JAVA_OPTS="-server \
-    -Xms64m -Xmx512m \
-    -XX:MetaspaceSize=96M -XX:MaxMetaspaceSize=256m \
+    -Xms512M -Xmx2G \
+    -XX:MetaspaceSize=512M -XX:MaxMetaspaceSize=1G \
     -Djava.net.preferIPv4Stack=true \
     -agentlib:jdwp=transport=dt_socket,address=*:8787,server=y,suspend=n"
 

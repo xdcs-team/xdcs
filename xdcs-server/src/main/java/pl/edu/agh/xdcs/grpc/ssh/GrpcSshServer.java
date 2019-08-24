@@ -67,9 +67,12 @@ public class GrpcSshServer {
         server.addSessionListener(new SessionListener() {
             @Override
             public void sessionClosed(Session session) {
+                InetAddress agentAddress = ((InetSocketAddress) session.getRemoteAddress()).getAddress();
+                String agentName = session.getUsername();
+                logger.info("Agent '" + agentName + "' disconnected from " + agentAddress);
                 agentDisconnectedEvent.fire(AgentDisconnectedEvent.builder()
-                        .agentName(session.getUsername())
-                        .agentAddress(((InetSocketAddress) session.getRemoteAddress()).getAddress())
+                        .agentName(agentName)
+                        .agentAddress(agentAddress)
                         .build());
             }
         });

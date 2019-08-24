@@ -10,7 +10,7 @@ message AgentTokenGrant {
 }
 
 message ServerCertificate {
-
+    bytes bytes = 1;
 }
 
 message SecurityInformation {

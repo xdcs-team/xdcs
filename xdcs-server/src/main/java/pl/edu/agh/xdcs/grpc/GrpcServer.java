@@ -5,28 +5,43 @@ import io.grpc.Server;
 import io.grpc.ServerBuilder;
 import javassist.util.proxy.MethodHandler;
 import javassist.util.proxy.ProxyFactory;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.slf4j.Logger;
 import pl.edu.agh.xdcs.grpc.ee.GrpcContextInterceptor;
-import pl.edu.agh.xdcs.util.Eager;
+import pl.edu.agh.xdcs.grpc.security.GrpcSecurityGenerator;
+import pl.edu.agh.xdcs.util.ApplicationStartedEvent;
+import pl.edu.agh.xdcs.util.StringUtil;
+import sun.security.provider.X509Factory;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
 import javax.enterprise.concurrent.ManagedExecutorService;
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.event.Observes;
 import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.CDI;
 import javax.inject.Inject;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
+import java.nio.charset.StandardCharsets;
+import java.security.KeyPair;
+import java.security.Security;
+import java.security.cert.CertificateEncodingException;
+import java.security.cert.X509Certificate;
+import java.util.Base64;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * @author Kamil Jarosz
  */
-@Eager
 @ApplicationScoped
 public class GrpcServer {
+    private final int port = Integer.parseInt(System.getProperty("xdcs.agent.port.grpc", "8081"));
+
     @Inject
     private Logger logger;
 
@@ -36,14 +51,21 @@ public class GrpcServer {
     @Inject
     private GrpcContextInterceptor contextInterceptor;
 
-    private Server server;
+    @Inject
+    private GrpcSecurityGenerator securityGenerator;
 
-    private final int port = Integer.parseInt(System.getProperty("xdcs.agent.port.grpc", "8081"));
+    private Server server;
+    private KeyPair keyPair;
+    private X509Certificate certificate;
 
     @PostConstruct
-    public void init() {
+    private void init() {
+        Security.addProvider(new BouncyCastleProvider());
+
         logger.info("Initializing GRPC server on port " + port);
 
+        keyPair = securityGenerator.generateKeyPair();
+        certificate = securityGenerator.generateSelfSignedCertificate(keyPair);
         server = createServer();
 
         try {
@@ -53,17 +75,61 @@ public class GrpcServer {
         }
     }
 
+    private void wake(@Observes ApplicationStartedEvent event) {
+
+    }
+
+    public InputStream getCertificate() {
+        return toPemCert(certificate);
+    }
+
     private Server createServer() {
         ServerBuilder<?> builder = ServerBuilder.forPort(port)
                 .executor(executorService)
-                .intercept(contextInterceptor);
+                .intercept(contextInterceptor)
+                .useTransportSecurity(
+                        getCertificate(),
+                        toPemKey(keyPair.getPrivate().getEncoded()));
 
-        Set<Bean<?>> beans = CDI.current().getBeanManager().getBeans(BindableService.class);
+        Set<Bean<?>> beans = CDI.current().getBeanManager()
+                .getBeans(BindableService.class, Service.INSTANCE);
         for (Bean bean : beans) {
             builder.addService(createProxyFromBean(bean));
         }
 
         return builder.build();
+    }
+
+    private ByteArrayInputStream toPemCert(X509Certificate cert) {
+        StringBuilder ret = new StringBuilder();
+
+        try {
+            String stringEncoded = Base64.getEncoder().encodeToString(cert.getEncoded());
+
+            // Begin Certificate
+            ret.append(X509Factory.BEGIN_CERT).append('\n');
+
+            StringUtil.breakByLength(stringEncoded, 65)
+                    .forEach(line -> ret.append(line).append('\n'));
+
+            // End Certificate
+            ret.append(X509Factory.END_CERT).append('\n').append('\n');
+        } catch (CertificateEncodingException e) {
+            throw new AssertionError(e);
+        }
+
+        return new ByteArrayInputStream(ret.substring(0, ret.length() - 1)
+                .getBytes(StandardCharsets.UTF_8));
+    }
+
+    private ByteArrayInputStream toPemKey(byte[] encoded) {
+        String stringEncoded = Base64.getEncoder().encodeToString(encoded);
+        String cert = "-----BEGIN PRIVATE KEY-----" + "\n" +
+                StringUtil.breakByLength(stringEncoded, 65)
+                        .collect(Collectors.joining("\n")) + "\n" +
+                "-----END PRIVATE KEY-----";
+
+        return new ByteArrayInputStream(cert.getBytes(StandardCharsets.UTF_8));
     }
 
     private BindableService createProxyFromBean(Bean<?> bean) {
@@ -78,7 +144,7 @@ public class GrpcServer {
         });
 
         MethodHandler handler = (self, method, proceed, args) -> {
-            Object delegate = CDI.current().select(bean.getBeanClass()).get();
+            Object delegate = CDI.current().select(bean.getBeanClass(), Service.INSTANCE).get();
 
             try {
                 return method.invoke(delegate, args);
@@ -98,7 +164,7 @@ public class GrpcServer {
     }
 
     @PreDestroy
-    public void destroy() {
+    private void destroy() {
         logger.info("Shutting down GRPC server");
         server.shutdownNow();
     }

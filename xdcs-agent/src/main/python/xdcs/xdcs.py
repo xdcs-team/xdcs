@@ -25,7 +25,7 @@ class _XDCS:
         return self._executor
 
     def execute(self, command: Command) -> None:
-        self.executor().submit(command.execute)
+        command.execute()
 
     def run(self) -> None:
         local_port = self.config('app.local_port', 25254)
