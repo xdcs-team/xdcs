@@ -77,3 +77,8 @@ def find_proto_files(path):
 @dependents(clean)
 def clean_grpc():
     shutil.rmtree('./target/generated-sources/protobuf')
+
+
+if __name__ == '__main__':
+    import pybuilder.cli
+    sys.exit(pybuilder.cli.main(*sys.argv[1:]))

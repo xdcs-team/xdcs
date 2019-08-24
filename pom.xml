@@ -34,6 +34,8 @@
         <commons-lang3.version>3.9</commons-lang3.version>
         <jjwt.version>0.10.7</jjwt.version>
         <hibernate.version>5.4.4.Final</hibernate.version>
+        <h2.version>1.4.199</h2.version>
+        <bouncycastle.provider.version>1.46</bouncycastle.provider.version>
     </properties>
 
     <modules>
@@ -216,6 +218,17 @@
                 <groupId>org.hibernate</groupId>
                 <artifactId>hibernate-core</artifactId>
                 <version>${hibernate.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.h2database</groupId>
+                <artifactId>h2</artifactId>
+                <version>${h2.version}</version>
+                <scope>runtime</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.bouncycastle</groupId>
+                <artifactId>bcprov-jdk16</artifactId>
+                <version>${bouncycastle.provider.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

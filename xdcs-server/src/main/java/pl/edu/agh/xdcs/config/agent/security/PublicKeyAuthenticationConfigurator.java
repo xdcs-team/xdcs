@@ -43,7 +43,7 @@ public class PublicKeyAuthenticationConfigurator implements GrpcSshConfigurator 
     private PublickeyAuthenticator parseDirective(SecurityPublicKeyPolicy.File directive) {
         Path path = fileLoader.toPath(directive.getPath());
 
-        if (directive.isRequired() && !Files.exists(path, LinkOption.NOFOLLOW_LINKS)) {
+        if (directive.isRequiredOnStartup() && !Files.exists(path, LinkOption.NOFOLLOW_LINKS)) {
             throw new RuntimeException("File does not exist: " + path);
         }
 

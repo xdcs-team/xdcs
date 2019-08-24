@@ -6,6 +6,7 @@ import pl.edu.agh.xdcs.agents.Agent;
 import pl.edu.agh.xdcs.api.AgentRegistrationGrpc;
 import pl.edu.agh.xdcs.api.AgentRegistrationRequest;
 import pl.edu.agh.xdcs.api.AgentRegistrationResponse;
+import pl.edu.agh.xdcs.grpc.Service;
 import pl.edu.agh.xdcs.grpc.events.AgentRegisteredEvent;
 
 import javax.enterprise.event.Event;
@@ -14,6 +15,7 @@ import javax.inject.Inject;
 /**
  * @author Kamil Jarosz
  */
+@Service
 public class AgentRegistrationService extends AgentRegistrationGrpc.AgentRegistrationImplBase {
     @Inject
     private Logger logger;
@@ -35,7 +37,9 @@ public class AgentRegistrationService extends AgentRegistrationGrpc.AgentRegistr
         agentRegisteredEvent.fire(event);
         agentRegisteredEvent.fireAsync(event);
 
-        responseObserver.onNext(AgentRegistrationResponse.newBuilder().build());
+        responseObserver.onNext(AgentRegistrationResponse.newBuilder()
+                .setSuccess(true)
+                .build());
         responseObserver.onCompleted();
     }
 }

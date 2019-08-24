@@ -23,6 +23,7 @@
                 </xs:complexType>
             </xs:element>
             <xs:element minOccurs="0" name="jwt-key" type="xdcs:JwtKeyConfiguration"/>
+            <xs:element minOccurs="0" name="allowed-hosts" type="xdcs:AllowedHosts"/>
         </xs:all>
     </xs:complexType>
 
@@ -51,7 +52,7 @@
                     <xs:element name="file">
                         <xs:complexType>
                             <xs:attribute name="path" type="xs:anyURI" use="required"/>
-                            <xs:attribute name="required" type="xs:boolean" default="true"/>
+                            <xs:attribute name="required-on-startup" type="xs:boolean" default="true"/>
                         </xs:complexType>
                     </xs:element>
                     <xs:element name="allow-all">
@@ -94,5 +95,11 @@
 
     <xs:complexType name="JwtKeyConfiguration">
         <xs:attribute name="path" type="xs:anyURI" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="AllowedHosts">
+        <xs:choice maxOccurs="unbounded">
+            <xs:element name="host" type="xs:string"/>
+        </xs:choice>
     </xs:complexType>
 </xs:schema>
