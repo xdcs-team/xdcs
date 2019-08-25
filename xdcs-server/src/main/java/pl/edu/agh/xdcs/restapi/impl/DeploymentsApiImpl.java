@@ -45,7 +45,8 @@ public class DeploymentsApiImpl implements DeploymentsApi {
 
     @Override
     public Response deployTaskDefinition(String taskDefinitionId) {
-        TaskDefinitionEntity definition = definitionService.getTaskDefinition(taskDefinitionId);
+        TaskDefinitionEntity definition = definitionService.getTaskDefinition(taskDefinitionId)
+                .orElseThrow(NotFoundException::new);
         String deploymentId = deploymentService.deploy(definition);
         return RestUtils.created(resolver.of(DeploymentsApi::getDeployment, deploymentId));
     }

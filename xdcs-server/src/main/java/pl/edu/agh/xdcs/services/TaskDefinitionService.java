@@ -7,6 +7,7 @@ import pl.edu.agh.xdcs.workspace.Workspace;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * @author Kamil Jarosz
@@ -19,8 +20,8 @@ public class TaskDefinitionService {
     @Inject
     private WorkspaceService workspaceService;
 
-    public TaskDefinitionEntity getTaskDefinition(String taskDefinitionId) {
-        return taskDefinitionDao.find(taskDefinitionId);
+    public Optional<TaskDefinitionEntity> getTaskDefinition(String taskDefinitionId) {
+        return Optional.ofNullable(taskDefinitionDao.find(taskDefinitionId));
     }
 
     public List<TaskDefinitionEntity> getTaskDefinitions(int from, int limit) {

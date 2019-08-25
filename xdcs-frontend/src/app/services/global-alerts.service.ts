@@ -24,11 +24,11 @@ export class GlobalAlertsService {
 }
 
 export class Alert {
-  type: string;
+  type: 'success' | 'info' | 'warning' | 'danger';
   message: string;
   timeout: number;
 
-  constructor(type: string, message: string, timeout = 0) {
+  constructor(type: 'success' | 'info' | 'warning' | 'danger', message: string, timeout = 0) {
     this.type = type;
     this.message = message;
     this.timeout = timeout;

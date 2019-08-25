@@ -9,13 +9,13 @@ import java.util.stream.Stream;
 public interface SimpleMapper<M, R> {
     M toModelEntity(R restEntity);
 
-    default Stream<M> toModelEntities(Collection<R> restEntities) {
+    default Stream<M> toModelEntities(Collection<? extends R> restEntities) {
         return restEntities.stream().map(this::toModelEntity);
     }
 
     R toRestEntity(M modelEntity);
 
-    default Stream<R> toRestEntities(Collection<M> modelEntities) {
+    default Stream<R> toRestEntities(Collection<? extends M> modelEntities) {
         return modelEntities.stream().map(this::toRestEntity);
     }
 }

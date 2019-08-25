@@ -1,5 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { faChevronDown, faChevronUp, faPlus, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { TaskDefinitionDto } from '../../../api/models/task-definition-dto';
+import { KernelParamDto } from '../../../api/models/kernel-param-dto';
 
 @Component({
   selector: 'app-task-def-config',
@@ -7,53 +9,34 @@ import { faChevronDown, faChevronUp, faPlus, faTrash } from '@fortawesome/free-s
   styleUrls: ['./task-def-config.component.less']
 })
 export class TaskDefConfigComponent implements OnInit {
-  private TaskDefinitionType = TaskDefinitionType;
-
   private faChevronUp = faChevronUp;
   private faChevronDown = faChevronDown;
   private faTrash = faTrash;
   private faPlus = faPlus;
 
-  private types: Map<number, string> = new Map([
-    [TaskDefinitionType.OpenCL, 'OpenCL'],
-    [TaskDefinitionType.CUDA, 'CUDA'],
-    [TaskDefinitionType.Docker, 'Docker'],
-    [TaskDefinitionType.Script, 'Script'],
+  private types: Map<string, string> = new Map([
+    ['opencl', 'OpenCL'],
+    ['cuda', 'CUDA'],
+    ['docker', 'Docker'],
+    ['script', 'Script'],
   ]);
 
-  private paramTypes: Map<number, string> = new Map([
-    [KernelParamType.Simple, 'Simple'],
-    [KernelParamType.Pointer, 'Pointer'],
+  private paramTypes: Map<string, string> = new Map([
+    ['simple', 'Simple'],
+    ['pointer', 'Pointer'],
   ]);
 
-  private paramDirections: Map<number, string> = new Map([
-    [KernelParamDirection.In, 'in'],
-    [KernelParamDirection.Out, 'out'],
-    [KernelParamDirection.InOut, 'in/out'],
+  private paramDirections: Map<string, string> = new Map([
+    ['in', 'in'],
+    ['out', 'out'],
+    ['inout', 'in/out'],
   ]);
 
-  // Common configuration
-  private name: string = null;
-  private type: number = null;
+  @Input()
+  taskDefinition: TaskDefinitionDto;
 
-  // OpenCL / CUDA config
-  private kernel = {
-    file: '',
-    name: '',
-    params: [],
-  };
-
-  // Docker config
-  private docker = {
-    dockerfile: '',
-  };
-
-  // Script config
-  private script = {
-    path: '',
-  };
-
-  private lastId = 0;
+  @Output()
+  submit = new EventEmitter<TaskDefinitionDto>();
 
   constructor() {
 
@@ -64,37 +47,42 @@ export class TaskDefConfigComponent implements OnInit {
   }
 
   addKernelParam() {
-    const param = new KernelParam();
-    param.id = this.lastId++;
-    this.kernel.params.push(param);
+    if (!this.taskDefinition.config.kernelparams) {
+      this.taskDefinition.config.kernelparams = [];
+    }
+
+    const param: KernelParamDto = {};
+    this.taskDefinition.config.kernelparams.push(param);
   }
 
-  removeKernelParam(param: KernelParam) {
-    this.kernel.params = this.kernel.params.filter(item => item !== param);
+  removeKernelParam(param: KernelParamDto) {
+    const params = this.taskDefinition.config.kernelparams;
+    this.taskDefinition.config.kernelparams = params.filter(item => item !== param);
   }
 
-  moveKernelParamUp(param: KernelParam) {
-    const index = this.kernel.params.indexOf(param);
-    if (index > 0 && index < this.kernel.params.length) {
+  moveKernelParamUp(param: KernelParamDto) {
+    const index = this.taskDefinition.config.kernelparams.indexOf(param);
+    if (index > 0 && index < this.taskDefinition.config.kernelparams.length) {
       this.swapKernelParams(index - 1, index);
     }
   }
 
-  moveKernelParamDown(param: KernelParam) {
-    const index = this.kernel.params.indexOf(param);
-    if (index >= 0 && index < this.kernel.params.length - 1) {
+  moveKernelParamDown(param: KernelParamDto) {
+    const index = this.taskDefinition.config.kernelparams.indexOf(param);
+    if (index >= 0 && index < this.taskDefinition.config.kernelparams.length - 1) {
       this.swapKernelParams(index + 1, index);
     }
   }
 
   private swapKernelParams(a, b) {
-    const tmp = this.kernel.params[a];
-    this.kernel.params[a] = this.kernel.params[b];
-    this.kernel.params[b] = tmp;
+    const params = this.taskDefinition.config.kernelparams;
+    const tmp = params[a];
+    params[a] = params[b];
+    params[b] = tmp;
   }
 
   isValid() {
-    if (this.type === null) {
+    if (this.taskDefinition.config.type === null) {
       return false;
     }
 
@@ -102,31 +90,6 @@ export class TaskDefConfigComponent implements OnInit {
   }
 
   saveConfiguration() {
-
+    this.submit.emit(this.taskDefinition);
   }
-}
-
-enum TaskDefinitionType {
-  OpenCL,
-  CUDA,
-  Docker,
-  Script,
-}
-
-enum KernelParamDirection {
-  In,
-  Out,
-  InOut,
-}
-
-enum KernelParamType {
-  Simple,
-  Pointer,
-}
-
-class KernelParam {
-  id: number = null;
-  name: string = null;
-  type: number = null;
-  direction: number = null;
 }
