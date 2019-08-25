@@ -12,6 +12,9 @@ export class NoDataComponent implements OnInit {
   @Input()
   mode = 'light';
 
+  @Input()
+  size = '3rem';
+
   constructor() {
 
   }

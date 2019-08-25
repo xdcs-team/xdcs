@@ -1,0 +1,137 @@
+<div class="container-fluid">
+  <label for="conf-name">Task definition name</label>
+  <input type="text"
+         class="form-control mb-3"
+         id="conf-name"
+         placeholder="Enter name"
+         required
+         [(ngModel)]="name"/>
+
+  <label for="conf-type">Task type</label>
+  <select class="form-control custom-select"
+          id="conf-type"
+          [(ngModel)]="type"
+          aria-describedby="conf-type-help"
+          required>
+    <option selected disabled [ngValue]="null">Type</option>
+    <option *ngFor="let t of types | keyvalue"
+            [ngValue]="t.key">{{ t.value }}</option>
+  </select>
+  <small id="conf-type-help" class="form-text text-muted">
+    Task type
+  </small>
+
+  <hr/>
+
+  <ng-container *ngIf="type === null">
+    <app-no-data message="Select type" size="2em"></app-no-data>
+  </ng-container>
+
+  <ng-container *ngIf="[TaskDefinitionType.OpenCL, TaskDefinitionType.CUDA].includes(type)">
+    <label for="conf-kernel-file">Kernel file</label>
+    <input type="text"
+           class="form-control mb-3"
+           id="conf-kernel-file"
+           placeholder="Kernel file"
+           required="required"
+           [(ngModel)]="kernel.file"/>
+
+    <label for="conf-kernel-name">Kernel name</label>
+    <input type="text"
+           class="form-control mb-3"
+           id="conf-kernel-name"
+           placeholder="Kernel name"
+           required="required"
+           [(ngModel)]="kernel.name"/>
+
+    <div class="headline mb-3">
+      <label>Kernel parameters</label>
+    </div>
+    <ng-container *ngFor="let param of kernel.params">
+      <ng-container
+        [ngTemplateOutlet]="kernelParamTemplate"
+        [ngTemplateOutletContext]="{param: param}"></ng-container>
+    </ng-container>
+    <ng-container *ngIf="kernel.params.length == 0">
+      <app-no-data message="No parameters" size="1em"></app-no-data>
+    </ng-container>
+    <a
+      href="javascript:void(0)"
+      class="btn btn-outline-secondary float-right"
+      (click)="addKernelParam()">
+      <fa-icon
+        class="m-0"
+        [icon]="faPlus"></fa-icon>
+    </a>
+    <div class="clearfix"></div>
+
+    <ng-template #kernelParamTemplate let-param="param">
+      <div class="input-group mb-1">
+        <div class="input-group-prepend">
+          <a class="input-group-text"
+             href="javascript:void(0)"
+             (click)="moveKernelParamUp(param)">
+            <fa-icon [icon]="faChevronUp"></fa-icon>
+          </a>
+          <a class="input-group-text"
+             href="javascript:void(0)"
+             (click)="moveKernelParamDown(param)">
+            <fa-icon [icon]="faChevronDown"></fa-icon>
+          </a>
+        </div>
+        <select [(ngModel)]="param.type"
+                class="custom-select">
+          <option selected disabled [ngValue]="null">Type</option>
+          <option
+            *ngFor="let t of paramTypes | keyvalue"
+            [ngValue]="t.key">{{ t.value }}</option>
+        </select>
+        <select [(ngModel)]="param.direction"
+                class="custom-select">
+          <option selected disabled [ngValue]="null">Direction</option>
+          <option
+            *ngFor="let t of paramDirections | keyvalue"
+            [ngValue]="t.key">{{ t.value }}</option>
+        </select>
+        <input type="text"
+               class="form-control"
+               placeholder="Name"
+               [(ngModel)]="param.name"/>
+        <div class="input-group-append">
+          <a class="input-group-text"
+             href="javascript:void(0)"
+             (click)="removeKernelParam(param)">
+            <fa-icon [icon]="faTrash"></fa-icon>
+          </a>
+        </div>
+      </div>
+    </ng-template>
+  </ng-container>
+
+  <ng-container *ngIf="[TaskDefinitionType.Docker].includes(type)">
+    <label for="conf-dockerfile">Dockerfile</label>
+    <input type="text"
+           class="form-control mb-3"
+           id="conf-dockerfile"
+           placeholder="Dockerfile"
+           required
+           [(ngModel)]="docker.dockerfile"/>
+  </ng-container>
+
+  <ng-container *ngIf="[TaskDefinitionType.Script].includes(type)">
+    <label for="conf-script-path">Script path</label>
+    <input type="text"
+           class="form-control mb-3"
+           id="conf-script-path"
+           placeholder="Script path"
+           required
+           [(ngModel)]="script.path"/>
+  </ng-container>
+
+  <input
+    type="submit"
+    class="btn btn-primary float-right mt-3"
+    [ngClass]="isValid() ? '' : 'disabled'"
+    value="Save"/>
+  <div class="clearfix"></div>
+</div>

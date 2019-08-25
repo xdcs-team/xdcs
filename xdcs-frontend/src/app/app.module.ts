@@ -15,7 +15,7 @@ import { SignInComponent } from './view/sign-in/sign-in.component';
 import { HomeComponent } from './view/home/home.component';
 import { TaskSummaryItemComponent } from './element/task-summary-item/task-summary-item.component';
 import { TaskSummaryListComponent } from './element/task-summary-list/task-summary-list.component';
-import { AlertModule, CollapseModule } from 'ngx-bootstrap';
+import { AlertModule, CollapseModule, SortableModule } from 'ngx-bootstrap';
 import { OcticonDirective } from './directives/octicon.directive';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { GlobalAlertsComponent } from './element/global-alerts/global-alerts.component';
@@ -29,6 +29,7 @@ import { JwtModule } from '@auth0/angular-jwt';
 import { TOKEN_INTERCEPTOR_PROVIDER, TokenInterceptor } from './auth/token-interceptor';
 import { NoDataComponent } from './element/no-data/no-data.component';
 import { AUTH_ERROR_INTERCEPTOR_PROVIDER, AuthErrorInterceptor } from './auth/auth-error-interceptor';
+import { TaskDefConfigComponent } from './element/task-def-config/task-def-config.component';
 
 @NgModule({
   declarations: [
@@ -46,6 +47,7 @@ import { AUTH_ERROR_INTERCEPTOR_PROVIDER, AuthErrorInterceptor } from './auth/au
     TaskDefinitionsComponent,
     TaskDefinitionComponent,
     NoDataComponent,
+    TaskDefConfigComponent,
   ],
   imports: [
     BrowserModule,
@@ -64,6 +66,7 @@ import { AUTH_ERROR_INTERCEPTOR_PROVIDER, AuthErrorInterceptor } from './auth/au
         tokenGetter: () => undefined,
       },
     }),
+    SortableModule.forRoot(),
   ],
   providers: [
     HttpClientModule,
