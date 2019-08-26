@@ -17,7 +17,7 @@ export class NavbarComponent implements OnInit {
       component: TaskDefinitionsComponent
     },
     {
-      path: '/task/definition',
+      path: '/task/definition/1234',
       component: TaskDefinitionComponent
     }
   ];

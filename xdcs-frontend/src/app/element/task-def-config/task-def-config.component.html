@@ -5,12 +5,12 @@
          id="conf-name"
          placeholder="Enter name"
          required
-         [(ngModel)]="name"/>
+         [(ngModel)]="taskDefinition.name"/>
 
   <label for="conf-type">Task type</label>
   <select class="form-control custom-select"
           id="conf-type"
-          [(ngModel)]="type"
+          [(ngModel)]="taskDefinition.config.type"
           aria-describedby="conf-type-help"
           required>
     <option selected disabled [ngValue]="null">Type</option>
@@ -23,18 +23,18 @@
 
   <hr/>
 
-  <ng-container *ngIf="type === null">
+  <ng-container *ngIf="taskDefinition.config.type === null">
     <app-no-data message="Select type" size="2em"></app-no-data>
   </ng-container>
 
-  <ng-container *ngIf="[TaskDefinitionType.OpenCL, TaskDefinitionType.CUDA].includes(type)">
+  <ng-container *ngIf="['opencl', 'cuda'].includes(taskDefinition.config.type)">
     <label for="conf-kernel-file">Kernel file</label>
     <input type="text"
            class="form-control mb-3"
            id="conf-kernel-file"
            placeholder="Kernel file"
            required="required"
-           [(ngModel)]="kernel.file"/>
+           [(ngModel)]="taskDefinition.config.kernelfile"/>
 
     <label for="conf-kernel-name">Kernel name</label>
     <input type="text"
@@ -42,17 +42,17 @@
            id="conf-kernel-name"
            placeholder="Kernel name"
            required="required"
-           [(ngModel)]="kernel.name"/>
+           [(ngModel)]="taskDefinition.config.kernelname"/>
 
     <div class="headline mb-3">
       <label>Kernel parameters</label>
     </div>
-    <ng-container *ngFor="let param of kernel.params">
+    <ng-container *ngFor="let param of taskDefinition.config.kernelparams">
       <ng-container
         [ngTemplateOutlet]="kernelParamTemplate"
         [ngTemplateOutletContext]="{param: param}"></ng-container>
     </ng-container>
-    <ng-container *ngIf="kernel.params.length == 0">
+    <ng-container *ngIf="!taskDefinition.config.kernelparams">
       <app-no-data message="No parameters" size="1em"></app-no-data>
     </ng-container>
     <a
@@ -108,30 +108,31 @@
     </ng-template>
   </ng-container>
 
-  <ng-container *ngIf="[TaskDefinitionType.Docker].includes(type)">
+  <ng-container *ngIf="['docker'].includes(taskDefinition.config.type)">
     <label for="conf-dockerfile">Dockerfile</label>
     <input type="text"
            class="form-control mb-3"
            id="conf-dockerfile"
            placeholder="Dockerfile"
            required
-           [(ngModel)]="docker.dockerfile"/>
+           [(ngModel)]="taskDefinition.config.dockerfile"/>
   </ng-container>
 
-  <ng-container *ngIf="[TaskDefinitionType.Script].includes(type)">
+  <ng-container *ngIf="['script'].includes(taskDefinition.config.type)">
     <label for="conf-script-path">Script path</label>
     <input type="text"
            class="form-control mb-3"
            id="conf-script-path"
            placeholder="Script path"
            required
-           [(ngModel)]="script.path"/>
+           [(ngModel)]="taskDefinition.config.scriptfile"/>
   </ng-container>
 
   <input
     type="submit"
     class="btn btn-primary float-right mt-3"
     [ngClass]="isValid() ? '' : 'disabled'"
+    (click)="saveConfiguration()"
     value="Save"/>
   <div class="clearfix"></div>
 </div>

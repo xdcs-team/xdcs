@@ -18,7 +18,7 @@ export const routes: Routes = [
         path: 'task',
         children: [
           { path: 'definitions', component: TaskDefinitionsComponent },
-          { path: 'definition', component: TaskDefinitionComponent },
+          { path: 'definition/:id', component: TaskDefinitionComponent },
         ]
       },
     ]

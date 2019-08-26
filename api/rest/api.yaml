@@ -197,6 +197,43 @@ paths:
         204:
           description: OK
 
+  /task-definitions/{taskDefinitionId}/configuration:
+    get:
+      tags:
+        - Task Definitions
+      operationId: getTaskDefinitionConfiguration
+      parameters:
+        - in: path
+          name: taskDefinitionId
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TaskDefinitionConfigDto'
+    put:
+      tags:
+        - Task Definitions
+      operationId: setTaskDefinitionConfiguration
+      parameters:
+        - in: path
+          name: taskDefinitionId
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TaskDefinitionConfigDto'
+      responses:
+        204:
+          description: OK
+
   /deployments:
     post:
       tags:
@@ -316,6 +353,8 @@ components:
           type: string
         name:
           type: string
+        config:
+          $ref: '#/components/schemas/TaskDefinitionConfigDto'
 
     TaskDefinitionsDto:
       type: object
@@ -354,3 +393,51 @@ components:
       required:
         - type
         - permissions
+
+    TaskDefinitionConfigDto:
+      type: object
+      properties:
+        name:
+          type: string
+        type:
+          type: string
+          enum:
+            - opencl
+            - cuda
+            - docker
+            - script
+
+        # Docker
+        dockerfile:
+          type: string
+
+        # Script
+        scriptfile:
+          type: string
+
+        # Kernel
+        kernelfile:
+          type: string
+        kernelname:
+          type: string
+        kernelparams:
+          type: array
+          items:
+            $ref: '#/components/schemas/KernelParamDto'
+
+    KernelParamDto:
+      type: object
+      properties:
+        name:
+          type: string
+        direction:
+          type: string
+          enum:
+            - in
+            - out
+            - inout
+        type:
+          type: string
+          enum:
+            - simple
+            - pointer
