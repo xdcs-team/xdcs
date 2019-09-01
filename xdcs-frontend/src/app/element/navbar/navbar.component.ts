@@ -2,7 +2,6 @@ import { Component, Input, OnInit } from '@angular/core';
 import { Route, Router } from '@angular/router';
 import { navbarItemNames } from '../../services/navbar.service';
 import { TaskDefinitionsComponent } from '../../view/task-definitions/task-definitions.component';
-import { TaskDefinitionComponent } from '../../view/task-definition/task-definition.component';
 import { AuthService } from '../../auth/auth.service';
 
 @Component({
@@ -13,13 +12,9 @@ import { AuthService } from '../../auth/auth.service';
 export class NavbarComponent implements OnInit {
   private routes = [
     {
-      path: '/task/definitions',
+      path: '/task-definitions',
       component: TaskDefinitionsComponent
     },
-    {
-      path: '/task/definition/1234',
-      component: TaskDefinitionComponent
-    }
   ];
 
   @Input()

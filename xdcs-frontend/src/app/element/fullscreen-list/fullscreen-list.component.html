@@ -1,0 +1,30 @@
+<div class="flex-fill">
+  <as-split unit="percent">
+    <as-split-area size="30">
+      <ng-container *ngIf="headerTemplateRef">
+        <ng-template [ngTemplateOutlet]="headerTemplateRef"
+                     [ngTemplateOutletContext]="createTemplateContext()"></ng-template>
+      </ng-container>
+      <hr/>
+      <div class="element-container">
+        <div class="position-relative" *ngFor="let element of data">
+          <ng-template [ngTemplateOutlet]="elementTemplateRef"
+                       [ngTemplateOutletContext]="createTemplateContext(element)"></ng-template>
+          <a class="stretched-link"
+             href="javascript:void(0)"
+             (click)="selected = element"></a>
+          <hr/>
+        </div>
+      </div>
+    </as-split-area>
+    <as-split-area size="70">
+      <ng-container *ngIf="selected !== undefined; else notSelected">
+        <ng-template [ngTemplateOutlet]="detailsTemplateRef"
+                     [ngTemplateOutletContext]="createTemplateContext()"></ng-template>
+      </ng-container>
+      <ng-template #notSelected>
+        Not selected
+      </ng-template>
+    </as-split-area>
+  </as-split>
+</div>

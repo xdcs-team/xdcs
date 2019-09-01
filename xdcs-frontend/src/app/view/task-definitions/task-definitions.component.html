@@ -1,1 +1,21 @@
 <app-navbar></app-navbar>
+<div class="container-fluid">
+  <app-fullscreen-list [data]="definitionList">
+    <ng-template #header let-item="header">
+      <div>
+        <button type="button"
+                class="btn btn-outline-success float-right"
+                openModal [modal]="NewTaskDefinitionComponent">New task definition</button>
+        <div class="clearfix"></div>
+      </div>
+    </ng-template>
+
+    <ng-template #element let-item="element">
+      {{item.name}}
+    </ng-template>
+
+    <ng-template #details let-item="selected">
+      <app-task-definition-preview [definition]="item"></app-task-definition-preview>
+    </ng-template>
+  </app-fullscreen-list>
+</div>

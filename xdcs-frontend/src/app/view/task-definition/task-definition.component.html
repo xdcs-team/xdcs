@@ -1,9 +1,9 @@
 <app-navbar></app-navbar>
-<div style="width: 100%; position: relative" class="container-fluid flex-fill">
+<div class="container-fluid flex-fill">
   <ng-container *ngIf="taskDefinition === null">
     <app-no-data message="Loading..."></app-no-data>
   </ng-container>
-  <as-split *ngIf="taskDefinition !== null" unit="percent" style="position: absolute; top:0;bottom: 0;left:0;right:0;">
+  <as-split *ngIf="taskDefinition !== null" unit="percent">
     <as-split-area size="20">
       TBD
     </as-split-area>
@@ -13,7 +13,6 @@
     <as-split-area size="20">
       <app-task-def-config [taskDefinition]="taskDefinition"
                            (submit)="saveTaskDefinitionConfig($event.config)"></app-task-def-config>
-      {{ taskDefinition | json }}
     </as-split-area>
   </as-split>
 </div>

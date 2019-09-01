@@ -14,13 +14,8 @@ export const routes: Routes = [
     children: [
       { path: '', redirectTo: 'home', pathMatch: 'full' },
       { path: 'home', component: HomeComponent },
-      {
-        path: 'task',
-        children: [
-          { path: 'definitions', component: TaskDefinitionsComponent },
-          { path: 'definition/:id', component: TaskDefinitionComponent },
-        ]
-      },
+      { path: 'task-definitions', component: TaskDefinitionsComponent },
+      { path: 'task-definitions/:id', component: TaskDefinitionComponent },
     ]
   }
 ];
