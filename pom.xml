@@ -23,8 +23,8 @@
         <lombok.version>1.18.8</lombok.version>
         <slf4j.version>1.7.26</slf4j.version>
         <swagger-annotations.version>1.5.21</swagger-annotations.version>
-        <jackson.version>2.9.9</jackson.version>
-        <jackson-databind.version>2.9.9.2</jackson-databind.version>
+        <jackson.version>2.10.0</jackson.version>
+        <jackson-databind.version>2.10.0</jackson-databind.version>
         <sshd.version>2.3.0</sshd.version>
         <javassist.version>3.25.0-GA</javassist.version>
         <jaxb.version>2.1</jaxb.version>
