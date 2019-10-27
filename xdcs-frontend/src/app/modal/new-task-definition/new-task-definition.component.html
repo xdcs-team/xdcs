@@ -1,0 +1,17 @@
+<app-modal #modal title="New task definition">
+  <label for="task-definition-name">Name</label>
+  <input type="text"
+         class="form-control mb-3"
+         id="task-definition-name"
+         placeholder="Name"
+         required="required"
+         [(ngModel)]="taskDefinition.name"/>
+
+  <input
+    type="submit"
+    class="btn btn-primary float-right mt-3"
+    [ngClass]="isValid() ? '' : 'disabled'"
+    (click)="submit()"
+    value="Create"/>
+  <div class="clearfix"></div>
+</app-modal>
