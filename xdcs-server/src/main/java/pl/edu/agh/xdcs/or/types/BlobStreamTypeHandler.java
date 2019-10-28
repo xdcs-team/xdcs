@@ -1,11 +1,13 @@
 package pl.edu.agh.xdcs.or.types;
 
 import com.google.common.io.ByteStreams;
+import pl.edu.agh.xdcs.or.ObjectKey;
 import pl.edu.agh.xdcs.or.ObjectRepositoryTypeHandler;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.stream.Stream;
 
 /**
  * @author Kamil Jarosz
@@ -30,5 +32,10 @@ public class BlobStreamTypeHandler implements ObjectRepositoryTypeHandler<BlobSt
     @Override
     public boolean closeAfterRead() {
         return false;
+    }
+
+    @Override
+    public Stream<ObjectKey> dependencies(BlobStream object) {
+        return Stream.empty();
     }
 }

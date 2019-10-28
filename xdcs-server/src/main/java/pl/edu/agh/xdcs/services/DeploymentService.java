@@ -50,7 +50,7 @@ public class DeploymentService {
     private void addDeploymentDescriptor(TaskDefinitionEntity definition, String deploymentId) {
         deploymentDescriptorDao.persist(DeploymentDescriptorEntity.builder()
                 .definition(definition)
-                .deploymentRef(new ObjectRefEntity(deploymentId))
+                .deploymentRef(new ObjectRefEntity(deploymentId, Deployment.class))
                 .build());
     }
 }

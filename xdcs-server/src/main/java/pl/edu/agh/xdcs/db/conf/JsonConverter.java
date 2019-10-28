@@ -14,7 +14,7 @@ import java.util.Objects;
  */
 public class JsonConverter<T> implements AttributeConverter<Object, String> {
     private final ObjectMapper objectMapper = new ObjectMapper();
-    private final TypeReference type;
+    private final TypeReference<T> type;
     private final Class<T> clazz;
 
     public JsonConverter(Class<T> clazz) {
@@ -22,7 +22,7 @@ public class JsonConverter<T> implements AttributeConverter<Object, String> {
         this.clazz = Objects.requireNonNull(clazz);
     }
 
-    public JsonConverter(TypeReference type) {
+    public JsonConverter(TypeReference<T> type) {
         this.type = Objects.requireNonNull(type);
         this.clazz = null;
     }
