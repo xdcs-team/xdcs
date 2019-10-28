@@ -32,10 +32,15 @@ import { AUTH_ERROR_INTERCEPTOR_PROVIDER, AuthErrorInterceptor } from './auth/au
 import { TaskDefConfigComponent } from './element/task-def-config/task-def-config.component';
 import { FullscreenListComponent } from './element/fullscreen-list/fullscreen-list.component';
 import { TaskDefinitionPreviewComponent } from './element/task-definition-preview/task-definition-preview.component';
-import { CUSTOM_ERROR_HANDLER_PROVIDER, CustomErrorHandler } from './services/custom-error-handler';
+import { CUSTOM_ERROR_HANDLER_PROVIDER } from './services/custom-error-handler';
 import { ModalComponent } from './element/modal/modal.component';
 import { OpenModalDirective } from './directives/open-modal.directive';
 import { NewTaskDefinitionComponent } from './modal/new-task-definition/new-task-definition.component';
+import { FileTreeComponent } from './element/file-tree/file-tree.component';
+import { TreeDraggedElement, TreeModule } from 'angular-tree-component';
+import { ContextMenuModule, ContextMenuService } from 'ngx-contextmenu';
+import { ClipboardModule } from 'ngx-clipboard';
+import { ConfirmationComponent } from './modal/confirmation/confirmation.component';
 
 @NgModule({
   declarations: [
@@ -60,9 +65,12 @@ import { NewTaskDefinitionComponent } from './modal/new-task-definition/new-task
     OpenModalDirective,
     OpenModalDirective,
     NewTaskDefinitionComponent,
+    FileTreeComponent,
+    ConfirmationComponent,
   ],
   entryComponents: [
     NewTaskDefinitionComponent,
+    ConfirmationComponent,
   ],
   imports: [
     BrowserModule,
@@ -83,6 +91,11 @@ import { NewTaskDefinitionComponent } from './modal/new-task-definition/new-task
     }),
     SortableModule.forRoot(),
     ModalModule.forRoot(),
+    TreeModule.forRoot(),
+    ContextMenuModule.forRoot({
+      useBootstrap4: true,
+    }),
+    ClipboardModule,
   ],
   providers: [
     HttpClientModule,
@@ -93,8 +106,10 @@ import { NewTaskDefinitionComponent } from './modal/new-task-definition/new-task
     AuthErrorInterceptor,
     AUTH_ERROR_INTERCEPTOR_PROVIDER,
     CUSTOM_ERROR_HANDLER_PROVIDER,
+    TreeDraggedElement,
+    ContextMenuService,
   ],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
 })
 export class AppModule {
 

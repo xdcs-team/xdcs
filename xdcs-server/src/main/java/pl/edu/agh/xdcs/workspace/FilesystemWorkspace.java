@@ -6,6 +6,7 @@ import pl.edu.agh.xdcs.util.FsUtils;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
@@ -37,22 +38,17 @@ class FilesystemWorkspace implements Workspace {
     @Override
     public Optional<FileDescription> readFileDescription(String path) throws IOException {
         Path resolved = resolveWorkspacePath(path);
-        PosixFileAttributeView view = Files.getFileAttributeView(resolved, PosixFileAttributeView.class);
-        PosixFileAttributes attributes = view.readAttributes();
+        PosixFileAttributes attributes = readPosixAttributes(resolved);
 
-        FileDescription.FileType type;
-        List<String> children;
+        FileDescription.FileType type = readFileType(attributes).orElse(null);
+        List<FileDescription.Entry> children;
         if (attributes.isRegularFile()) {
-            type = FileDescription.FileType.REGULAR;
             children = null;
         } else if (attributes.isDirectory()) {
-            type = FileDescription.FileType.DIRECTORY;
             children = Files.list(resolved)
-                    .map(Path::getFileName)
-                    .map(Path::toString)
+                    .map(this::readEntry)
                     .collect(Collectors.toList());
         } else if (attributes.isSymbolicLink()) {
-            type = FileDescription.FileType.SYMLINK;
             children = null;
         } else {
             return Optional.empty();
@@ -63,6 +59,36 @@ class FilesystemWorkspace implements Workspace {
                 .children(children)
                 .permissions(attributes.permissions())
                 .build());
+    }
+
+    private PosixFileAttributes readPosixAttributes(Path resolved) {
+        PosixFileAttributeView view = Files.getFileAttributeView(resolved, PosixFileAttributeView.class);
+        try {
+            return view.readAttributes();
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
+    }
+
+    private Optional<FileDescription.FileType> readFileType(PosixFileAttributes attributes) {
+        if (attributes.isRegularFile()) {
+            return Optional.of(FileDescription.FileType.REGULAR);
+        } else if (attributes.isDirectory()) {
+            return Optional.of(FileDescription.FileType.DIRECTORY);
+        } else if (attributes.isSymbolicLink()) {
+            return Optional.of(FileDescription.FileType.SYMLINK);
+        } else {
+            return Optional.empty();
+        }
+    }
+
+    private FileDescription.Entry readEntry(Path path) {
+        PosixFileAttributes attributes = readPosixAttributes(path);
+        return FileDescription.Entry.builder()
+                .name(path.getFileName().toString())
+                .type(readFileType(attributes).orElse(null))
+                .permissions(attributes.permissions())
+                .build();
     }
 
     @Override
@@ -80,5 +106,16 @@ class FilesystemWorkspace implements Workspace {
         }
 
         return FsUtils.resolveWithoutTraversal(root, path);
+    }
+
+    @Override
+    public void deleteFile(String path) throws IOException {
+        Path resolved = resolveWorkspacePath(path);
+        Files.deleteIfExists(resolved);
+    }
+
+    @Override
+    public void setup() throws IOException {
+        Files.createDirectories(root);
     }
 }

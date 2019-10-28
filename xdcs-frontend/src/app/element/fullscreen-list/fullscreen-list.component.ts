@@ -3,7 +3,7 @@ import { Component, ContentChild, Input, OnInit, TemplateRef } from '@angular/co
 @Component({
   selector: 'app-fullscreen-list',
   templateUrl: './fullscreen-list.component.html',
-  styleUrls: ['./fullscreen-list.component.less']
+  styleUrls: ['./fullscreen-list.component.less'],
 })
 export class FullscreenListComponent implements OnInit {
   @ContentChild('header', { static: false })
@@ -31,7 +31,7 @@ export class FullscreenListComponent implements OnInit {
   createTemplateContext(element?: any) {
     return {
       element,
-      selected: this.selected
+      selected: this.selected,
     };
   }
 }

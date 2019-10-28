@@ -6,6 +6,8 @@ import pl.edu.agh.xdcs.workspace.Workspace;
 
 import javax.inject.Inject;
 import javax.transaction.Transactional;
+import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.util.List;
 import java.util.Optional;
 
@@ -37,6 +39,11 @@ public class TaskDefinitionService {
                 .name(name)
                 .build();
         taskDefinitionDao.persist(definition);
+        try {
+            workspaceService.forDefinition(definition).setup();
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
         return definition;
     }
 

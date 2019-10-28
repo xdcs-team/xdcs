@@ -13,7 +13,7 @@ export class NavbarComponent implements OnInit {
   private routes = [
     {
       path: '/task-definitions',
-      component: TaskDefinitionsComponent
+      component: TaskDefinitionsComponent,
     },
   ];
 

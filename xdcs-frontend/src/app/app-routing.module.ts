@@ -16,13 +16,13 @@ export const routes: Routes = [
       { path: 'home', component: HomeComponent },
       { path: 'task-definitions', component: TaskDefinitionsComponent },
       { path: 'task-definitions/:id', component: TaskDefinitionComponent },
-    ]
-  }
+    ],
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forRoot(routes, { useHash: true })],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
 export class AppRoutingModule {
 

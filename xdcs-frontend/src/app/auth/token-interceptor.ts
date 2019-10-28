@@ -7,7 +7,7 @@ import { mergeMap } from 'rxjs/operators';
 export const TOKEN_INTERCEPTOR_PROVIDER: Provider = {
   provide: HTTP_INTERCEPTORS,
   useExisting: forwardRef(() => TokenInterceptor),
-  multi: true
+  multi: true,
 };
 
 @Injectable()
@@ -25,8 +25,8 @@ export class TokenInterceptor implements HttpInterceptor {
       mergeMap(accessToken => {
         return next.handle(req.clone({
           setHeaders: {
-            Authorization: `Bearer ${accessToken}`
-          }
+            Authorization: `Bearer ${accessToken}`,
+          },
         }));
       }),
     );

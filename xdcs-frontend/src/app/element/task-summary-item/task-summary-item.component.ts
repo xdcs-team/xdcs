@@ -4,7 +4,7 @@ import { faCheck, faCircleNotch, faTimes, faRedo } from '@fortawesome/free-solid
 @Component({
   selector: 'app-task-summary-item',
   templateUrl: './task-summary-item.component.html',
-  styleUrls: ['./task-summary-item.component.less']
+  styleUrls: ['./task-summary-item.component.less'],
 })
 export class TaskSummaryItemComponent implements OnInit {
   private isCollapsed = true;

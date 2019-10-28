@@ -4,7 +4,7 @@ import { faCircle } from '@fortawesome/free-solid-svg-icons';
 @Component({
   selector: 'app-node-card',
   templateUrl: './node-card.component.html',
-  styleUrls: ['./node-card.component.less']
+  styleUrls: ['./node-card.component.less'],
 })
 export class NodeCardComponent implements OnInit {
   private hover: boolean;

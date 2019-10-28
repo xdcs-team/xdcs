@@ -33,7 +33,7 @@
         <junit5.version>5.5.1</junit5.version>
         <commons-lang3.version>3.9</commons-lang3.version>
         <jjwt.version>0.10.7</jjwt.version>
-        <hibernate.version>5.4.4.Final</hibernate.version>
+        <hibernate.version>5.4.7.Final</hibernate.version>
         <h2.version>1.4.199</h2.version>
         <bouncycastle.provider.version>1.46</bouncycastle.provider.version>
     </properties>

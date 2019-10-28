@@ -7,7 +7,7 @@ import { NewTaskDefinitionComponent } from 'src/app/modal/new-task-definition/ne
 @Component({
   selector: 'app-task-definitions',
   templateUrl: './task-definitions.component.html',
-  styleUrls: ['./task-definitions.component.less']
+  styleUrls: ['./task-definitions.component.less'],
 })
 @NavbarItem('Task Definitions')
 export class TaskDefinitionsComponent implements OnInit {

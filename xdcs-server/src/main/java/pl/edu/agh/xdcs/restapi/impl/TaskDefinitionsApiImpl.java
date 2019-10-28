@@ -92,6 +92,21 @@ public class TaskDefinitionsApiImpl implements TaskDefinitionsApi {
     }
 
     @Override
+    public Response deleteTaskDefinitionWorkspaceFile(String taskDefinitionId, String path) {
+        try {
+            TaskDefinitionEntity definition = taskDefinitionService.getTaskDefinition(taskDefinitionId)
+                    .orElseThrow(NotFoundException::new);
+            taskDefinitionService.getWorkspace(definition)
+                    .deleteFile(path);
+            return Response.ok().build();
+        } catch (NoSuchFileException e) {
+            return Response.status(Response.Status.NOT_FOUND).build();
+        } catch (IOException e) {
+            return RestUtils.serverError(e);
+        }
+    }
+
+    @Override
     public Response getTaskDefinitionWorkspaceFileContent(String taskDefinitionId, String path) {
         try {
             TaskDefinitionEntity definition = taskDefinitionService.getTaskDefinition(taskDefinitionId)
