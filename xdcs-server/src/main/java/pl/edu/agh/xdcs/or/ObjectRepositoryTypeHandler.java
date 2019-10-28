@@ -3,6 +3,7 @@ package pl.edu.agh.xdcs.or;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.stream.Stream;
 
 /**
  * @author Kamil Jarosz
@@ -17,4 +18,6 @@ public interface ObjectRepositoryTypeHandler<T> {
     default boolean closeAfterRead() {
         return true;
     }
+
+    Stream<ObjectKey> dependencies(T object);
 }

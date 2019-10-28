@@ -1,5 +1,7 @@
 package pl.edu.agh.xdcs.or;
 
+import pl.edu.agh.xdcs.util.ConcurrentUtils;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -10,6 +12,10 @@ import java.nio.file.StandardCopyOption;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+import java.util.stream.Stream;
 
 /**
  * @author Kamil Jarosz
@@ -17,11 +23,11 @@ import java.util.Map;
 public class ObjectRepository {
     private final Map<Class<?>, ObjectRepositoryTypeHandler<?>> handlers = new HashMap<>();
     private final Path root;
-    private final ObjectIdentifierResolver resolver;
+    private final ObjectResolver resolver;
 
     private ObjectRepository(Path root) {
         this.root = root;
-        this.resolver = new ObjectIdentifierResolver(getObjectsDir());
+        this.resolver = new ObjectResolver(getObjectsDir());
 
         try {
             Files.createDirectories(getObjectsDir());
@@ -36,7 +42,7 @@ public class ObjectRepository {
     }
 
     public static boolean validObjectId(String objectId, boolean allowPartial) {
-        return ObjectIdentifierResolver.validObjectId(objectId, allowPartial);
+        return ObjectResolver.validObjectId(objectId, allowPartial);
     }
 
     private Path getObjectsDir() {
@@ -119,6 +125,70 @@ public class ObjectRepository {
         }
 
         return (ObjectRepositoryTypeHandler<T>) handler;
+    }
+
+    /**
+     * Run consistency check. The returned future will provide a set of objects
+     * that are required but missing from the object repository.
+     *
+     * @param rootProvider provider for object roots
+     * @return future returning a set of missing objects
+     */
+    public Future<Set<String>> runConsistencyCheck(RootProvider rootProvider) {
+        try (ConsistencyCheckTask task = new ConsistencyCheckTask(this, rootProvider)) {
+            return ConcurrentUtils.applicationExecutorService()
+                    .submit(task);
+        }
+    }
+
+    /**
+     * @param rootProvider provider for object roots
+     * @throws InterruptedException            when consistency check has been interrupted
+     * @throws ConsistencyCheckFailedException when consistency check failed
+     */
+    public void checkConsistency(RootProvider rootProvider) throws InterruptedException, ConsistencyCheckFailedException {
+        try {
+            Set<String> missingObjects = runConsistencyCheck(rootProvider).get();
+            if (!missingObjects.isEmpty()) {
+                throw new ConsistencyCheckFailedException("Missing objects: " + missingObjects);
+            }
+        } catch (ExecutionException e) {
+            throw new ConsistencyCheckFailedException(e);
+        }
+    }
+
+    /**
+     * Run housekeeping. The returned future will provide a set of objects
+     * that are unreachable by the given roots and may be safely deleted.
+     *
+     * @param rootProvider provider for object roots
+     * @return future returning a set of unreachable objects
+     */
+    public Future<Set<String>> runHousekeeping(RootProvider rootProvider) {
+        try (HousekeepingTask task = new HousekeepingTask(this, rootProvider)) {
+            return ConcurrentUtils.applicationExecutorService()
+                    .submit(task);
+        }
+    }
+
+    public Stream<String> allObjects() {
+        return resolver.allObjects();
+    }
+
+    /**
+     * @return root path for this object repository
+     */
+    public Path root() {
+        return root;
+    }
+
+    /**
+     * @param objectId object to get the dependencies from
+     * @return set of objects that the given object depends on
+     */
+    public <T extends ObjectBase> Stream<ObjectKey> dependenciesFor(String objectId, Class<T> type) {
+        ObjectRepositoryTypeHandler<T> handler = getHandler(type);
+        return handler.dependencies(cat(objectId, type));
     }
 
     public enum ObjectLookupResult {

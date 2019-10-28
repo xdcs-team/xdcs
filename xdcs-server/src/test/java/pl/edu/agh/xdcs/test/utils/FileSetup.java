@@ -1,10 +1,10 @@
 package pl.edu.agh.xdcs.test.utils;
 
-import java.io.File;
+import pl.edu.agh.xdcs.util.DeletingFileVisitor;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Comparator;
 
 /**
  * @author Kamil Jarosz
@@ -15,10 +15,7 @@ public class FileSetup {
     }
 
     public static void tearDownDirectory(Path dir) throws IOException {
-        Files.walk(dir)
-                .sorted(Comparator.reverseOrder())
-                .map(Path::toFile)
-                .forEach(File::delete);
+        Files.walkFileTree(dir, new DeletingFileVisitor());
     }
 
     public static Path setUpFile(Object requester) throws IOException {

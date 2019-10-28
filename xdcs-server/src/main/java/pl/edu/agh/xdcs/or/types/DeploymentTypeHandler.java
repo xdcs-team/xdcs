@@ -1,11 +1,13 @@
 package pl.edu.agh.xdcs.or.types;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import pl.edu.agh.xdcs.or.ObjectKey;
 import pl.edu.agh.xdcs.or.ObjectRepositoryTypeHandler;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.stream.Stream;
 
 /**
  * @author Kamil Jarosz
@@ -27,5 +29,10 @@ public class DeploymentTypeHandler implements ObjectRepositoryTypeHandler<Deploy
     @Override
     public void write(Deployment object, OutputStream file) throws IOException {
         objectMapper.writeValue(file, object);
+    }
+
+    @Override
+    public Stream<ObjectKey> dependencies(Deployment object) {
+        return Stream.of(ObjectKey.from(object.getRoot(), Tree.class));
     }
 }

@@ -1,40 +1,19 @@
 package pl.edu.agh.xdcs.or;
 
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import pl.edu.agh.xdcs.or.types.Blob;
-import pl.edu.agh.xdcs.or.types.BlobTypeHandler;
 import pl.edu.agh.xdcs.or.types.Tree;
-import pl.edu.agh.xdcs.or.types.TreeTypeHandler;
-import pl.edu.agh.xdcs.test.utils.FileSetup;
+import pl.edu.agh.xdcs.test.utils.ObjectRepositoryTestBase;
 
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * @author Kamil Jarosz
  */
-class ObjectRepositoryTest {
-    private ObjectRepository repository;
-    private Path root;
-
-    @BeforeEach
-    void setUp() throws IOException {
-        root = FileSetup.setUpDirectory(this);
-        repository = ObjectRepository.forPath(root);
-        repository.register(new BlobTypeHandler());
-        repository.register(new TreeTypeHandler());
-    }
-
-    @AfterEach
-    void tearDown() throws IOException {
-        FileSetup.tearDownDirectory(root);
-    }
-
+class ObjectRepositoryTest extends ObjectRepositoryTestBase {
     @Test
     void testStoreRead() throws IOException {
         Blob object = Blob.fromBytes("test content".getBytes());

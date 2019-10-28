@@ -15,14 +15,14 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 /**
  * @author Kamil Jarosz
  */
-class ObjectIdentifierResolverTest {
-    private ObjectIdentifierResolver resolver;
+class ObjectResolverTest {
+    private ObjectResolver resolver;
     private Path objectsDir;
 
     @BeforeEach
     void setUp() throws IOException {
         objectsDir = FileSetup.setUpDirectory(this);
-        resolver = new ObjectIdentifierResolver(objectsDir);
+        resolver = new ObjectResolver(objectsDir);
     }
 
     @AfterEach
@@ -120,5 +120,25 @@ class ObjectIdentifierResolverTest {
                 .isInstanceOf(InvalidObjectIdentifierException.class);
         assertThatThrownBy(() -> resolver.resolveFullNoCheck("1234567890abcdef1234567890abcdef1234567890"))
                 .isInstanceOf(InvalidObjectIdentifierException.class);
+    }
+
+    @Test
+    void testAllObjects() throws IOException {
+        Files.createDirectories(objectsDir.resolve("12"));
+        Files.write(objectsDir.resolve("12/34567890abcdef1234567890abcdef12345678"), "a".getBytes());
+        Files.write(objectsDir.resolve("12/34567890abcdef1234567890abcdef12345679"), "b".getBytes());
+        Files.createDirectories(objectsDir.resolve("34"));
+        Files.write(objectsDir.resolve("34/34567890abcdef1234567890abcdef12345678"), "a".getBytes());
+        Files.createDirectories(objectsDir.resolve("xd"));
+        Files.write(objectsDir.resolve("xd/34567890abcdef1234567890abcdef12345678"), "a".getBytes());
+        Files.createDirectories(objectsDir.resolve("ab"));
+        Files.write(objectsDir.resolve("ab/x4567890abcdef1234567890abcdef12345678"), "a".getBytes());
+        Files.createDirectories(objectsDir.resolve("34"));
+        Files.write(objectsDir.resolve("34/34567890abcdef1234567890abcdef1234567"), "a".getBytes());
+
+        assertThat(resolver.allObjects()).containsExactlyInAnyOrder(
+                "1234567890abcdef1234567890abcdef12345678",
+                "1234567890abcdef1234567890abcdef12345679",
+                "3434567890abcdef1234567890abcdef12345678");
     }
 }
