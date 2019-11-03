@@ -44,7 +44,10 @@ class ObjectRepository:
             raise ObjectRepositoryException('Invalid object ID: ' + object_id)
 
         containing_dir = self._path + '/' + object_id[:2]
-        if create_dirs: os.makedirs(containing_dir, exist_ok=True)
+
+        if create_dirs:
+            os.makedirs(containing_dir, exist_ok=True)
+
         return containing_dir + '/' + object_id[2:]
 
 
