@@ -7,7 +7,7 @@ import { catchError } from 'rxjs/operators';
 export const AUTH_ERROR_INTERCEPTOR_PROVIDER: Provider = {
   provide: HTTP_INTERCEPTORS,
   useExisting: forwardRef(() => AuthErrorInterceptor),
-  multi: true
+  multi: true,
 };
 
 @Injectable()

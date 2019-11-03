@@ -8,7 +8,7 @@ import { first } from 'rxjs/operators';
 @Component({
   selector: 'app-node-cards',
   templateUrl: './node-cards.component.html',
-  styleUrls: ['./node-cards.component.less']
+  styleUrls: ['./node-cards.component.less'],
 })
 export class NodeCardsComponent implements OnInit {
   @Input()

@@ -148,6 +148,25 @@ paths:
         200:
           description: OK
 
+    delete:
+      tags:
+        - Task Definitions
+      operationId: deleteTaskDefinitionWorkspaceFile
+      parameters:
+        - in: path
+          name: taskDefinitionId
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+
   /task-definitions/{taskDefinitionId}/workspace/content:
     get:
       tags:
@@ -378,19 +397,36 @@ components:
         root:
           type: string
 
+    FileType:
+      type: string
+      enum: [regular, directory, link]
+
     FileDto:
       type: object
       properties:
         type:
-          type: string
-          enum: [regular, directory, link]
+          $ref: '#/components/schemas/FileType'
         permissions:
           type: string
         children:
           type: array
           items:
-            type: string
+            $ref: '#/components/schemas/FileEntryDto'
       required:
+        - type
+        - permissions
+
+    FileEntryDto:
+      type: object
+      properties:
+        name:
+          type: string
+        permissions:
+          type: string
+        type:
+          $ref: '#/components/schemas/FileType'
+      required:
+        - name
         - type
         - permissions
 

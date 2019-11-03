@@ -24,4 +24,8 @@ public interface Workspace {
     Optional<FileDescription> readFileDescription(String path) throws IOException;
 
     void saveFile(String path, InputStream content) throws IOException;
+
+    void deleteFile(String path) throws IOException;
+
+    void setup() throws IOException;
 }

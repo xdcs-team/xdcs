@@ -1,0 +1,47 @@
+<tree-root [nodes]="nodes" [options]="options">
+  <ng-template #treeNodeTemplate let-node let-index="index">
+     <span *ngIf="getModelFromNode(node) as model"
+           [contextMenu]="fileContextMenu"
+           [contextMenuSubject]="node">
+      <fa-icon [icon]="getIcon(model, node.isExpanded)"
+               [fixedWidth]="true"
+               class="mr-1"></fa-icon>
+       {{ model.name }}
+     </span>
+  </ng-template>
+</tree-root>
+<context-menu #fileContextMenu>
+  <ng-template contextMenuItem (execute)="startOpening($event.item)">
+    <fa-icon [icon]="faExternalLinkAlt"
+             [fixedWidth]="true"></fa-icon>
+    Open
+  </ng-template>
+  <ng-template contextMenuItem divider="true"></ng-template>
+  <ng-template contextMenuItem (execute)="startRenaming($event.item)" [enabled]="!!renameHandler">
+    <fa-icon [icon]="farEdit"
+             [fixedWidth]="true"></fa-icon>
+    Rename
+  </ng-template>
+  <ng-template contextMenuItem (execute)="startDeleting($event.item)" [enabled]="!!deleteHandler">
+    <fa-icon [icon]="farTrashAlt"
+             [fixedWidth]="true"></fa-icon>
+    Delete
+  </ng-template>
+  <ng-template contextMenuItem divider="true"></ng-template>
+  <ng-template contextMenuItem (execute)="copyToClipboard(getModelFromNode($event.item).name)">
+    <fa-icon [icon]="farClipboard"
+             [fixedWidth]="true"></fa-icon>
+    Copy name
+  </ng-template>
+  <ng-template contextMenuItem (execute)="copyToClipboard(nodeToPath($event.item))">
+    <fa-icon [icon]="farClipboard"
+             [fixedWidth]="true"></fa-icon>
+    Copy path
+  </ng-template>
+  <ng-template contextMenuItem divider="true"></ng-template>
+  <ng-template contextMenuItem (execute)="openAttributes($event.item)">
+    <fa-icon [icon]="faWrench"
+             [fixedWidth]="true"></fa-icon>
+    Attributes
+  </ng-template>
+</context-menu>

@@ -6,7 +6,7 @@ import { KernelParamDto } from '../../../api/models/kernel-param-dto';
 @Component({
   selector: 'app-task-def-config',
   templateUrl: './task-def-config.component.html',
-  styleUrls: ['./task-def-config.component.less']
+  styleUrls: ['./task-def-config.component.less'],
 })
 export class TaskDefConfigComponent implements OnInit {
   private faChevronUp = faChevronUp;

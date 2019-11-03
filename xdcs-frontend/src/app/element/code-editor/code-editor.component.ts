@@ -1,13 +1,18 @@
-import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 
 @Component({
   selector: 'app-code-editor',
   templateUrl: './code-editor.component.html',
-  styleUrls: ['./code-editor.component.less']
+  styleUrls: ['./code-editor.component.less'],
 })
 export class CodeEditorComponent implements OnInit, AfterViewInit {
-  text: string;
-  options = {
+  @ViewChild('editor', { static: false })
+  private readonly editor;
+
+  @ViewChild('wrapper', { static: false })
+  private readonly wrapper;
+
+  private readonly options = {
     fontFamily: 'Roboto Mono',
     fontSize: '14pt',
     scrollPastEnd: 0.8,
@@ -15,11 +20,11 @@ export class CodeEditorComponent implements OnInit, AfterViewInit {
     autoScrollEditorIntoView: true,
   };
 
-  @ViewChild('editor', { static: false })
-  editor;
+  @Input()
+  text: string;
 
-  @ViewChild('wrapper', { static: false })
-  wrapper;
+  @Output()
+  textChange = new EventEmitter();
 
   constructor() {
 
@@ -33,11 +38,11 @@ export class CodeEditorComponent implements OnInit, AfterViewInit {
     this.refreshHeight();
   }
 
-  onChange($event: any) {
-
+  private onTextChange($event: any) {
+    this.textChange.emit(this.text);
   }
 
-  refreshHeight() {
+  private refreshHeight() {
     // probably a bug in Firefox / Angular on Firefox:
     //    when container height is set as a percentage, ngAfterViewInit fires
     //    before the container has been rendered; we have to check whether

@@ -5,6 +5,7 @@ import pl.edu.agh.xdcs.or.ObjectRepositoryException;
 import pl.edu.agh.xdcs.or.ObjectRepositoryIOException;
 import pl.edu.agh.xdcs.or.types.BlobStream;
 import pl.edu.agh.xdcs.or.types.Tree;
+import pl.edu.agh.xdcs.restapi.mapper.UnsatisfiedMappingException;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -90,7 +91,7 @@ class ObjectRepositoryWorkspace implements Workspace {
     }
 
     private FileDescription mapFileDescription(Tree.Entry entry) {
-        List<String> children;
+        List<FileDescription.Entry> children;
         if (entry.getMode().getType() == Tree.FileType.S_IFDIR) {
             children = list(entry.getObjectId());
         } else {
@@ -104,12 +105,29 @@ class ObjectRepositoryWorkspace implements Workspace {
                 .build();
     }
 
-    private List<String> list(String objectId) {
+    private List<FileDescription.Entry> list(String objectId) {
         return or.cat(objectId, Tree.class)
                 .getEntries()
                 .stream()
-                .map(Tree.Entry::getName)
+                .map(entry -> FileDescription.Entry.builder()
+                        .name(entry.getName())
+                        .type(mapFileType(entry.getMode().getType()))
+                        .permissions(entry.getMode().getPermissions().toPosixPermissions())
+                        .build())
                 .collect(Collectors.toList());
+    }
+
+    private FileDescription.FileType mapFileType(Tree.FileType type) {
+        switch (type) {
+            case S_IFLNK:
+                return FileDescription.FileType.SYMLINK;
+            case S_IFREG:
+                return FileDescription.FileType.REGULAR;
+            case S_IFDIR:
+                return FileDescription.FileType.DIRECTORY;
+            default:
+                throw new UnsatisfiedMappingException();
+        }
     }
 
     private FileDescription.FileType mapType(Tree.FileType type) {
@@ -128,5 +146,15 @@ class ObjectRepositoryWorkspace implements Workspace {
     @Override
     public void saveFile(String path, InputStream content) {
         throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void deleteFile(String path) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void setup() {
+        // nothing to set up
     }
 }
