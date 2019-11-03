@@ -56,13 +56,15 @@ def compile_grpc():
 
     os.makedirs(gen_python, exist_ok=True)
     proto_include = pkg_resources.resource_filename('grpc_tools', '_proto')
-    protoc.main([sys.argv[0],
+    exit_code = protoc.main([sys.argv[0],
                  '-I=src/main/proto',
-                 '--python_out=' + gen_python,
-                 '--grpc_python_out=' + gen_python,
+                 '--python_out={}'.format(gen_python),
+                 '--grpc_python_out={}'.format(gen_python),
                  *find_proto_files('./src/main/proto/xdcs_api/'),
                  '-I{}'.format(proto_include)])
 
+    if exit_code != 0:
+        raise Exception('protoc failed ' + str(exit_code))
 
 def find_proto_files(path):
     result = []

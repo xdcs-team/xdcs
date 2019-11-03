@@ -1,6 +1,7 @@
 [app]
 executors = 10
 local_port = 25254
+fs_repo_path = "./data"
 
 [server]
 host = "127.0.0.1"

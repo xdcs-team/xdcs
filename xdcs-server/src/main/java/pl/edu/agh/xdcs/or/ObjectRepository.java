@@ -68,11 +68,21 @@ public class ObjectRepository {
         }
     }
 
-    public <T extends ObjectBase> T cat(String objectId, Class<T> type) {
+    public InputStream cat(String objectId) {
         Path objectPath = resolver.resolve(objectId);
-        ObjectRepositoryTypeHandler<T> handler = getHandler(type);
         try {
-            InputStream is = Files.newInputStream(objectPath);
+            return Files.newInputStream(objectPath);
+        } catch (NoSuchFileException e) {
+            throw new ObjectRepositoryInconsistencyException(objectId, e);
+        } catch (IOException e) {
+            throw new ObjectRepositoryIOException(objectId, e);
+        }
+    }
+
+    public <T extends ObjectBase> T cat(String objectId, Class<T> type) {
+        ObjectRepositoryTypeHandler<T> handler = getHandler(type);
+        InputStream is = cat(objectId);
+        try {
             try {
                 return handler.read(is);
             } finally {
@@ -80,8 +90,6 @@ public class ObjectRepository {
                     is.close();
                 }
             }
-        } catch (NoSuchFileException e) {
-            throw new ObjectRepositoryInconsistencyException(objectId, e);
         } catch (IOException e) {
             throw new ObjectRepositoryIOException(objectId, e);
         }
