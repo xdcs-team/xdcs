@@ -24,7 +24,7 @@ jobs:
       stage: Build
       script:
         - mvn -T 1C clean compile
-        - mvn -T 1C test
+        - mvn test
 
     - name: "Build frontend"
       stage: Build
@@ -49,17 +49,9 @@ jobs:
         - pyb run_unit_tests
         - pyb publish
 
-    - name: "Build Dockerfile for server"
+    - name: "Build Dockerfiles"
       stage: Docker
       script:
         - docker build . -f Dockerfile.server
-
-    - name: "Build Dockerfile for frontend"
-      stage: Docker
-      script:
         - docker build . -f Dockerfile.frontend
-
-    - name: "Build Dockerfile for agent"
-      stage: Docker
-      script:
         - docker build . -f Dockerfile.agent
