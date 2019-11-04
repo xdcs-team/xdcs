@@ -76,7 +76,8 @@ class AgentInfo(AgentInfoServicer):
         programs = []
 
         for path in paths:
-            if not os.path.isdir(path): continue
+            if not os.path.isdir(path):
+                continue
 
             for file in os.listdir(path):
                 full_path = os.path.join(path, file)

@@ -1,6 +1,5 @@
 from xdcs.app import xdcs
 from xdcs.cmd import Command
-from xdcs.cmd.object_repository import RetrieveObjectsCmd
 from xdcs_api.registration_pb2 import AgentRegistrationRequest
 from xdcs_api.registration_pb2_grpc import AgentRegistrationStub
 

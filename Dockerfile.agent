@@ -7,8 +7,8 @@ COPY xdcs-agent /var/xdcs/xdcs-agent
 
 WORKDIR /var/xdcs/xdcs-agent
 
-RUN pyb install_build_dependencies && \
-    pyb publish
+RUN pyb -X install_build_dependencies && \
+    pyb -X publish
 
 ################################################################################
 
