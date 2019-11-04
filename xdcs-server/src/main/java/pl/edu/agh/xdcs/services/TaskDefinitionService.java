@@ -35,9 +35,8 @@ public class TaskDefinitionService {
     }
 
     public TaskDefinitionEntity newTaskDefinition(String name) {
-        TaskDefinitionEntity definition = TaskDefinitionEntity.builder()
-                .name(name)
-                .build();
+        TaskDefinitionEntity definition = new TaskDefinitionEntity();
+        definition.setName(name);
         taskDefinitionDao.persist(definition);
         try {
             workspaceService.forDefinition(definition).setup();

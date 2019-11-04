@@ -48,10 +48,10 @@ public class DeploymentService {
     }
 
     private void addDeploymentDescriptor(TaskDefinitionEntity definition, String deploymentId, String description) {
-        deploymentDescriptorDao.persist(DeploymentDescriptorEntity.builder()
-                .definition(definition)
-                .deploymentRef(new ObjectRefEntity(deploymentId, Deployment.class))
-                .description(description)
-                .build());
+        DeploymentDescriptorEntity desc = new DeploymentDescriptorEntity();
+        desc.setDefinition(definition);
+        desc.setDeploymentRef(new ObjectRefEntity(deploymentId, Deployment.class));
+        desc.setDescription(description);
+        deploymentDescriptorDao.persist(desc);
     }
 }
