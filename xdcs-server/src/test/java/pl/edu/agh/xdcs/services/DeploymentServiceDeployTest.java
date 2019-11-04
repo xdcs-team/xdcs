@@ -74,7 +74,7 @@ class DeploymentServiceDeployTest {
         when(definitionService.getWorkspace(taskDefinition))
                 .thenReturn(Workspace.forPath(workspacePath));
 
-        String id = deploymentService.deploy(taskDefinition);
+        String id = deploymentService.deploy(taskDefinition, "");
 
         Deployment deployment = objectRepository.cat(id, Deployment.class);
 

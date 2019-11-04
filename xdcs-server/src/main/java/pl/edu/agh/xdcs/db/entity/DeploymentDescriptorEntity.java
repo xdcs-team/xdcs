@@ -33,6 +33,9 @@ public class DeploymentDescriptorEntity extends BaseEntity {
     @Column(name = "DEPLOY_TIME_")
     private Instant timeDeployed = Instant.now();
 
+    @Column(name = "DESCRIPTION_")
+    private String description = "";
+
     @JoinColumn(name = "DEPLOYMENT_REF_")
     @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = CascadeType.ALL)
     private ObjectRefEntity deploymentRef;

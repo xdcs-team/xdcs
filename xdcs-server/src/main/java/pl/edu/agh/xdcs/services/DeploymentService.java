@@ -34,7 +34,7 @@ public class DeploymentService {
         return Workspace.forObject(objectRepository, getDeployment(deploymentId).getRoot());
     }
 
-    public String deploy(TaskDefinitionEntity definition) {
+    public String deploy(TaskDefinitionEntity definition, String description) {
         ObjectRepositoryWorkspaceWriter writer = ObjectRepositoryWorkspaceWriter.forObjectRepository(objectRepository);
         String root = writer.write(definitionService.getWorkspace(definition));
         Deployment deployment = Deployment.builder()
@@ -43,14 +43,15 @@ public class DeploymentService {
                 .build();
 
         String deploymentId = objectRepository.store(deployment);
-        addDeploymentDescriptor(definition, deploymentId);
+        addDeploymentDescriptor(definition, deploymentId, description);
         return deploymentId;
     }
 
-    private void addDeploymentDescriptor(TaskDefinitionEntity definition, String deploymentId) {
+    private void addDeploymentDescriptor(TaskDefinitionEntity definition, String deploymentId, String description) {
         deploymentDescriptorDao.persist(DeploymentDescriptorEntity.builder()
                 .definition(definition)
                 .deploymentRef(new ObjectRefEntity(deploymentId, Deployment.class))
+                .description(description)
                 .build());
     }
 }

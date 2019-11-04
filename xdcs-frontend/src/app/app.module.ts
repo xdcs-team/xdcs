@@ -43,6 +43,7 @@ import { ClipboardModule } from 'ngx-clipboard';
 import { ConfirmationComponent } from './modal/confirmation/confirmation.component';
 import { LoadingComponent } from './element/loading/loading.component';
 import { NgxSpinnerModule } from 'ngx-spinner';
+import { DeployDefinitionComponent } from './modal/deploy-definition/deploy-definition.component';
 
 @NgModule({
   declarations: [
@@ -70,10 +71,12 @@ import { NgxSpinnerModule } from 'ngx-spinner';
     FileTreeComponent,
     ConfirmationComponent,
     LoadingComponent,
+    DeployDefinitionComponent,
   ],
   entryComponents: [
     NewTaskDefinitionComponent,
     ConfirmationComponent,
+    DeployDefinitionComponent,
   ],
   imports: [
     BrowserModule,
