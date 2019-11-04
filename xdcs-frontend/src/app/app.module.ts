@@ -41,6 +41,8 @@ import { TreeDraggedElement, TreeModule } from 'angular-tree-component';
 import { ContextMenuModule, ContextMenuService } from 'ngx-contextmenu';
 import { ClipboardModule } from 'ngx-clipboard';
 import { ConfirmationComponent } from './modal/confirmation/confirmation.component';
+import { LoadingComponent } from './element/loading/loading.component';
+import { NgxSpinnerModule } from 'ngx-spinner';
 
 @NgModule({
   declarations: [
@@ -67,6 +69,7 @@ import { ConfirmationComponent } from './modal/confirmation/confirmation.compone
     NewTaskDefinitionComponent,
     FileTreeComponent,
     ConfirmationComponent,
+    LoadingComponent,
   ],
   entryComponents: [
     NewTaskDefinitionComponent,
@@ -96,6 +99,7 @@ import { ConfirmationComponent } from './modal/confirmation/confirmation.compone
       useBootstrap4: true,
     }),
     ClipboardModule,
+    NgxSpinnerModule,
   ],
   providers: [
     HttpClientModule,

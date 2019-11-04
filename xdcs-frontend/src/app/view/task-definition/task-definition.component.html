@@ -1,7 +1,7 @@
 <app-navbar></app-navbar>
 <div class="container-fluid flex-fill" #container>
   <ng-container *ngIf="taskDefinition === null">
-    <app-no-data message="Loading..."></app-no-data>
+    <app-loading></app-loading>
   </ng-container>
   <as-split *ngIf="taskDefinition !== null" unit="percent" [style.height.px]="container.offsetHeight">
     <as-split-area size="20">
