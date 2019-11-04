@@ -6,6 +6,7 @@ import pl.edu.agh.xdcs.util.FsUtils;
 import pl.edu.agh.xdcs.workspace.FileDescription;
 
 import javax.inject.Inject;
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -33,11 +34,14 @@ public class FileDescriptionMapper implements SimpleMapper<FileDescription, File
         FileDto dto = new FileDto();
         dto.setType(typeMapper.toRestEntity(model.getType()));
         dto.setPermissions(FsUtils.permissionsToString(model.getPermissions()));
-        dto.setChildren(model.getChildren().stream()
-                .sorted(FileDescription.Entry.DIRECTORIES_FIRST
-                        .thenComparing(FileDescription.Entry::getName))
-                .map(entryMapper::toRestEntity)
-                .collect(Collectors.toList()));
+        List<FileDescription.Entry> children = model.getChildren();
+        if (children != null) {
+            dto.setChildren(children.stream()
+                    .sorted(FileDescription.Entry.DIRECTORIES_FIRST
+                            .thenComparing(FileDescription.Entry::getName))
+                    .map(entryMapper::toRestEntity)
+                    .collect(Collectors.toList()));
+        }
         return dto;
     }
 }
