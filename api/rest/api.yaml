@@ -258,13 +258,11 @@ paths:
       tags:
         - Deployments
       operationId: deployTaskDefinition
-      parameters:
-        - in: query
-          name: from
-          description: Task definition ID which should be deployed
-          required: true
-          schema:
-            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeploymentRequestDto'
       responses:
         201:
           description: OK
@@ -477,3 +475,11 @@ components:
           enum:
             - simple
             - pointer
+
+    DeploymentRequestDto:
+      type: object
+      properties:
+        from:
+          type: string
+        description:
+          type: string

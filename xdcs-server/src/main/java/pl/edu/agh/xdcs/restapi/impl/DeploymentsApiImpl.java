@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import pl.edu.agh.xdcs.db.entity.TaskDefinitionEntity;
 import pl.edu.agh.xdcs.restapi.DeploymentsApi;
 import pl.edu.agh.xdcs.restapi.mapper.impl.FileDescriptionMapper;
+import pl.edu.agh.xdcs.restapi.model.DeploymentRequestDto;
 import pl.edu.agh.xdcs.restapi.model.FileDto;
 import pl.edu.agh.xdcs.restapi.util.RestUtils;
 import pl.edu.agh.xdcs.services.DeploymentService;
@@ -44,10 +45,10 @@ public class DeploymentsApiImpl implements DeploymentsApi {
     }
 
     @Override
-    public Response deployTaskDefinition(String taskDefinitionId) {
-        TaskDefinitionEntity definition = definitionService.getTaskDefinition(taskDefinitionId)
+    public Response deployTaskDefinition(DeploymentRequestDto deploymentRequest) {
+        TaskDefinitionEntity definition = definitionService.getTaskDefinition(deploymentRequest.getFrom())
                 .orElseThrow(NotFoundException::new);
-        String deploymentId = deploymentService.deploy(definition);
+        String deploymentId = deploymentService.deploy(definition, deploymentRequest.getDescription());
         return RestUtils.created(resolver.of(DeploymentsApi::getDeployment, deploymentId));
     }
 

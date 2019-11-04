@@ -1,0 +1,15 @@
+<app-modal #modal title="Deploy task definition">
+  <label for="deployment-description">Description</label>
+  <input type="text"
+         class="form-control mb-3"
+         id="deployment-description"
+         placeholder="Description"
+         [(ngModel)]="description"/>
+
+  <input
+    type="submit"
+    class="btn btn-primary float-right mt-3"
+    (click)="doDeploy()"
+    value="Deploy"/>
+  <div class="clearfix"></div>
+</app-modal>

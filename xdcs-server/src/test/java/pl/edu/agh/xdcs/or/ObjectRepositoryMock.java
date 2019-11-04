@@ -1,5 +1,6 @@
 package pl.edu.agh.xdcs.or;
 
+import javax.enterprise.inject.Vetoed;
 import java.io.InputStream;
 import java.nio.file.Path;
 import java.util.HashMap;
@@ -12,6 +13,7 @@ import java.util.stream.Stream;
 /**
  * @author Kamil Jarosz
  */
+@Vetoed
 public class ObjectRepositoryMock implements ObjectRepository {
     private final Map<String, Object> objects = new HashMap<>();
 
