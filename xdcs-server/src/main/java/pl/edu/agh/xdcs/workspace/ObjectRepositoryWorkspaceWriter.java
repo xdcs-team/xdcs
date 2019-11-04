@@ -26,21 +26,27 @@ public class ObjectRepositoryWorkspaceWriter {
 
     public String write(Workspace ws) {
         try {
-            List<FileDescription.Entry> rootChildren = ws.readFileDescription("/")
-                    .orElseThrow(RuntimeException::new)
-                    .getChildren();
-            return writeDirectory(ws, "/", rootChildren);
+            return writeDirectory(ws, "/");
         } catch (IOException e) {
             throw new ObjectRepositoryIOException(e);
         }
     }
 
-    private String writeDirectory(Workspace ws, String path, List<FileDescription.Entry> children) throws IOException {
+    private String writeDirectory(Workspace ws, String path) throws IOException {
+        List<FileDescription.Entry> children = ws.readFileDescription(path)
+                .orElseThrow(RuntimeException::new)
+                .getChildren();
+
         List<Tree.Entry> entries = new ArrayList<>();
         for (FileDescription.Entry child : children) {
             String childPath = path + "/" + child.getName();
             Tree.FileType type = mapFileType(child.getType());
-            String id = writeFile(ws, childPath);
+            String id;
+            if (type == Tree.FileType.S_IFDIR) {
+                id = writeDirectory(ws, childPath);
+            } else {
+                id = writeFile(ws, childPath);
+            }
             Tree.FilePermissions permissions = Tree.FilePermissions.fromPosixPermissions(child.getPermissions());
             entries.add(Tree.Entry.of(Tree.EntryMode.of(type, permissions), child.getName(), id));
         }
