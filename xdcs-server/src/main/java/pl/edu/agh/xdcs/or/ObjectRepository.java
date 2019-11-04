@@ -10,7 +10,10 @@ import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
@@ -133,6 +136,44 @@ public class ObjectRepository {
         }
 
         return (ObjectRepositoryTypeHandler<T>) handler;
+    }
+
+    private boolean verifyChecksum(String objectId) {
+        try (InputStream cat = cat(objectId)) {
+            return DigestUtils.digest(cat).equals(objectId);
+        } catch (IOException e) {
+            throw new ObjectRepositoryIOException(e);
+        }
+    }
+
+    /**
+     * @throws InterruptedException          when verification has been interrupted
+     * @throws ChecksumVerificationException when verification failed
+     */
+    public void verifyChecksums() throws InterruptedException, ChecksumVerificationException {
+        List<Future<String>> futures = new ArrayList<>();
+
+        allObjects().forEach(objectId -> {
+            Future<String> future = ConcurrentUtils.applicationExecutorService()
+                    .submit(() -> verifyChecksum(objectId) ? null : objectId);
+            futures.add(future);
+        });
+
+        Set<String> invalidObjects = new HashSet<>();
+        try {
+            for (Future<String> future : futures) {
+                String invalidObject = future.get();
+                if (invalidObject != null) {
+                    invalidObjects.add(invalidObject);
+                }
+            }
+        } catch (ExecutionException e) {
+            throw new ChecksumVerificationException(e);
+        }
+
+        if (!invalidObjects.isEmpty()) {
+            throw new ChecksumVerificationException("Invalid objects: " + invalidObjects);
+        }
     }
 
     /**
