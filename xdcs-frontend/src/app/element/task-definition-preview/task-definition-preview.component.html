@@ -1,5 +1,11 @@
 <h2>{{definition.name}}</h2>
 <div>ID {{definition.id}}</div>
 
-<a class="btn btn-secondary float-right"
-   [routerLink]="'/task-definitions/' + definition.id">Edit</a>
+<button class="btn btn-success float-right"
+        (click)="showDeployModal()">
+  Deploy
+</button>
+<a class="btn btn-outline-success float-right"
+   [routerLink]="'/task-definitions/' + definition.id">
+  Edit
+</a>

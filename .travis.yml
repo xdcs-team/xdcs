@@ -34,6 +34,7 @@ jobs:
       script:
         - cd xdcs-frontend
         - npm install
+        - npm run lint
         - npm run build
 
     - name: "Build & test agent"
@@ -41,12 +42,13 @@ jobs:
       install:
         - pyenv global system 3.7
         - pip3.7 install --user pybuilder --pre
+        - pip3.7 install --user flake8
       script:
         - cd xdcs-agent
-        - pyb install_build_dependencies
-        - pyb package
-        - pyb run_unit_tests
-        - pyb publish
+        - pyb -X install_build_dependencies
+        - pyb -X package
+        - pyb -X run_unit_tests
+        - pyb -X publish
 
     - name: "Build Dockerfile for server"
       stage: Docker

@@ -7,7 +7,7 @@ import { Alert, GlobalAlertsService } from '../services/global-alerts.service';
 export const API_INTERCEPTOR_PROVIDER: Provider = {
   provide: HTTP_INTERCEPTORS,
   useExisting: forwardRef(() => ApiInterceptor),
-  multi: true
+  multi: true,
 };
 
 @Injectable()

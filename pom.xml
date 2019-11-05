@@ -33,9 +33,10 @@
         <junit5.version>5.5.1</junit5.version>
         <commons-lang3.version>3.9</commons-lang3.version>
         <jjwt.version>0.10.7</jjwt.version>
-        <hibernate.version>5.4.4.Final</hibernate.version>
+        <hibernate.version>5.4.7.Final</hibernate.version>
         <h2.version>1.4.199</h2.version>
         <bouncycastle.provider.version>1.46</bouncycastle.provider.version>
+        <commons-io.version>2.6</commons-io.version>
     </properties>
 
     <modules>
@@ -103,6 +104,12 @@
             <dependency>
                 <groupId>org.mockito</groupId>
                 <artifactId>mockito-core</artifactId>
+                <version>${mockito.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.mockito</groupId>
+                <artifactId>mockito-junit-jupiter</artifactId>
                 <version>${mockito.version}</version>
                 <scope>test</scope>
             </dependency>
@@ -229,6 +236,11 @@
                 <groupId>org.bouncycastle</groupId>
                 <artifactId>bcprov-jdk16</artifactId>
                 <version>${bouncycastle.provider.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-io</groupId>
+                <artifactId>commons-io</artifactId>
+                <version>${commons-io.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

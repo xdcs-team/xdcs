@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class GlobalAlertsService {
   private alerts: Alert[] = [];
@@ -28,9 +28,18 @@ export class Alert {
   message: string;
   timeout: number;
 
-  constructor(type: 'success' | 'info' | 'warning' | 'danger', message: string, timeout = 0) {
+  constructor(type: 'success' | 'info' | 'warning' | 'danger', message: string, timeout: number | 'short' | 'long' = 0) {
     this.type = type;
     this.message = message;
-    this.timeout = timeout;
+    switch (timeout) {
+      case 'short':
+        this.timeout = 2;
+        break;
+      case 'long':
+        this.timeout = 5;
+        break;
+      default:
+        this.timeout = timeout;
+    }
   }
 }

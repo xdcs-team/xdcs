@@ -48,7 +48,6 @@
     "no-non-null-assertion": true,
     "no-redundant-jsdoc": true,
     "no-switch-case-fall-through": true,
-    "no-use-before-declare": true,
     "no-var-requires": false,
     "object-literal-key-quotes": [
       true,
@@ -60,7 +59,6 @@
       true,
       "single"
     ],
-    "trailing-comma": false,
     "no-output-on-prefix": true,
     "use-input-property-decorator": true,
     "use-output-property-decorator": true,
@@ -70,6 +68,28 @@
     "use-life-cycle-interface": true,
     "use-pipe-transform-interface": true,
     "component-class-suffix": true,
-    "directive-class-suffix": true
+    "directive-class-suffix": true,
+    "whitespace": [
+      true,
+      "check-module"
+    ],
+    "trailing-comma": [
+      true,
+      {
+        "multiline": {
+          "objects": "always",
+          "arrays": "always",
+          "functions": "ignore",
+          "typeLiterals": "ignore",
+          "imports": "always"
+        },
+        "esSpecCompliant": true
+      }
+    ],
+    "eofline": true,
+    "linebreak-style": [
+      true,
+      "LF"
+    ]
   }
 }

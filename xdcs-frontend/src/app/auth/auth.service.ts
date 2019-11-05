@@ -10,7 +10,7 @@ const AUTH_URL = '/xdcs/auth/auth';
 const TOKEN_URL = '/xdcs/auth/token';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class AuthService {
   constructor(private router: Router,
@@ -88,7 +88,7 @@ export class AuthService {
       window.location.hash.substr(1);
 
     this.router.navigate(['sign-in'], {
-      queryParams: { redirect }
+      queryParams: { redirect },
     });
   }
 

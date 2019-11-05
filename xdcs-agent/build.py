@@ -1,16 +1,18 @@
 import fnmatch
 import os
 import shutil
-import sys
 
-from pybuilder.core import use_plugin, init, task, dependents
+import sys
+from pybuilder.core import use_plugin, init, task, dependents, depends
 from pybuilder.plugins.core_plugin import clean, compile_sources
+from pybuilder.plugins.python.flake8_plugin import analyze
 
 use_plugin("python.core")
 use_plugin("python.unittest")
 use_plugin("python.install_dependencies")
 use_plugin("python.distutils")
 use_plugin("python.pycharm")
+use_plugin("python.flake8")
 use_plugin("exec")
 
 name = "xdcs-agent"
@@ -27,6 +29,7 @@ def check_version():
 
 @init
 def initialize(project):
+    project.build_depends_on('flake8')
     project.build_depends_on('mockito')
     project.build_depends_on('protobuf')
     project.build_depends_on('grpcio')
@@ -44,6 +47,15 @@ def initialize(project):
         "xdcs"])
     project.set_property('distutils_console_scripts', [
         "xdcs-agent = xdcs.agent_cli:main"])
+    project.set_property('flake8_break_build', True)
+    project.set_property('flake8_verbose_output', True)
+
+
+@task
+@dependents(compile_sources)
+@depends(analyze)
+def ensure_analyzed():
+    pass
 
 
 @task
@@ -56,12 +68,15 @@ def compile_grpc():
 
     os.makedirs(gen_python, exist_ok=True)
     proto_include = pkg_resources.resource_filename('grpc_tools', '_proto')
-    protoc.main([sys.argv[0],
-                 '-I=src/main/proto',
-                 '--python_out=' + gen_python,
-                 '--grpc_python_out=' + gen_python,
-                 *find_proto_files('./src/main/proto/xdcs_api/'),
-                 '-I{}'.format(proto_include)])
+    exit_code = protoc.main([sys.argv[0],
+                             '-I=src/main/proto',
+                             '--python_out={}'.format(gen_python),
+                             '--grpc_python_out={}'.format(gen_python),
+                             *find_proto_files('./src/main/proto/xdcs_api/'),
+                             '-I{}'.format(proto_include)])
+
+    if exit_code != 0:
+        raise Exception('protoc failed ' + str(exit_code))
 
 
 def find_proto_files(path):
@@ -81,4 +96,5 @@ def clean_grpc():
 
 if __name__ == '__main__':
     import pybuilder.cli
+
     sys.exit(pybuilder.cli.main(*sys.argv[1:]))

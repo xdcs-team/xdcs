@@ -1,14 +1,23 @@
 <app-navbar></app-navbar>
-<div class="container-fluid flex-fill">
+<div class="container-fluid flex-fill" #container>
   <ng-container *ngIf="taskDefinition === null">
-    <app-no-data message="Loading..."></app-no-data>
+    <app-loading></app-loading>
   </ng-container>
-  <as-split *ngIf="taskDefinition !== null" unit="percent">
+  <as-split *ngIf="taskDefinition !== null" unit="percent" [style.height.px]="container.offsetHeight">
     <as-split-area size="20">
-      TBD
+      <app-file-tree
+        [loadHandler]="loadHandler"
+        [moveHandler]="moveHandler"
+        [deleteHandler]="deleteHandler"
+        [openHandler]="openHandler"></app-file-tree>
     </as-split-area>
     <as-split-area size="60">
-      <app-code-editor></app-code-editor>
+      <app-code-editor
+        *ngIf="!!editedFile"
+        [(text)]="editedFile.text"></app-code-editor>
+      <ng-container *ngIf="!editedFile">
+        <app-no-data message="No opened file" size="2rem"></app-no-data>
+      </ng-container>
     </as-split-area>
     <as-split-area size="20">
       <app-task-def-config [taskDefinition]="taskDefinition"

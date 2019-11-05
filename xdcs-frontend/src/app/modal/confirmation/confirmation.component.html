@@ -1,0 +1,13 @@
+<app-modal #modal [title]="title">
+  <div class="mb-3">{{ text }}</div>
+  <div class="clearfix"></div>
+  <button
+    [class]="'btn float-right btn-' + type"
+    (click)="doConfirm()">{{ confirmText }}
+  </button>
+  <button
+    class="btn btn-outline-secondary float-right mr-2"
+    (click)="doCancel()">{{ cancelText }}
+  </button>
+  <div class="clearfix"></div>
+</app-modal>

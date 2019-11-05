@@ -41,6 +41,7 @@ import {OpenModalDirective} from './directives/open-modal.directive';
 import {NewTaskDefinitionComponent} from './modal/new-task-definition/new-task-definition.component';
 import {NodePreviewComponent} from "./element/node-preview/node-preview.component";
 
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -68,9 +69,15 @@ import {NodePreviewComponent} from "./element/node-preview/node-preview.componen
     OpenModalDirective,
     OpenModalDirective,
     NewTaskDefinitionComponent,
+    FileTreeComponent,
+    ConfirmationComponent,
+    LoadingComponent,
+    DeployDefinitionComponent,
   ],
   entryComponents: [
     NewTaskDefinitionComponent,
+    ConfirmationComponent,
+    DeployDefinitionComponent,
   ],
   imports: [
     BrowserModule,
@@ -91,6 +98,12 @@ import {NodePreviewComponent} from "./element/node-preview/node-preview.componen
     }),
     SortableModule.forRoot(),
     ModalModule.forRoot(),
+    TreeModule.forRoot(),
+    ContextMenuModule.forRoot({
+      useBootstrap4: true,
+    }),
+    ClipboardModule,
+    NgxSpinnerModule,
   ],
   providers: [
     HttpClientModule,
@@ -101,8 +114,10 @@ import {NodePreviewComponent} from "./element/node-preview/node-preview.componen
     AuthErrorInterceptor,
     AUTH_ERROR_INTERCEPTOR_PROVIDER,
     CUSTOM_ERROR_HANDLER_PROVIDER,
+    TreeDraggedElement,
+    ContextMenuService,
   ],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
 })
 export class AppModule {
 

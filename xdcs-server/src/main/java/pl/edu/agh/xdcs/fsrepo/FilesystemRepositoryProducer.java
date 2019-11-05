@@ -2,6 +2,7 @@ package pl.edu.agh.xdcs.fsrepo;
 
 import com.google.common.base.Stopwatch;
 import org.slf4j.Logger;
+import pl.edu.agh.xdcs.or.ChecksumVerificationException;
 import pl.edu.agh.xdcs.or.ConsistencyCheckFailedException;
 import pl.edu.agh.xdcs.or.ObjectRepository;
 import pl.edu.agh.xdcs.or.ObjectRepositoryTypeHandler;
@@ -51,17 +52,32 @@ public class FilesystemRepositoryProducer {
         }
 
         try {
-            logger.info("Checking object repository consistency");
-            Stopwatch sw = Stopwatch.createStarted();
-            or.checkConsistency(databaseRootProvider);
-            logger.info("Consistency check succeeded (" + sw + ")");
+            verifyChecksums(or);
+            checkConsistency(or);
+        } catch (ChecksumVerificationException e) {
+            logger.error("Verifying checksums failed", e);
+            throw e;
         } catch (ConsistencyCheckFailedException e) {
             logger.error("Consistency check failed", e);
             throw e;
         } catch (InterruptedException e) {
-            logger.error("Consistency check interrupted", e);
-            throw new ConsistencyCheckFailedException(e);
+            logger.error("Filesystem repository initialization has been interrupted", e);
+            throw new RuntimeException(e);
         }
+    }
+
+    private void checkConsistency(ObjectRepository or) throws InterruptedException {
+        logger.info("Checking object repository consistency");
+        Stopwatch sw2 = Stopwatch.createStarted();
+        or.checkConsistency(databaseRootProvider);
+        logger.info("Consistency check succeeded (" + sw2 + ")");
+    }
+
+    private void verifyChecksums(ObjectRepository or) throws InterruptedException {
+        logger.info("Verifying object repository checksums");
+        Stopwatch sw = Stopwatch.createStarted();
+        or.verifyChecksums();
+        logger.info("Verification succeeded (" + sw + ")");
     }
 
     @Produces
