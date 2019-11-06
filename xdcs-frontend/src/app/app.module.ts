@@ -14,9 +14,9 @@ import { NavbarComponent } from './element/navbar/navbar.component';
 import { SignInComponent } from './view/sign-in/sign-in.component';
 import { HomeComponent } from './view/home/home.component';
 import { NodesComponent } from './view/nodes/nodes.component';
-import { NodesListComponent }from './element/nodes-list/nodes-list.component';
-import { NodeComponent }from './view/node/node.component';
-import { NodePreviewComponent }from "./element/node-preview/node-preview.component";
+import { NodesListComponent } from './element/nodes-list/nodes-list.component';
+import { NodeComponent } from './view/node/node.component';
+import { NodePreviewComponent } from "./element/node-preview/node-preview.component";
 import { TaskSummaryItemComponent } from './element/task-summary-item/task-summary-item.component';
 import { TaskSummaryListComponent } from './element/task-summary-list/task-summary-list.component';
 import { AlertModule, CollapseModule, ModalModule, SortableModule } from 'ngx-bootstrap';
@@ -91,7 +91,7 @@ import { DeployDefinitionComponent } from './modal/deploy-definition/deploy-defi
     AppRoutingModule,
     FormsModule,
     HttpClientModule,
-    ApiModule.forRoot({ rootUrl: environment.serverUrl }),
+    ApiModule.forRoot({rootUrl: environment.serverUrl}),
     BrowserAnimationsModule,
     CollapseModule.forRoot(),
     AlertModule.forRoot(),

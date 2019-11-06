@@ -31,7 +31,7 @@ export class NodeComponent implements OnInit {
   loadNode(nodeId): void {
     this.nodeId = nodeId;
     this.nodesService.getNode({
-      nodeId: this.nodeId
+      nodeId: this.nodeId,
     }).pipe(first()).subscribe(def => {
       this.node = def;
     });
