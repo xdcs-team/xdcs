@@ -25,6 +25,9 @@ export class NavbarComponent implements OnInit {
   @Input()
   showLinks = true;
 
+  @Input()
+  fullscreenMode = false;
+
   constructor(private router: Router,
               private authService: AuthService) {
 

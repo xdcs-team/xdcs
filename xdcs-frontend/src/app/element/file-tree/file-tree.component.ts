@@ -52,7 +52,7 @@ export class FileTreeComponent implements OnInit {
           if (node.hasChildren) {
             TREE_ACTIONS.TOGGLE_EXPANDED(tree, node, $event);
           } else {
-            // open file here
+            this.startOpening(node);
           }
         },
         drop: (tree: TreeModel, node: TreeNode, $event: any, { from, to }: { from: TreeNode, to: TreeNode }) => {

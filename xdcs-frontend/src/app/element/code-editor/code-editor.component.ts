@@ -1,4 +1,5 @@
-import { AfterViewInit, Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, Input, OnInit, ViewChild } from '@angular/core';
+import { AceEditorComponent } from 'ng2-ace-editor';
 
 @Component({
   selector: 'app-code-editor',
@@ -7,7 +8,7 @@ import { AfterViewInit, Component, EventEmitter, Input, OnInit, Output, ViewChil
 })
 export class CodeEditorComponent implements OnInit, AfterViewInit {
   @ViewChild('editor', { static: false })
-  private readonly editor;
+  private readonly editor: AceEditorComponent;
 
   @ViewChild('wrapper', { static: false })
   private readonly wrapper;
@@ -21,10 +22,9 @@ export class CodeEditorComponent implements OnInit, AfterViewInit {
   };
 
   @Input()
-  text: string;
+  editable: Editable;
 
-  @Output()
-  textChange = new EventEmitter();
+  private oldEditable: Editable;
 
   constructor() {
 
@@ -36,10 +36,6 @@ export class CodeEditorComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit() {
     this.refreshHeight();
-  }
-
-  private onTextChange($event: any) {
-    this.textChange.emit(this.text);
   }
 
   private refreshHeight() {
@@ -54,4 +50,36 @@ export class CodeEditorComponent implements OnInit, AfterViewInit {
 
     this.editor.getEditor().resize();
   }
+
+  isOpened() {
+    return !!this.editable;
+  }
+
+  undo() {
+    this.editor.getEditor().undo();
+  }
+
+  redo() {
+    this.editor.getEditor().redo();
+  }
+
+  save() {
+    this.editable.save();
+  }
+
+  aceTextChanged() {
+    if (this.editable !== this.oldEditable) {
+      // editable changed, this change was not caused by the user
+      this.oldEditable = this.editable;
+    } else {
+      this.editable.modified = true;
+    }
+  }
+}
+
+export interface Editable {
+  text: string;
+  modified: boolean;
+
+  save(): Promise<void>;
 }
