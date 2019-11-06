@@ -1,15 +1,15 @@
-import {Component, Input, OnInit} from '@angular/core';
-import {NavbarItem} from '../../services/navbar.service';
-import {NodesService} from '../../../api/services/nodes.service';
-import {NodeDto} from "../../../api/models/node-dto";
-import {NodeCardData, NodeStatus} from "../node-card/node-card.component";
-import {first} from "rxjs/operators";
-import {NodesDto} from "../../../api/models/nodes-dto";
+import { Component, Input, OnInit } from '@angular/core';
+import { NavbarItem } from '../../services/navbar.service';
+import { NodesService } from '../../../api/services/nodes.service';
+import { NodeDto } from '../../../api/models/node-dto';
+import { NodeCardData, NodeStatus } from '../node-card/node-card.component';
+import { first } from 'rxjs/operators';
+import { NodesDto } from '../../../api/models/nodes-dto';
 
 @Component({
   selector: 'app-nodes-list',
   templateUrl: './nodes-list.component.html',
-  styleUrls: ['./nodes-list.component.less']
+  styleUrls: ['./nodes-list.component.less'],
 })
 @NavbarItem('Nodes')
 export class NodesListComponent implements OnInit {

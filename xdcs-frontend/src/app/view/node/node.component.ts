@@ -1,10 +1,10 @@
-import {Component, Input, OnInit} from '@angular/core';
-import {ActivatedRoute} from '@angular/router';
-import {first} from 'rxjs/operators';
-import {NodeDto} from "../../../api/models/node-dto";
-import {NodesService} from "../../../api/services/nodes.service";
-import {NodeCardData} from "../../element/node-card/node-card.component";
-import {faCircle} from '@fortawesome/free-solid-svg-icons';
+import { Component, Input, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { first } from 'rxjs/operators';
+import { NodeDto } from '../../../api/models/node-dto';
+import { NodesService } from '../../../api/services/nodes.service';
+import { NodeCardData } from '../../element/node-card/node-card.component';
+import { faCircle } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
   selector: 'app-node',
