@@ -67,9 +67,8 @@ class DeploymentServiceDeployTest {
 
         // set up definition
 
-        TaskDefinitionEntity taskDefinition = TaskDefinitionEntity.builder()
-                .name("test definition")
-                .build();
+        TaskDefinitionEntity taskDefinition = new TaskDefinitionEntity();
+        taskDefinition.setName("test definition");
 
         when(definitionService.getWorkspace(taskDefinition))
                 .thenReturn(Workspace.forPath(workspacePath));

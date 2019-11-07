@@ -1,7 +1,6 @@
 package pl.edu.agh.xdcs.db.entity;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -18,7 +17,6 @@ import javax.persistence.Table;
  */
 @Getter
 @Setter
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity(name = "TaskDefinition")
@@ -37,7 +35,7 @@ public class TaskDefinitionEntity extends BaseEntity {
     @Column(name = "KERN_NAME_")
     private String kernelName;
 
-    @Column(name = "KERN_PARAMs_")
+    @Column(name = "KERN_PARAMS_")
     @Convert(converter = KernelParameters.Converter.class)
     private KernelParameters kernelParams;
 
