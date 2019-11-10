@@ -3,7 +3,8 @@
   <ng-container *ngIf="taskDefinition === null">
     <app-loading></app-loading>
   </ng-container>
-  <as-split *ngIf="taskDefinition !== null" unit="percent" [style.height.px]="container.offsetHeight">
+  <as-split *ngIf="taskDefinition !== null" unit="percent"
+            appSizeFill [fillHeight]="true">
     <as-split-area size="20">
       <div class="split-area-container">
         <app-file-tree

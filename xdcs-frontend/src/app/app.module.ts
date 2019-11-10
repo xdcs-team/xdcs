@@ -47,6 +47,7 @@ import { ConfirmationComponent } from './modal/confirmation/confirmation.compone
 import { LoadingComponent } from './element/loading/loading.component';
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { DeployDefinitionComponent } from './modal/deploy-definition/deploy-definition.component';
+import { FillDirective } from './directives/fill.directive';
 import { EditorToolbarComponent } from './element/editor-toolbar/editor-toolbar.component';
 
 @NgModule({
@@ -74,12 +75,12 @@ import { EditorToolbarComponent } from './element/editor-toolbar/editor-toolbar.
     TaskDefinitionPreviewComponent,
     ModalComponent,
     OpenModalDirective,
-    OpenModalDirective,
     NewTaskDefinitionComponent,
     FileTreeComponent,
     ConfirmationComponent,
     LoadingComponent,
     DeployDefinitionComponent,
+    FillDirective,
     EditorToolbarComponent,
   ],
   entryComponents: [
@@ -92,7 +93,7 @@ import { EditorToolbarComponent } from './element/editor-toolbar/editor-toolbar.
     AppRoutingModule,
     FormsModule,
     HttpClientModule,
-    ApiModule.forRoot({rootUrl: environment.serverUrl}),
+    ApiModule.forRoot({ rootUrl: environment.serverUrl }),
     BrowserAnimationsModule,
     CollapseModule.forRoot(),
     AlertModule.forRoot(),

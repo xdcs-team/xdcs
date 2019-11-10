@@ -1,12 +1,33 @@
 :host {
   height: 100%;
   flex: 1;
+  display: block;
 }
 
 as-split {
   height: 100%;
 }
 
+// scroll
+.elements-container {
+  overflow-y: auto;
+}
+
+// padding
+.header-container, .element-container, .right-window {
+  padding: 1rem;
+}
+
+// header border
+.header-container {
+  border-style: solid;
+  border-width: 0 0 1px 0;
+  border-color: #dfdfdf;
+}
+
+// element border
 .element-container {
-  overflow-y: scroll;
+  border-style: solid;
+  border-color: #dfdfdf;
+  border-width: 0 0 1px 0;
 }

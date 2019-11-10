@@ -1,11 +1,11 @@
-import { Component, ContentChild, Input, OnInit, TemplateRef } from '@angular/core';
+import { Component, ContentChild, Input, TemplateRef } from '@angular/core';
 
 @Component({
   selector: 'app-fullscreen-list',
   templateUrl: './fullscreen-list.component.html',
   styleUrls: ['./fullscreen-list.component.less'],
 })
-export class FullscreenListComponent implements OnInit {
+export class FullscreenListComponent {
   @ContentChild('header', { static: false })
   headerTemplateRef: TemplateRef<undefined>;
 
@@ -21,10 +21,6 @@ export class FullscreenListComponent implements OnInit {
   private selected: any = undefined;
 
   constructor() {
-
-  }
-
-  ngOnInit() {
 
   }
 
