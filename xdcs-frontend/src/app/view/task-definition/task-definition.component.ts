@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { NavbarItem } from '../../services/navbar.service';
 import { TaskDefinitionDto } from '../../../api/models/task-definition-dto';
 import { TaskDefinitionsService } from '../../../api/services/task-definitions.service';
@@ -9,6 +9,7 @@ import { Alert, GlobalAlertsService } from '../../services/global-alerts.service
 import { TreeDirectory, TreeFileType } from '../../element/file-tree/file-tree.component';
 import { from, Observable, of } from 'rxjs';
 import { ModalService } from '../../services/modal.service';
+import { CodeEditorComponent, Editable } from '../../element/code-editor/code-editor.component';
 
 @Component({
   selector: 'app-task-definition',
@@ -21,7 +22,10 @@ export class TaskDefinitionComponent implements OnInit {
   private readonly taskDefinitionId: string;
   private taskDefinition: TaskDefinitionDto = null;
 
-  private editedFile: EditedFile = null;
+  @ViewChild(CodeEditorComponent, { static: false })
+  private editor: CodeEditorComponent;
+
+  private editedFile: EditedFile;
 
   private readonly loadHandler = path => this.loadFile(path);
   private readonly moveHandler = (fromPath, toPath) => this.moveFile(fromPath, toPath);
@@ -99,9 +103,9 @@ export class TaskDefinitionComponent implements OnInit {
         reader.readAsText(blob, 'utf-8');
       }))
     ).pipe(flatMap(content => {
-      if (this.editedFile) {
+      if (this.editedFile && this.editedFile.modified) {
         return from(this.modalService.confirmation({
-          text: 'Another file is opened, any unsaved changes will be lost',
+          text: 'Another file is modified, any unsaved changes will be lost',
           type: 'warning',
           confirmText: 'Open anyways',
         }))
@@ -115,15 +119,24 @@ export class TaskDefinitionComponent implements OnInit {
     })).subscribe(content => {
       this.editedFile = {
         path,
-        type: 'text',
         text: content,
+        save: () => this.save(),
+        modified: false,
       };
+    });
+  }
+
+  private save(): Promise<void> {
+    return this.taskDefinitionsService.setTaskDefinitionWorkspaceFileContent({
+      taskDefinitionId: this.taskDefinitionId,
+      path: this.editedFile.path,
+      body: new Blob([this.editedFile.text]),
+    }).toPromise().then(() => {
+      this.editedFile.modified = false;
     });
   }
 }
 
-interface EditedFile {
+interface EditedFile extends Editable {
   path: string;
-  type: 'text';
-  text?: string;
 }

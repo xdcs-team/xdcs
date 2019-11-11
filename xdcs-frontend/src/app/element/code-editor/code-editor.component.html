@@ -1,13 +1,13 @@
 <div class="wrapper" #wrapper>
   <ace-editor
-    #editor
-    class="ace"
-    [(text)]="text"
-    [mode]="'java'"
-    [theme]="'tomorrow'"
-    [options]="options"
-    [readOnly]="false"
-    [autoUpdateContent]="true"
-    [durationBeforeCallback]="1000"
-    (textChanged)="onTextChange($event)"></ace-editor>
+      #editor
+      class="ace"
+      [(text)]="editable.text"
+      [mode]="'java'"
+      [theme]="'tomorrow'"
+      [options]="options"
+      [readOnly]="false"
+      [autoUpdateContent]="true"
+      [durationBeforeCallback]="50"
+      (textChange)="aceTextChanged()"></ace-editor>
 </div>
