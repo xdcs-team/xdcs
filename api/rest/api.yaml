@@ -335,6 +335,60 @@ paths:
                 type: string
                 format: binary
 
+  /tasks:
+    get:
+      tags:
+        - Tasks
+      operationId: getTasks
+      parameters:
+        - in: query
+          name: historical
+          required: false
+          schema:
+            type: boolean
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TasksDto'
+    post:
+      tags:
+        - Tasks
+      operationId: startTask
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TaskCreationDto'
+      responses:
+        201:
+          description: Created
+          headers:
+            Location:
+              description: Location of the newly created task
+              schema:
+                type: string
+
+  /tasks/{taskId}:
+    get:
+      tags:
+        - Tasks
+      operationId: getTask
+      parameters:
+        - in: path
+          name: taskId
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TaskDto'
 
 components:
   schemas:
@@ -483,3 +537,66 @@ components:
           type: string
         description:
           type: string
+
+    LinksDto:
+      type: object
+      additionalProperties:
+        type: string
+
+    TasksDto:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/TaskDto'
+        from:
+          type: integer
+        total:
+          type: integer
+
+    TaskDto:
+      type: object
+      properties:
+        id:
+          type: string
+        deploymentId:
+          type: string
+        state:
+          type: string
+          enum:
+            - queued
+            - in_progress
+            - finished
+            - canceled
+            - errored
+        links:
+          $ref: '#/components/schemas/LinksDto'
+
+    TaskCreationDto:
+      type: object
+      properties:
+        deploymentId:
+          type: string
+        name:
+          type: string
+        resources:
+          type: array
+          items:
+            $ref: '#/components/schemas/ResourceDto'
+
+    ResourceDto:
+      type: object
+      properties:
+        agent:
+          type: string
+        key:
+          type: string
+        type:
+          type: string
+          enum:
+            - cpu
+            - cuda
+            - opencl
+        quantity:
+          type: integer
