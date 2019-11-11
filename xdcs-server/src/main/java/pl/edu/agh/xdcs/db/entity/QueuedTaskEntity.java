@@ -9,6 +9,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Index;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import java.time.Instant;
@@ -26,7 +27,7 @@ import java.time.Instant;
         @Index(columnList = "CREATED_")
 })
 public class QueuedTaskEntity extends BaseEntity {
-    @Column(name = "DEPLOYMENT_DESC_")
+    @JoinColumn(name = "DEPLOYMENT_DESC_")
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     private DeploymentDescriptorEntity deploymentDescriptor;
 

@@ -36,7 +36,6 @@ import { AUTH_ERROR_INTERCEPTOR_PROVIDER, AuthErrorInterceptor } from './auth/au
 import { TaskDefConfigComponent } from './element/task-def-config/task-def-config.component';
 import { FullscreenListComponent } from './element/fullscreen-list/fullscreen-list.component';
 import { TaskDefinitionPreviewComponent } from './element/task-definition-preview/task-definition-preview.component';
-import { CUSTOM_ERROR_HANDLER_PROVIDER } from './services/custom-error-handler';
 import { ModalComponent } from './element/modal/modal.component';
 import { OpenModalDirective } from './directives/open-modal.directive';
 import { NewTaskDefinitionComponent } from './modal/new-task-definition/new-task-definition.component';
@@ -48,6 +47,7 @@ import { ConfirmationComponent } from './modal/confirmation/confirmation.compone
 import { LoadingComponent } from './element/loading/loading.component';
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { DeployDefinitionComponent } from './modal/deploy-definition/deploy-definition.component';
+import { EditorToolbarComponent } from './element/editor-toolbar/editor-toolbar.component';
 
 @NgModule({
   declarations: [
@@ -80,6 +80,7 @@ import { DeployDefinitionComponent } from './modal/deploy-definition/deploy-defi
     ConfirmationComponent,
     LoadingComponent,
     DeployDefinitionComponent,
+    EditorToolbarComponent,
   ],
   entryComponents: [
     NewTaskDefinitionComponent,
@@ -120,7 +121,6 @@ import { DeployDefinitionComponent } from './modal/deploy-definition/deploy-defi
     TOKEN_INTERCEPTOR_PROVIDER,
     AuthErrorInterceptor,
     AUTH_ERROR_INTERCEPTOR_PROVIDER,
-    CUSTOM_ERROR_HANDLER_PROVIDER,
     TreeDraggedElement,
     ContextMenuService,
   ],

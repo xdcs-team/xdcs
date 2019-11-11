@@ -1,27 +1,38 @@
-<app-navbar></app-navbar>
-<div class="container-fluid flex-fill" #container>
+<app-navbar [fullscreenMode]="true"></app-navbar>
+<div class="flex-fill" #container>
   <ng-container *ngIf="taskDefinition === null">
     <app-loading></app-loading>
   </ng-container>
   <as-split *ngIf="taskDefinition !== null" unit="percent" [style.height.px]="container.offsetHeight">
     <as-split-area size="20">
-      <app-file-tree
-        [loadHandler]="loadHandler"
-        [moveHandler]="moveHandler"
-        [deleteHandler]="deleteHandler"
-        [openHandler]="openHandler"></app-file-tree>
+      <div class="split-area-container">
+        <app-file-tree
+          [loadHandler]="loadHandler"
+          [moveHandler]="moveHandler"
+          [deleteHandler]="deleteHandler"
+          [openHandler]="openHandler"></app-file-tree>
+      </div>
     </as-split-area>
-    <as-split-area size="60">
-      <app-code-editor
-        *ngIf="!!editedFile"
-        [(text)]="editedFile.text"></app-code-editor>
-      <ng-container *ngIf="!editedFile">
+    <as-split-area size="60" #editorContainer>
+      <div *ngIf="!!editedFile" class="code-editor-area">
+        <div #editorToolbar class="code-editor-toolbar-wrapper">
+          <app-editor-toolbar [editor]="codeEditor"></app-editor-toolbar>
+        </div>
+        <div class="code-editor-wrapper">
+          <app-code-editor
+              #codeEditor
+              [editable]="editedFile"></app-code-editor>
+        </div>
+      </div>
+      <div class="split-area-container" *ngIf="!editedFile">
         <app-no-data message="No opened file" size="2rem"></app-no-data>
-      </ng-container>
+      </div>
     </as-split-area>
     <as-split-area size="20">
-      <app-task-def-config [taskDefinition]="taskDefinition"
-                           (submit)="saveTaskDefinitionConfig($event.config)"></app-task-def-config>
+      <div class="split-area-container">
+        <app-task-def-config [taskDefinition]="taskDefinition"
+                             (submit)="saveTaskDefinitionConfig($event.config)"></app-task-def-config>
+      </div>
     </as-split-area>
   </as-split>
 </div>
