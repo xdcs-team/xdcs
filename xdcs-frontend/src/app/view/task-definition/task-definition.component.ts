@@ -4,11 +4,11 @@ import { TaskDefinitionDto } from '../../../api/models/task-definition-dto';
 import { TaskDefinitionsService } from '../../../api/services/task-definitions.service';
 import { first, flatMap, map } from 'rxjs/operators';
 import { ActivatedRoute } from '@angular/router';
-import { TaskDefinitionConfigDto } from '../../../api/models/task-definition-config-dto';
 import { Alert, GlobalAlertsService } from '../../services/global-alerts.service';
 import { FileTreeComponent, TreeDirectory, TreeFileType } from '../../element/file-tree/file-tree.component';
 import { from, Observable, of } from 'rxjs';
 import { ModalService } from '../../services/modal.service';
+import { DeploymentConfigDto } from '../../../api/models/deployment-config-dto';
 import { Editable, EditableMode } from '../../element/code-editor/code-editor.component';
 import { FileDto } from '../../../api/models/file-dto';
 import { FileType } from '../../../api/models/file-type';
@@ -29,6 +29,7 @@ export class TaskDefinitionComponent implements OnInit {
   private fileTree: FileTreeComponent;
 
   taskDefinition: TaskDefinitionDto = null;
+
   editedFile: EditedFile;
 
   readonly loadHandler = path => this.loadFile(path);
@@ -46,7 +47,7 @@ export class TaskDefinitionComponent implements OnInit {
 
   ngOnInit(): void {
     this.route.params.subscribe(routeParams => {
-      this.loadTaskDefinition(routeParams.id);
+      this.loadTaskDefinition(routeParams.definitionId);
     });
   }
 
@@ -59,7 +60,7 @@ export class TaskDefinitionComponent implements OnInit {
     });
   }
 
-  private saveTaskDefinitionConfig(config: TaskDefinitionConfigDto) {
+  private saveTaskDefinitionConfig(config: DeploymentConfigDto) {
     this.taskDefinitionsService.setTaskDefinitionConfiguration({
       taskDefinitionId: this.taskDefinitionId,
       body: config,
@@ -138,6 +139,7 @@ export class TaskDefinitionComponent implements OnInit {
       };
     });
   }
+
 
   private createFile(path: string): void {
     return this.modalService.show(CreateFileComponent, true, {

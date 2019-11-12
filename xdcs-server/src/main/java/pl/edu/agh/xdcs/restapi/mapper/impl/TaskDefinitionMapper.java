@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
  */
 public class TaskDefinitionMapper {
     @Inject
-    private TaskDefinitionConfigMapper configMapper;
+    private DeploymentConfigMapper configMapper;
 
     public List<TaskDefinitionDto> toRestEntities(Collection<TaskDefinitionEntity> model) {
         return model.stream()

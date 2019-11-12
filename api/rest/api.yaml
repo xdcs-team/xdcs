@@ -256,7 +256,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/TaskDefinitionConfigDto'
+                $ref: '#/components/schemas/DeploymentConfigDto'
     put:
       tags:
         - Task Definitions
@@ -271,7 +271,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/TaskDefinitionConfigDto'
+              $ref: '#/components/schemas/DeploymentConfigDto'
       responses:
         204:
           description: OK
@@ -307,7 +307,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/DeploymentDescriptorDto'
+                $ref: '#/components/schemas/DeploymentDto'
 
   /deployments/{deploymentId}/workspace:
     get:
@@ -448,7 +448,7 @@ components:
         name:
           type: string
         config:
-          $ref: '#/components/schemas/TaskDefinitionConfigDto'
+          $ref: '#/components/schemas/DeploymentConfigDto'
 
     TaskDefinitionsDto:
       type: object
@@ -474,6 +474,16 @@ components:
         timeDeployed:
           type: string
           format: 'date-time'
+
+    DeploymentDto:
+      type: object
+      properties:
+        id:
+          type: string
+        taskDefinitionId:
+          type: string
+        config:
+          $ref: '#/components/schemas/DeploymentConfigDto'
 
     DeploymentDescriptorsDto:
       type: object
@@ -519,11 +529,9 @@ components:
         - type
         - permissions
 
-    TaskDefinitionConfigDto:
+    DeploymentConfigDto:
       type: object
       properties:
-        name:
-          type: string
         type:
           type: string
           enum:

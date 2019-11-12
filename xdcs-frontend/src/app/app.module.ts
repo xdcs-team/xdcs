@@ -39,6 +39,7 @@ import { TaskDefinitionPreviewComponent } from './element/task-definition-previe
 import { ModalComponent } from './element/modal/modal.component';
 import { OpenModalDirective } from './directives/open-modal.directive';
 import { NewTaskDefinitionComponent } from './modal/new-task-definition/new-task-definition.component';
+import { NewTaskComponent } from './modal/new-task/new-task.component';
 import { FileTreeComponent } from './element/file-tree/file-tree.component';
 import { TreeDraggedElement, TreeModule } from 'angular-tree-component';
 import { ContextMenuModule, ContextMenuService } from 'ngx-contextmenu';
@@ -49,11 +50,13 @@ import { NgxSpinnerModule } from 'ngx-spinner';
 import { DeployDefinitionComponent } from './modal/deploy-definition/deploy-definition.component';
 import { FillDirective } from './directives/fill.directive';
 import { EditorToolbarComponent } from './element/editor-toolbar/editor-toolbar.component';
+import { TaskCreationComponent } from './view/task-creation/task-creation.component';
 import { ToolbarComponent } from './element/toolbar/toolbar.component';
 import { FileTreeToolbarComponent } from './element/file-tree-toolbar/file-tree-toolbar.component';
 import { CreateFileComponent } from './modal/create-file/create-file.component';
 import { TimeAgoPipe } from 'time-ago-pipe';
 import { CopyIconComponent } from './element/copy-icon/copy-icon.component';
+import { OrderableInputListComponent } from './element/orderable-input-list/orderable-input-list.component';
 import { UploadFileComponent } from './element/upload-file/upload-file.component';
 import { ngfModule } from 'angular-file';
 import { AutoFocusDirective } from './directives/auto-focus.directive';
@@ -77,6 +80,7 @@ import { AutoFocusDirective } from './directives/auto-focus.directive';
     CodeEditorComponent,
     TaskDefinitionsComponent,
     TaskDefinitionComponent,
+    TaskCreationComponent,
     NoDataComponent,
     TaskDefConfigComponent,
     FullscreenListComponent,
@@ -84,6 +88,7 @@ import { AutoFocusDirective } from './directives/auto-focus.directive';
     ModalComponent,
     OpenModalDirective,
     NewTaskDefinitionComponent,
+    NewTaskComponent,
     FileTreeComponent,
     ConfirmationComponent,
     LoadingComponent,
@@ -93,6 +98,7 @@ import { AutoFocusDirective } from './directives/auto-focus.directive';
     ToolbarComponent,
     FileTreeToolbarComponent,
     CreateFileComponent,
+    OrderableInputListComponent,
     TimeAgoPipe,
     CopyIconComponent,
     UploadFileComponent,
@@ -100,6 +106,7 @@ import { AutoFocusDirective } from './directives/auto-focus.directive';
   ],
   entryComponents: [
     NewTaskDefinitionComponent,
+    NewTaskComponent,
     ConfirmationComponent,
     DeployDefinitionComponent,
     CreateFileComponent,

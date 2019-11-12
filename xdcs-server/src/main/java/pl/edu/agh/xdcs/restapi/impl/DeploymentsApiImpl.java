@@ -2,8 +2,11 @@ package pl.edu.agh.xdcs.restapi.impl;
 
 import org.slf4j.Logger;
 import pl.edu.agh.xdcs.db.entity.TaskDefinitionEntity;
+import pl.edu.agh.xdcs.or.types.Deployment;
 import pl.edu.agh.xdcs.restapi.DeploymentsApi;
+import pl.edu.agh.xdcs.restapi.mapper.impl.DeploymentMapper;
 import pl.edu.agh.xdcs.restapi.mapper.impl.FileDescriptionMapper;
+import pl.edu.agh.xdcs.restapi.model.DeploymentDto;
 import pl.edu.agh.xdcs.restapi.model.DeploymentRequestDto;
 import pl.edu.agh.xdcs.restapi.model.FileDto;
 import pl.edu.agh.xdcs.restapi.util.RestUtils;
@@ -40,9 +43,16 @@ public class DeploymentsApiImpl implements DeploymentsApi {
     @Inject
     private FileDescriptionMapper fileDescriptionMapper;
 
+    @Inject
+    private DeploymentMapper deploymentMapper;
+
+
+
     @Override
     public Response getDeployment(String deploymentId) {
-        return null;
+        Deployment deployment = deploymentService.getDeployment(deploymentId);
+        DeploymentDto deploymentDto = deploymentMapper.toRestEntity(deployment);
+        return Response.ok(deploymentDto).build();
     }
 
     @Override

@@ -9,6 +9,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import pl.edu.agh.xdcs.or.ObjectBase;
 
+import java.util.List;
+
 /**
  * @author Kamil Jarosz
  */
@@ -50,5 +52,22 @@ public class Deployment implements ObjectBase {
         @JsonProperty("dockerfile")
         @JsonInclude(JsonInclude.Include.NON_EMPTY)
         private String dockerfile;
+
+        @JsonProperty("kernelfile")
+        @JsonInclude(JsonInclude.Include.NON_EMPTY)
+        private String kernelfile;
+
+        @JsonProperty("kernelname")
+        @JsonInclude(JsonInclude.Include.NON_EMPTY)
+        private String kernelname;
+
+        @JsonProperty("scriptfile")
+        @JsonInclude(JsonInclude.Include.NON_EMPTY)
+        private String scriptfile;
+
+        @JsonProperty("kernelparams")
+        @JsonInclude(JsonInclude.Include.NON_EMPTY)
+        private List<KernelParameter> kernelParams;
     }
+
 }

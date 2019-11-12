@@ -7,6 +7,8 @@ import { TaskDefinitionComponent } from './view/task-definition/task-definition.
 import { AuthGuard } from './auth/auth.guard';
 import { NodeComponent } from './view/node/node.component';
 import { NodesComponent } from './view/nodes/nodes.component';
+import { TaskCreationComponent } from './view/task-creation/task-creation.component';
+
 export const routes: Routes = [
   { path: 'sign-in', component: SignInComponent },
   {
@@ -16,9 +18,10 @@ export const routes: Routes = [
       { path: '', redirectTo: 'home', pathMatch: 'full' },
       { path: 'home', component: HomeComponent },
       { path: 'task-definitions', component: TaskDefinitionsComponent },
-      { path: 'task-definitions/:id', component: TaskDefinitionComponent },
+      { path: 'task-definitions/:definitionId', component: TaskDefinitionComponent },
       { path: 'nodes', component: NodesComponent },
-      { path: 'nodes/:id', component: NodeComponent },
+      { path: 'nodes/:nodeId', component: NodeComponent },
+      { path: 'new-task/:deploymentId', component: TaskCreationComponent },
     ],
   },
 ];

@@ -1,0 +1,109 @@
+<app-navbar></app-navbar>
+<ng-container *ngIf="!deployment; else loaded">
+  <app-loading></app-loading>
+</ng-container>
+<ng-template #loaded>
+
+  <div class="container">
+    <div class="task-content">
+      <div>
+        <h1>{{deploymentId}}</h1>
+        <button
+          class="btn btn-outline-success float-right" type="button">Run
+        </button>
+        <div class="clearfix"></div>
+      </div>
+      <div class="row">
+        <div class="col-md-6">
+          <label>ID</label>
+        </div>
+        <div class="col-md-6">
+          <p>{{deployment.id}}</p>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-6">
+          <label>Task type:</label>
+        </div>
+        <div class="col-md-6">
+          <p>{{deployment.config.type}}</p>
+        </div>
+      </div>
+      <ng-container *ngIf="['opencl', 'cuda'].includes(deployment.config.type)">
+        <div class="row">
+          <div class="col-md-6">
+            <label>Kernel file:</label>
+          </div>
+          <div class="col-md-6">
+            <p>{{deployment.config.kernelfile}}</p>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-6">
+            <label>Kernel name:</label>
+          </div>
+          <div class="col-md-6">
+            <p>{{deployment.config.kernelname}}</p>
+          </div>
+        </div>
+        <h2>Parameters:</h2>
+        <ng-container *ngFor="let param of deployment.config.kernelparams">
+          <ng-container
+            [ngTemplateOutletContext]="{param: param}"
+            [ngTemplateOutlet]="kernelParamTemplate"></ng-container>
+        </ng-container>
+        <ng-template #kernelParamTemplate let-param="param">
+          <ng-container *ngIf="param.direction != 'out'">
+            <div class="row">
+              <div class="col-md-3">
+                <label>{{param.name}}</label>
+              </div>
+              <div class="col-md-2">
+                <p>{{param.type}}</p>
+              </div>
+              <div class="col-md-2">
+                <p>{{param.direction}}</p>
+              </div>
+              <ng-container *ngIf="param.type=='simple'">
+                <div class="col-md-4">
+                  <input [(ngModel)]="param.value"
+                         class="form-control mb-3"
+                         id="conf-simple-param-value"
+                         placeholder="Value"
+                         required="required"
+                         type="text"/>
+                </div>
+              </ng-container>
+              <ng-container *ngIf="param.type=='pointer'">
+                <div class="col-md-4">
+                  <app-upload-file
+                    [(file)]="this.files[param.name]"
+                    label="Enter param file"
+                  ></app-upload-file>
+                </div>
+              </ng-container>
+            </div>
+          </ng-container>
+        </ng-template>
+        <ng-container *ngIf="!deployment.config.kernelparams">
+          <app-no-data message="No parameters" size="1em"></app-no-data>
+        </ng-container>
+      </ng-container>
+      <h2>Devices:</h2>
+      <app-list-manager [data]="usedNodes"
+                        [emptyElement]="emptyNode">
+        <ng-template #content let-item="element">
+          <select [(ngModel)]="item.name"
+                  class="custom-select">
+            <option [ngValue]="null" disabled selected>Device</option>
+            <option
+              *ngFor="let t of nodes "
+              [ngValue]="t.name">{{ t.name }}</option>
+          </select>
+
+        </ng-template>
+
+      </app-list-manager>
+    </div>
+  </div>
+</ng-template>

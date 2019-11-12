@@ -1,0 +1,29 @@
+<app-modal #modal title="New task">
+  <label>Select definition</label>
+  <select class="form-control custom-select"
+          [(ngModel)]="taskDefinition.id"
+          (change)='onDefinitionChange(taskDefinition)'>
+          required>
+    <option *ngFor="let element of definitionList"
+            [ngValue]="element.id">{{ element.name }}</option>
+  </select>
+
+  <ng-container *ngIf="taskDefinition.id != null">
+    <hr/>
+    <label>Select deployment</label>
+    <select class="form-control custom-select"
+            [(ngModel)]="deployment.id"
+            required>
+      <option *ngFor="let element of deploymentList"
+              [ngValue]="element.id">{{ element.id }}</option>
+    </select>
+
+  </ng-container>
+  <input
+    type="submit"
+    class="btn btn-primary float-right mt-3"
+    [ngClass]="isValid() ? '' : 'disabled'"
+    (click)="submit()"
+    value="Create"/>
+  <div class="clearfix"></div>
+</app-modal>

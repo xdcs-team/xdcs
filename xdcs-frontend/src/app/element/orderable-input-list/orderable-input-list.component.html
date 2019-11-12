@@ -1,0 +1,36 @@
+<ng-container *ngFor="let param of data">
+  <div class="input-group mb-1">
+    <div class="input-group-prepend">
+      <a (click)="moveElementUp(param)"
+         class="input-group-text"
+         href="javascript:void(0)">
+        <fa-icon [icon]="faChevronUp"></fa-icon>
+      </a>
+      <a (click)="moveElementDown(param)"
+         class="input-group-text"
+         href="javascript:void(0)">
+        <fa-icon [icon]="faChevronDown"></fa-icon>
+      </a>
+    </div>
+    <ng-template *ngIf="contentTemplateRef"
+                 [ngTemplateOutletContext]="createTemplateContext(param)"
+                 [ngTemplateOutlet]="contentTemplateRef"></ng-template>
+    <div class="input-group-append">
+      <a (click)="removeElement(param)"
+         class="input-group-text"
+         href="javascript:void(0)">
+        <fa-icon [icon]="faTrash"></fa-icon>
+      </a>
+    </div>
+  </div>
+</ng-container>
+<a
+  (click)="addElement()"
+  class="btn text-primary float-right btn-icon"
+  href="javascript:void(0)">
+  <fa-icon
+    [icon]="faPlus">
+  </fa-icon>
+</a>
+<div class="clearfix"></div>
+

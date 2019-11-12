@@ -47,46 +47,22 @@
     <div class="headline mb-3">
       <label>Kernel parameters</label>
     </div>
-    <ng-container *ngFor="let param of taskDefinition.config.kernelparams">
-      <ng-container
-        [ngTemplateOutlet]="kernelParamTemplate"
-        [ngTemplateOutletContext]="{param: param}"></ng-container>
-    </ng-container>
-    <ng-container *ngIf="!taskDefinition.config.kernelparams">
+
+    <ng-container *ngIf="taskDefinition.config.kernelparams.length === 0">
       <app-no-data message="No parameters" size="1em"></app-no-data>
     </ng-container>
-    <a
-      href="javascript:void(0)"
-      class="btn btn-outline-secondary float-right"
-      (click)="addKernelParam()">
-      <fa-icon
-        class="m-0"
-        [icon]="faPlus"></fa-icon>
-    </a>
-    <div class="clearfix"></div>
+    <app-list-manager [data]="taskDefinition.config.kernelparams"
+                      [emptyElement]="emptyElement">
+      <ng-template #content let-item="element">
 
-    <ng-template #kernelParamTemplate let-param="param">
-      <div class="input-group mb-1">
-        <div class="input-group-prepend">
-          <a class="input-group-text"
-             href="javascript:void(0)"
-             (click)="moveKernelParamUp(param)">
-            <fa-icon [icon]="faChevronUp"></fa-icon>
-          </a>
-          <a class="input-group-text"
-             href="javascript:void(0)"
-             (click)="moveKernelParamDown(param)">
-            <fa-icon [icon]="faChevronDown"></fa-icon>
-          </a>
-        </div>
-        <select [(ngModel)]="param.type"
+        <select [(ngModel)]="item.type"
                 class="custom-select">
           <option selected disabled [ngValue]="null">Type</option>
           <option
             *ngFor="let t of paramTypes | keyvalue"
             [ngValue]="t.key">{{ t.value }}</option>
         </select>
-        <select [(ngModel)]="param.direction"
+        <select [(ngModel)]="item.direction"
                 class="custom-select">
           <option selected disabled [ngValue]="null">Direction</option>
           <option
@@ -96,17 +72,11 @@
         <input type="text"
                class="form-control"
                placeholder="Name"
-               [(ngModel)]="param.name"/>
-        <div class="input-group-append">
-          <a class="input-group-text"
-             href="javascript:void(0)"
-             (click)="removeKernelParam(param)">
-            <fa-icon [icon]="faTrash"></fa-icon>
-          </a>
-        </div>
-      </div>
-    </ng-template>
+               [(ngModel)]="item.name"/>
+      </ng-template>
+    </app-list-manager>
   </ng-container>
+
 
   <ng-container *ngIf="['docker'].includes(taskDefinition.config.type)">
     <label for="conf-dockerfile">Dockerfile</label>

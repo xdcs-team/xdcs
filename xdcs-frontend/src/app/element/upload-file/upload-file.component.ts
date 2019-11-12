@@ -24,11 +24,26 @@ export class UploadFileComponent {
   @Output()
   filesChange = new EventEmitter<File[]>();
 
+  @Output()
+  fileChange = new EventEmitter<File>();
+
+  @Input()
+  file(value: File) {
+    if (value) {
+      this.files = [value];
+    } else {
+      this.files = null;
+    }
+  }
+
   constructor() {
 
   }
 
   filesChanged($event: File[]) {
+    if (!this.multiple && $event.length === 1) {
+      this.fileChange.emit($event[0]);
+    }
     this.filesChange.emit($event);
   }
 }

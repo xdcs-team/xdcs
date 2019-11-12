@@ -1,4 +1,4 @@
-package pl.edu.agh.xdcs.db.entity;
+package pl.edu.agh.xdcs.or.types;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
