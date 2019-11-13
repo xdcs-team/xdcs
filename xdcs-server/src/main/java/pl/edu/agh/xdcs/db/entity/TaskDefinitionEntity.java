@@ -1,6 +1,5 @@
 package pl.edu.agh.xdcs.db.entity;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -18,7 +17,6 @@ import javax.persistence.Table;
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
 @Entity(name = "TaskDefinition")
 @Table(name = "XDCS_TASK_DEF_")
 public class TaskDefinitionEntity extends BaseEntity {

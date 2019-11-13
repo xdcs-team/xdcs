@@ -1,6 +1,5 @@
 package pl.edu.agh.xdcs.db.entity;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -18,9 +17,8 @@ import javax.persistence.Table;
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
 @Entity(name = "ObjectRef")
-@Table(name = "XDCS_OR_REF")
+@Table(name = "XDCS_OR_REF_")
 public class ObjectRefEntity extends BaseEntity {
     @Column(name = "REF_OBJ_ID_", length = 40)
     private String referencedObjectId;
@@ -28,4 +26,11 @@ public class ObjectRefEntity extends BaseEntity {
     @Column(name = "REF_OBJ_TYPE_", length = 256)
     @Convert(converter = ClassConverter.class)
     private Class<? extends ObjectBase> referencedObjectType;
+
+    public static ObjectRefEntity of(String objectId, Class<? extends ObjectBase> type) {
+        ObjectRefEntity ref = new ObjectRefEntity();
+        ref.setReferencedObjectId(objectId);
+        ref.setReferencedObjectType(type);
+        return ref;
+    }
 }

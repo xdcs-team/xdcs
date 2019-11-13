@@ -22,11 +22,20 @@ public abstract class BaseEntity {
     @Id
     @Column(name = "ID_")
     @Convert(converter = UUIDConverter.class)
-    private String id = UUID.randomUUID().toString();
+    private String id;
 
     @Version
     @Column(name = "REV_")
     private Long revision;
+
+    protected BaseEntity() {
+        this.id = UUID.randomUUID().toString();
+    }
+
+    protected BaseEntity(String id) {
+        UUID.fromString(id);
+        this.id = id;
+    }
 
     @Override
     public final boolean equals(Object o) {
