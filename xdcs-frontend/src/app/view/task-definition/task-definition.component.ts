@@ -19,7 +19,7 @@ import { CodeEditorComponent, Editable } from '../../element/code-editor/code-ed
 })
 @NavbarItem('Task Definition')
 export class TaskDefinitionComponent implements OnInit {
-  private readonly taskDefinitionId: string;
+  private taskDefinitionId: string;
   private taskDefinition: TaskDefinitionDto = null;
 
   @ViewChild(CodeEditorComponent, { static: false })
@@ -36,10 +36,16 @@ export class TaskDefinitionComponent implements OnInit {
               private route: ActivatedRoute,
               private globalAlerts: GlobalAlertsService,
               private modalService: ModalService) {
-    this.taskDefinitionId = this.route.snapshot.params.id;
   }
 
   ngOnInit(): void {
+    this.route.params.subscribe(routeParams => {
+      this.loadTaskDefinition(routeParams.id);
+    });
+  }
+
+  loadTaskDefinition(taskDefinitionId): void {
+    this.taskDefinitionId = taskDefinitionId;
     this.taskDefinitionsService.getTaskDefinition({
       taskDefinitionId: this.taskDefinitionId,
     }).pipe(first()).subscribe(def => {
