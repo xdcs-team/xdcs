@@ -1,29 +1,33 @@
-<div class="flex-fill">
-  <as-split unit="percent">
-    <as-split-area size="30">
-      <ng-container *ngIf="headerTemplateRef">
-        <ng-template [ngTemplateOutlet]="headerTemplateRef"
+<div class="flex-fill h-100">
+  <as-split unit="percent"
+            appSizeFill [fillHeight]="true">
+    <as-split-area size="30" class="left-window">
+      <div class="header-container shadow-sm">
+        <ng-template *ngIf="headerTemplateRef"
+                     [ngTemplateOutlet]="headerTemplateRef"
                      [ngTemplateOutletContext]="createTemplateContext()"></ng-template>
-      </ng-container>
-      <hr/>
-      <div class="element-container">
-        <div class="position-relative" *ngFor="let element of data">
+      </div>
+      <div class="elements-container"
+           appSizeFill [fillHeight]="true">
+        <ng-container *ngIf="data.length === 0">
+          <app-no-data size="2rem" message="No data"></app-no-data>
+        </ng-container>
+        <div class="position-relative element-container" *ngFor="let element of data">
           <ng-template [ngTemplateOutlet]="elementTemplateRef"
                        [ngTemplateOutletContext]="createTemplateContext(element)"></ng-template>
           <a class="stretched-link"
              href="javascript:void(0)"
              (click)="selected = element"></a>
-          <hr/>
         </div>
       </div>
     </as-split-area>
-    <as-split-area size="70">
+    <as-split-area size="70" class="right-window">
       <ng-container *ngIf="selected !== undefined; else notSelected">
         <ng-template [ngTemplateOutlet]="detailsTemplateRef"
                      [ngTemplateOutletContext]="createTemplateContext()"></ng-template>
       </ng-container>
       <ng-template #notSelected>
-        Not selected
+        <app-no-data message="Nothing selected"></app-no-data>
       </ng-template>
     </as-split-area>
   </as-split>

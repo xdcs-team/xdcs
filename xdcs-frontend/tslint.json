@@ -71,7 +71,15 @@
     "directive-class-suffix": true,
     "whitespace": [
       true,
-      "check-module"
+      "check-module",
+      "check-branch",
+      "check-decl",
+      "check-operator",
+      "check-separator",
+      "check-type",
+      "check-typecast",
+      "check-type-operator",
+      "check-preblock"
     ],
     "trailing-comma": [
       true,
