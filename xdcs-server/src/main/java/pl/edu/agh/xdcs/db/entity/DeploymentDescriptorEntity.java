@@ -1,6 +1,5 @@
 package pl.edu.agh.xdcs.db.entity;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -20,7 +19,6 @@ import java.time.Instant;
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
 @Entity(name = "Deployment")
 @Table(name = "XDCS_DEPLOYMENT_DESC_")
 public class DeploymentDescriptorEntity extends BaseEntity {

@@ -50,7 +50,7 @@ public class DeploymentService {
     private void addDeploymentDescriptor(TaskDefinitionEntity definition, String deploymentId, String description) {
         DeploymentDescriptorEntity desc = new DeploymentDescriptorEntity();
         desc.setDefinition(definition);
-        desc.setDeploymentRef(new ObjectRefEntity(deploymentId, Deployment.class));
+        desc.setDeploymentRef(ObjectRefEntity.of(deploymentId, Deployment.class));
         desc.setDescription(description);
         deploymentDescriptorDao.persist(desc);
     }

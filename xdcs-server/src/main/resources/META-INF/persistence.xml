@@ -7,6 +7,12 @@
         <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
         <class>pl.edu.agh.xdcs.db.entity.TaskDefinitionEntity</class>
         <class>pl.edu.agh.xdcs.db.entity.ObjectRefEntity</class>
+        <class>pl.edu.agh.xdcs.db.entity.DeploymentDescriptorEntity</class>
+        <class>pl.edu.agh.xdcs.db.entity.HistoricalTaskEntity</class>
+        <class>pl.edu.agh.xdcs.db.entity.QueuedTaskEntity</class>
+        <class>pl.edu.agh.xdcs.db.entity.ResourceEntity</class>
+        <class>pl.edu.agh.xdcs.db.entity.ResourcePatternEntity</class>
+        <class>pl.edu.agh.xdcs.db.entity.RuntimeTaskEntity</class>
         <properties>
             <property name="javax.persistence.jdbc.driver" value="org.h2.Driver"/>
             <property name="javax.persistence.jdbc.url" value="jdbc:h2:mem:xdcs;DB_CLOSE_DELAY=-1"/>
