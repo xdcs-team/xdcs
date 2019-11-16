@@ -1,6 +1,7 @@
 package pl.edu.agh.xdcs.grpc.ee;
 
 import pl.edu.agh.xdcs.api.HeartbeatGrpc;
+import pl.edu.agh.xdcs.api.TaskRunnerGrpc;
 import pl.edu.agh.xdcs.grpc.scope.SessionScoped;
 import pl.edu.agh.xdcs.grpc.session.GrpcSession;
 
@@ -12,8 +13,12 @@ import javax.inject.Inject;
  */
 @SessionScoped
 public class StubProducer {
+    private final GrpcSession session;
+
     @Inject
-    private GrpcSession session;
+    public StubProducer(GrpcSession session) {
+        this.session = session;
+    }
 
     @Produces
     public HeartbeatGrpc.HeartbeatBlockingStub getHeartbeatBlockingStub() {
@@ -28,5 +33,10 @@ public class StubProducer {
     @Produces
     public HeartbeatGrpc.HeartbeatFutureStub getHeartbeatFutureStub() {
         return HeartbeatGrpc.newFutureStub(session.getChannel());
+    }
+
+    @Produces
+    public TaskRunnerGrpc.TaskRunnerBlockingStub getTaskRunnerBlockingStub() {
+        return TaskRunnerGrpc.newBlockingStub(session.getChannel());
     }
 }

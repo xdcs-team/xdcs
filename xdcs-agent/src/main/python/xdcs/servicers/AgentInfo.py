@@ -1,12 +1,13 @@
 import importlib
 import os
 import platform
-import sys
 
 import cpuinfo
 import distro
 import pyopencl
+import sys
 
+from xdcs import docker
 from xdcs_api.agent_info_pb2 import ProcessorInfo, SystemInfo, GPUInfo, OpenCLPlatform, OpenCLDevice, SoftwareInfo, \
     CUDAInfo, CUDADevice
 from xdcs_api.agent_info_pb2_grpc import AgentInfoServicer
@@ -68,6 +69,7 @@ class AgentInfo(AgentInfoServicer):
         software_info = SoftwareInfo()
 
         software_info.programs.extend(self._get_programs_from_path())
+        software_info.dockerVersion = docker.info.version()
 
         return software_info
 
@@ -98,7 +100,7 @@ class AgentInfo(AgentInfoServicer):
 
         return gpu_info
 
-    def _map_platform(self, mapped: OpenCLPlatform, cl_platform) -> OpenCLPlatform:
+    def _map_platform(self, mapped: OpenCLPlatform, cl_platform) -> None:
         mapped.name = cl_platform.name
         mapped.profile = cl_platform.profile
         mapped.vendor = cl_platform.vendor
@@ -107,7 +109,7 @@ class AgentInfo(AgentInfoServicer):
         for device in cl_platform.get_devices(pyopencl.device_type.ALL):
             self._map_device(mapped.devices.add(), device)
 
-    def _map_device(self, mapped: OpenCLDevice, device) -> OpenCLDevice:
+    def _map_device(self, mapped: OpenCLDevice, device) -> None:
         mapped.version = device.version
         mapped.type = pyopencl.device_type.to_string(device.type)
         mapped.extensions[:] = device.extensions.strip().split(' ')

@@ -8,13 +8,16 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.slf4j.Logger;
 import pl.edu.agh.xdcs.db.dao.DeploymentDescriptorDao;
 import pl.edu.agh.xdcs.db.entity.TaskDefinitionEntity;
+import pl.edu.agh.xdcs.db.entity.TaskType;
 import pl.edu.agh.xdcs.or.ObjectRepository;
 import pl.edu.agh.xdcs.or.ObjectRepositoryMock;
 import pl.edu.agh.xdcs.or.types.Deployment;
 import pl.edu.agh.xdcs.or.types.Tree;
 import pl.edu.agh.xdcs.test.utils.FileSetup;
+import pl.edu.agh.xdcs.test.utils.TestLogger;
 import pl.edu.agh.xdcs.workspace.Workspace;
 
 import java.io.IOException;
@@ -29,6 +32,9 @@ import static org.mockito.Mockito.when;
  */
 @ExtendWith(MockitoExtension.class)
 class DeploymentServiceDeployTest {
+    @Spy
+    private Logger logger = TestLogger.getLogger();
+
     @Spy
     private ObjectRepository objectRepository = new ObjectRepositoryMock();
 
@@ -69,6 +75,7 @@ class DeploymentServiceDeployTest {
 
         TaskDefinitionEntity taskDefinition = new TaskDefinitionEntity();
         taskDefinition.setName("test definition");
+        taskDefinition.setType(TaskType.SCRIPT);
 
         when(definitionService.getWorkspace(taskDefinition))
                 .thenReturn(Workspace.forPath(workspacePath));

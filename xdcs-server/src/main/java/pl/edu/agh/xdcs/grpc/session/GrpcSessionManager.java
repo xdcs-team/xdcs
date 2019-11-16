@@ -1,6 +1,8 @@
 package pl.edu.agh.xdcs.grpc.session;
 
+import pl.edu.agh.xdcs.agents.Agent;
 import pl.edu.agh.xdcs.grpc.context.SessionContext;
+import pl.edu.agh.xdcs.grpc.ee.StubProducer;
 import pl.edu.agh.xdcs.grpc.events.AgentConnectedEvent;
 import pl.edu.agh.xdcs.grpc.events.AgentDisconnectedEvent;
 import pl.edu.agh.xdcs.grpc.events.GrpcSessionClosedEvent;
@@ -29,6 +31,11 @@ public class GrpcSessionManager {
 
     public Optional<GrpcSession> getSession(String agentName) {
         return Optional.ofNullable(sessionsByNames.get(agentName));
+    }
+
+    public StubProducer getStubProducer(Agent agent) {
+        return new StubProducer(getSession(agent.getName())
+                .orElseThrow(() -> new RuntimeException("Agent " + agent.getName() + " doesn't have an active session")));
     }
 
     private void createSession(@Observes AgentConnectedEvent event, GrpcSessionFactory sessionFactory) {

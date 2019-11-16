@@ -21,8 +21,21 @@ export class ApiInterceptor implements HttpInterceptor {
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     return next.handle(req).pipe(
       tap(x => x, err => {
-        const alert = new Alert('danger', 'An error occurred', 5);
-        this.alerts.addAlert(alert);
+        if (err && err.status && err.status / 100 !== 5 &&
+          err.error && typeof err.error === 'string') {
+          let errorMessage: any;
+          try {
+            const parsed = JSON.parse(err.error);
+            errorMessage = parsed.error ? parsed.error : err.error;
+          } catch (e) {
+            errorMessage = err.error;
+          }
+          const alert = new Alert('danger', 'Error: ' + errorMessage, 5);
+          this.alerts.addAlert(alert);
+        } else {
+          const alert = new Alert('danger', 'An error occurred', 5);
+          this.alerts.addAlert(alert);
+        }
       })
     );
   }

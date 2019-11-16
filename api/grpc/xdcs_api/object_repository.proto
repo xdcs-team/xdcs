@@ -10,6 +10,7 @@ import "xdcs_api/common.proto";
 enum ObjectType {
     BLOB = 0;
     TREE = 1;
+    DEPLOYMENT = 2;
 }
 
 message ObjectKey {
