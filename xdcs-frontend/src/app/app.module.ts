@@ -49,6 +49,9 @@ import { NgxSpinnerModule } from 'ngx-spinner';
 import { DeployDefinitionComponent } from './modal/deploy-definition/deploy-definition.component';
 import { FillDirective } from './directives/fill.directive';
 import { EditorToolbarComponent } from './element/editor-toolbar/editor-toolbar.component';
+import { ToolbarComponent } from './element/toolbar/toolbar.component';
+import { FileTreeToolbarComponent } from './element/file-tree-toolbar/file-tree-toolbar.component';
+import { CreateFileComponent } from './modal/create-file/create-file.component';
 
 @NgModule({
   declarations: [
@@ -82,11 +85,15 @@ import { EditorToolbarComponent } from './element/editor-toolbar/editor-toolbar.
     DeployDefinitionComponent,
     FillDirective,
     EditorToolbarComponent,
+    ToolbarComponent,
+    FileTreeToolbarComponent,
+    CreateFileComponent,
   ],
   entryComponents: [
     NewTaskDefinitionComponent,
     ConfirmationComponent,
     DeployDefinitionComponent,
+    CreateFileComponent,
   ],
   imports: [
     BrowserModule,

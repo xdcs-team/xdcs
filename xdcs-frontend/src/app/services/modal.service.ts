@@ -2,6 +2,8 @@ import { EventEmitter, Injectable, TemplateRef } from '@angular/core';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap';
 import { ConfirmationComponent } from '../modal/confirmation/confirmation.component';
 
+export type CloseCallback = () => void;
+
 export interface ConfirmationParams {
   title?: string;
   text?: string;
@@ -33,8 +35,8 @@ export class ModalService {
   confirmation(params: ConfirmationParams): Promise<() => void> {
     return new Promise((resolve, reject) => {
       const modal = this.show(ConfirmationComponent, true, params);
-      modal.content.confirm.subscribe(callback => {
-        resolve(callback);
+      modal.content.confirm.subscribe(closeCallback => {
+        resolve(closeCallback);
       });
       modal.content.cancel.subscribe(() => {
         reject();

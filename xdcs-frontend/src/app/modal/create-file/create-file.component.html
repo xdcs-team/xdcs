@@ -1,0 +1,15 @@
+<app-modal #modal [title]="'Create a new ' + (isDirectory ? 'directory' : 'file')">
+  <label for="filename">Name</label>
+  <input type="text"
+         class="form-control mb-3"
+         id="filename"
+         placeholder="Name"
+         [(ngModel)]="filename"/>
+
+  <input
+    type="submit"
+    class="btn btn-primary float-right mt-3"
+    (click)="doSubmit()"
+    value="Create"/>
+  <div class="clearfix"></div>
+</app-modal>

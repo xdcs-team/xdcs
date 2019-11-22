@@ -1,0 +1,16 @@
+<app-toolbar [buttons]="[buttonCreateDirectory, buttonCreateFile]">
+  <ng-template #buttonCreateFile>
+    <button class="btn btn-icon text-primary"
+            (click)="doCreateFile()"
+            [disabled]="!canCreateFile">
+      <fa-icon [icon]="faPlusCircle"></fa-icon>
+    </button>
+  </ng-template>
+  <ng-template #buttonCreateDirectory>
+    <button class="btn btn-icon text-primary"
+            (click)="doCreateDirectory()"
+            [disabled]="!canCreateFile">
+      <fa-icon [icon]="faFolderPlus"></fa-icon>
+    </button>
+  </ng-template>
+</app-toolbar>
