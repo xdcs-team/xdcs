@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "pl.edu.agh.xdcs.api";
+
+package xdcs.agent;
+
+import "xdcs_api/common.proto";
+
+message DeploymentId {
+    string deploymentId = 1;
+}
+
+service TaskRunner {
+    rpc Submit (DeploymentId) returns (OkResponse) {
+
+    }
+}

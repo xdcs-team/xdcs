@@ -1,5 +1,6 @@
 package pl.edu.agh.xdcs.or.types;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -22,4 +23,32 @@ public class Deployment implements ObjectBase {
 
     @JsonProperty("root")
     private String root;
+
+    @JsonProperty("config")
+    private Config config;
+
+    public enum ConfigType {
+        @JsonProperty("opencl")
+        OPENCL,
+        @JsonProperty("cuda")
+        CUDA,
+        @JsonProperty("docker")
+        DOCKER,
+        @JsonProperty("script")
+        SCRIPT,
+    }
+
+    @Getter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Builder
+    @EqualsAndHashCode
+    public static class Config {
+        @JsonProperty("type")
+        private ConfigType type;
+
+        @JsonProperty("dockerfile")
+        @JsonInclude(JsonInclude.Include.NON_EMPTY)
+        private String dockerfile;
+    }
 }

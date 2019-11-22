@@ -1,7 +1,9 @@
 import hashlib
+import json
 import os
 import re
 import shutil
+from os import path
 
 
 class ObjectRepositoryException(Exception):
@@ -43,12 +45,19 @@ class ObjectRepository:
         if not self._object_id_pattern.match(object_id):
             raise ObjectRepositoryException('Invalid object ID: ' + object_id)
 
-        containing_dir = self._path + '/' + object_id[:2]
+        containing_dir = path.join(self._path, object_id[:2])
 
         if create_dirs:
             os.makedirs(containing_dir, exist_ok=True)
 
-        return containing_dir + '/' + object_id[2:]
+        return path.join(containing_dir, object_id[2:])
+
+    def cat_bytes(self, object_id: str) -> bytes:
+        with open(self._path + '/' + object_id[:2] + '/' + object_id[2:], "rb") as f:
+            return f.read()
+
+    def cat_json(self, object_id: str) -> dict:
+        return json.loads(self.cat_bytes(object_id))
 
 
 def from_path(path: str) -> ObjectRepository:

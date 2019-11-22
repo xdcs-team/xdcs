@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
 import java.net.InetAddress;
+import java.net.InetSocketAddress;
 
 /**
  * @author Kamil Jarosz
@@ -20,6 +21,8 @@ public class Agent {
     private InetAddress address;
     @Setter
     private Status status;
+    @Setter
+    private InetSocketAddress tunnelEndpoint;
 
     public enum Status {
         UNAVAILABLE,

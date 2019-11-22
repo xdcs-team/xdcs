@@ -4,6 +4,7 @@ import { Component, ContentChild, Input, TemplateRef } from '@angular/core';
   selector: 'app-fullscreen-list',
   templateUrl: './fullscreen-list.component.html',
   styleUrls: ['./fullscreen-list.component.less'],
+  host: { class: 'flex-fill d-flex' },
 })
 export class FullscreenListComponent {
   @ContentChild('header', { static: false })

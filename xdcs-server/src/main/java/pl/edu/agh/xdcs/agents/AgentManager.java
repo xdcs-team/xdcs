@@ -33,6 +33,7 @@ public class AgentManager {
     private void connectAgent(@Observes AgentConnectedEvent event) {
         Agent agent = getOrCreateAgent(event.getAgentName());
         agent.setAddress(event.getAgentAddress());
+        agent.setTunnelEndpoint(event.getTunnelEndpoint());
         agent.setStatus(Agent.Status.UNAVAILABLE);
     }
 

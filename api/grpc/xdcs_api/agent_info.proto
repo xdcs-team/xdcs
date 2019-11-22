@@ -185,6 +185,8 @@ message SoftwareInfo {
      * List of executable files available in the path.
      */
     repeated string programs = 1;
+
+    string dockerVersion = 2;
 }
 
 message GPUInfoRequest {

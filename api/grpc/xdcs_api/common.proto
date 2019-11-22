@@ -8,3 +8,6 @@ package xdcs.agent;
 message Chunk {
     bytes content = 1;
 }
+
+message OkResponse {
+}

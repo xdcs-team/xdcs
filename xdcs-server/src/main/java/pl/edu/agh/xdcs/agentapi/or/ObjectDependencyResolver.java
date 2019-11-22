@@ -8,10 +8,10 @@ import pl.edu.agh.xdcs.or.ObjectBase;
 import pl.edu.agh.xdcs.or.ObjectKey;
 import pl.edu.agh.xdcs.or.ObjectRepository;
 import pl.edu.agh.xdcs.or.types.Blob;
+import pl.edu.agh.xdcs.or.types.Deployment;
 import pl.edu.agh.xdcs.or.types.Tree;
 import pl.edu.agh.xdcs.restapi.mapper.UnsatisfiedMappingException;
 
-import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import java.util.HashSet;
 import java.util.Set;
@@ -19,7 +19,6 @@ import java.util.Set;
 /**
  * @author Kamil Jarosz
  */
-@RequestScoped
 public class ObjectDependencyResolver {
     @Inject
     private ObjectRepository objectRepository;
@@ -57,6 +56,8 @@ public class ObjectDependencyResolver {
                 return Blob.class;
             case TREE:
                 return Tree.class;
+            case DEPLOYMENT:
+                return Deployment.class;
             case UNRECOGNIZED:
             default:
                 throw new UnsatisfiedMappingException();

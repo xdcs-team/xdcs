@@ -1,9 +1,11 @@
 package pl.edu.agh.xdcs.services;
 
+import org.slf4j.Logger;
 import pl.edu.agh.xdcs.db.dao.DeploymentDescriptorDao;
 import pl.edu.agh.xdcs.db.entity.DeploymentDescriptorEntity;
 import pl.edu.agh.xdcs.db.entity.ObjectRefEntity;
 import pl.edu.agh.xdcs.db.entity.TaskDefinitionEntity;
+import pl.edu.agh.xdcs.db.entity.TaskType;
 import pl.edu.agh.xdcs.or.ObjectRepository;
 import pl.edu.agh.xdcs.or.types.Deployment;
 import pl.edu.agh.xdcs.workspace.ObjectRepositoryWorkspaceWriter;
@@ -17,6 +19,9 @@ import javax.transaction.Transactional;
  */
 @Transactional
 public class DeploymentService {
+    @Inject
+    private Logger logger;
+
     @Inject
     private ObjectRepository objectRepository;
 
@@ -40,10 +45,12 @@ public class DeploymentService {
         Deployment deployment = Deployment.builder()
                 .definitionId(definition.getId())
                 .root(root)
+                .config(buildDeploymentConfig(definition))
                 .build();
 
         String deploymentId = objectRepository.store(deployment);
         addDeploymentDescriptor(definition, deploymentId, description);
+        logger.info("Task definition " + definition.getId() + " deployed: " + deploymentId);
         return deploymentId;
     }
 
@@ -53,5 +60,31 @@ public class DeploymentService {
         desc.setDeploymentRef(ObjectRefEntity.of(deploymentId, Deployment.class));
         desc.setDescription(description);
         deploymentDescriptorDao.persist(desc);
+    }
+
+    private Deployment.Config buildDeploymentConfig(TaskDefinitionEntity definition) {
+        return Deployment.Config.builder()
+                .type(mapConfigType(definition.getType()))
+                .dockerfile(definition.getDockerfile())
+                .build();
+    }
+
+    private Deployment.ConfigType mapConfigType(TaskType type) {
+        if (type == null) {
+            throw new DeploymentFailedException("Unspecified type");
+        }
+
+        switch (type) {
+            case OPENCL:
+                return Deployment.ConfigType.OPENCL;
+            case CUDA:
+                return Deployment.ConfigType.CUDA;
+            case DOCKER:
+                return Deployment.ConfigType.DOCKER;
+            case SCRIPT:
+                return Deployment.ConfigType.SCRIPT;
+            default:
+                throw new DeploymentFailedException("Unknown type: " + type);
+        }
     }
 }

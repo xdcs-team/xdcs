@@ -39,6 +39,9 @@ def initialize(project):
 
     project.depends_on('py-cpuinfo')
     project.depends_on('pyopencl')
+    project.depends_on('distro')
+    project.depends_on('packaging')
+    project.depends_on('lazy')
 
     # This dependency should be optional
     # as it requires CUDA to be installed.
@@ -61,7 +64,7 @@ def ensure_analyzed():
 
 @task
 @dependents(compile_sources)
-def compile_grpc():
+def compile_grpc(logger):
     from grpc_tools import protoc
     import pkg_resources
 
@@ -69,15 +72,19 @@ def compile_grpc():
 
     os.makedirs(gen_python, exist_ok=True)
     proto_include = pkg_resources.resource_filename('grpc_tools', '_proto')
-    exit_code = protoc.main([sys.argv[0],
-                             '-I=src/main/proto',
-                             '--python_out={}'.format(gen_python),
-                             '--grpc_python_out={}'.format(gen_python),
-                             *find_proto_files('./src/main/proto/xdcs_api/'),
-                             '-I{}'.format(proto_include)])
+    params = [sys.argv[0],
+                '-I=src/main/proto',
+                '--python_out={}'.format(gen_python),
+                '--grpc_python_out={}'.format(gen_python),
+                *find_proto_files('./src/main/proto/xdcs_api/'),
+                '-I{}'.format(proto_include)]
+    logger.debug("Executing protoc with parameters {}".format(params))
+    exit_code = protoc.main(params)
 
     if exit_code != 0:
         raise Exception('protoc failed ' + str(exit_code))
+    else:
+        logger.info("protoc succeeded")
 
 
 def find_proto_files(path):

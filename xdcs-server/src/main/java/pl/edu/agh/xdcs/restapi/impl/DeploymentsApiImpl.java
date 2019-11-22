@@ -7,6 +7,7 @@ import pl.edu.agh.xdcs.restapi.mapper.impl.FileDescriptionMapper;
 import pl.edu.agh.xdcs.restapi.model.DeploymentRequestDto;
 import pl.edu.agh.xdcs.restapi.model.FileDto;
 import pl.edu.agh.xdcs.restapi.util.RestUtils;
+import pl.edu.agh.xdcs.services.DeploymentFailedException;
 import pl.edu.agh.xdcs.services.DeploymentService;
 import pl.edu.agh.xdcs.services.TaskDefinitionService;
 import pl.edu.agh.xdcs.util.UriResolver;
@@ -48,8 +49,12 @@ public class DeploymentsApiImpl implements DeploymentsApi {
     public Response deployTaskDefinition(DeploymentRequestDto deploymentRequest) {
         TaskDefinitionEntity definition = definitionService.getTaskDefinition(deploymentRequest.getFrom())
                 .orElseThrow(NotFoundException::new);
-        String deploymentId = deploymentService.deploy(definition, deploymentRequest.getDescription());
-        return RestUtils.created(resolver.of(DeploymentsApi::getDeployment, deploymentId));
+        try {
+            String deploymentId = deploymentService.deploy(definition, deploymentRequest.getDescription());
+            return RestUtils.created(resolver.of(DeploymentsApi::getDeployment, deploymentId));
+        } catch (DeploymentFailedException e) {
+            return RestUtils.badRequest(e.getMessage());
+        }
     }
 
     @Override
