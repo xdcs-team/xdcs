@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { CloseCallback } from '../../services/modal.service';
 
 @Component({
   selector: 'app-confirmation',
@@ -25,7 +26,7 @@ export class ConfirmationComponent implements OnInit {
   type: 'danger' | 'warning' | 'success' = 'success';
 
   @Output()
-  confirm = new EventEmitter();
+  confirm = new EventEmitter<CloseCallback>();
 
   @Output()
   cancel = new EventEmitter();

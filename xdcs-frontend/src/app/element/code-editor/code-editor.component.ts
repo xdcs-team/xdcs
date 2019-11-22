@@ -1,6 +1,9 @@
 import { AfterViewInit, Component, Input, OnInit, ViewChild } from '@angular/core';
 import { AceEditorComponent } from 'ng2-ace-editor';
 
+import 'brace/theme/tomorrow';
+import 'brace/mode/java';
+
 @Component({
   selector: 'app-code-editor',
   templateUrl: './code-editor.component.html',

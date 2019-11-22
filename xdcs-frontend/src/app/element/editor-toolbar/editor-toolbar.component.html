@@ -1,12 +1,10 @@
-<div class="toolbar" *ngIf="editor.editable">
-  <ul>
-    <li>
-      <button class="btn btn-outline-primary"
-              [disabled]="!editor.editable.modified"
-              (click)="doSave()">
-        <fa-icon [icon]="farSave"></fa-icon>
-        Save
-      </button>
-    </li>
-  </ul>
-</div>
+<app-toolbar [buttons]="[buttonSave]" *ngIf="editor.editable">
+  <ng-template #buttonSave>
+    <button class="btn btn-outline-primary"
+            [disabled]="!editor.editable.modified"
+            (click)="doSave()">
+      <fa-icon [icon]="farSave"></fa-icon>
+      Save
+    </button>
+  </ng-template>
+</app-toolbar>

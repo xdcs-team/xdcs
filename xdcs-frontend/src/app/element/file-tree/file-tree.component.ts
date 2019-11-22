@@ -166,14 +166,14 @@ export class FileTreeComponent implements OnInit {
       text: 'Are you sure you want to delete ' + path + '?',
       confirmText: 'Delete',
       type: 'danger',
-    }).then(callback => {
+    }).then(closeCallback => {
       this.deleteHandler(path).then(() => {
         this.globalAlertsService.addAlert(
           new Alert('success', 'File deleted', 'short'));
       }).catch(() => {
         this.globalAlertsService.addAlert(
           new Alert('danger', 'Failed to delete the file', 'long'));
-      }).finally(() => callback());
+      }).finally(() => closeCallback());
     });
   }
 

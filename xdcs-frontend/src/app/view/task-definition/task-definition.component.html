@@ -6,6 +6,11 @@
   <as-split *ngIf="taskDefinition !== null" unit="percent"
             appSizeFill [fillHeight]="true">
     <as-split-area size="20">
+      <div class="file-tree-toolbar">
+        <app-file-tree-toolbar
+          (createFile)="onCreateFile($event)"
+          (createDirectory)="onCreateDirectory($event)"></app-file-tree-toolbar>
+      </div>
       <div class="split-area-container">
         <app-file-tree
           [loadHandler]="loadHandler"
@@ -14,9 +19,9 @@
           [openHandler]="openHandler"></app-file-tree>
       </div>
     </as-split-area>
-    <as-split-area size="60" #editorContainer>
+    <as-split-area size="60">
       <div *ngIf="!!editedFile" class="code-editor-area">
-        <div #editorToolbar class="code-editor-toolbar-wrapper">
+        <div class="code-editor-toolbar-wrapper">
           <app-editor-toolbar [editor]="codeEditor"></app-editor-toolbar>
         </div>
         <div class="code-editor-wrapper">

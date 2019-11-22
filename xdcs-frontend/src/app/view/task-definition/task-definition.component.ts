@@ -8,7 +8,7 @@ import { TaskDefinitionConfigDto } from '../../../api/models/task-definition-con
 import { Alert, GlobalAlertsService } from '../../services/global-alerts.service';
 import { TreeDirectory, TreeFileType } from '../../element/file-tree/file-tree.component';
 import { from, Observable, of } from 'rxjs';
-import { ModalService } from '../../services/modal.service';
+import { CloseCallback, ModalService } from '../../services/modal.service';
 import { CodeEditorComponent, Editable } from '../../element/code-editor/code-editor.component';
 
 @Component({
@@ -115,8 +115,8 @@ export class TaskDefinitionComponent implements OnInit {
           type: 'warning',
           confirmText: 'Open anyways',
         }))
-          .pipe(map(callback => {
-            callback();
+          .pipe(map(closeCallback => {
+            closeCallback();
             return content;
           }));
       } else {
@@ -140,6 +140,25 @@ export class TaskDefinitionComponent implements OnInit {
     }).toPromise().then(() => {
       this.editedFile.modified = false;
     });
+  }
+
+  onCreateFile([filename, closeCallback]: [string, CloseCallback]) {
+    return this.taskDefinitionsService.setTaskDefinitionWorkspaceFileContent({
+      taskDefinitionId: this.taskDefinitionId,
+      path: this.getSelectedDirectory() + '/' + filename,
+      body: new Blob(['']),
+    }).toPromise().then(() => {
+      closeCallback();
+    });
+  }
+
+  onCreateDirectory([filename, closeCallback]: [string, CloseCallback]) {
+    // TODO implement
+  }
+
+  private getSelectedDirectory(): string {
+    // TODO implement
+    return '';
   }
 }
 
