@@ -31,6 +31,7 @@ def check_version():
 def initialize(project):
     project.build_depends_on('flake8')
     project.build_depends_on('mockito')
+    project.build_depends_on('numpy')
     project.build_depends_on('protobuf')
     project.build_depends_on('grpcio')
     project.build_depends_on('grpcio-tools')
