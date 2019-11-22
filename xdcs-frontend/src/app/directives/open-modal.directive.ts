@@ -1,4 +1,4 @@
-import { Directive, HostListener, Input, TemplateRef } from '@angular/core';
+import { Directive, EventEmitter, HostListener, Input, Output, TemplateRef } from '@angular/core';
 import { ModalService } from '../services/modal.service';
 
 @Directive({
@@ -11,6 +11,9 @@ export class OpenModalDirective {
   @Input()
   modal: string | TemplateRef<any> | any;
 
+  @Output()
+  modalHidden = new EventEmitter();
+
   constructor(private modalService: ModalService) {
 
   }
@@ -18,5 +21,6 @@ export class OpenModalDirective {
   @HostListener('click')
   onClick() {
     this.modalService.show(this.modal, this.centered);
+    this.modalService.onHidden.subscribe(() => this.modalHidden.emit());
   }
 }
