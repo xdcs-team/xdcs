@@ -1,4 +1,4 @@
-import { Injectable, TemplateRef } from '@angular/core';
+import { EventEmitter, Injectable, TemplateRef } from '@angular/core';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap';
 import { ConfirmationComponent } from '../modal/confirmation/confirmation.component';
 
@@ -14,8 +14,12 @@ export interface ConfirmationParams {
   providedIn: 'root',
 })
 export class ModalService {
-  constructor(private modalService: BsModalService) {
+  onHide: EventEmitter<any>;
+  onHidden: EventEmitter<any>;
 
+  constructor(private modalService: BsModalService) {
+    this.onHide = modalService.onHide;
+    this.onHidden = modalService.onHidden;
   }
 
   show(modal: string | TemplateRef<any> | any, centered = true, parameters: object = {}): BsModalRef {

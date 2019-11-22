@@ -21,7 +21,15 @@ export class TaskDefinitionsComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.fetchTaskDefinitions();
+  }
+
+  private fetchTaskDefinitions(): void {
     this.taskDefinitionsService.getTaskDefinitions({})
       .subscribe(definitions => this.definitionList = definitions.items);
+  }
+
+  onModalHidden(): void {
+    this.fetchTaskDefinitions();
   }
 }
