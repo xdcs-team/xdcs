@@ -19,7 +19,7 @@ import { NodeComponent } from './view/node/node.component';
 import { NodePreviewComponent } from './element/node-preview/node-preview.component';
 import { TaskSummaryItemComponent } from './element/task-summary-item/task-summary-item.component';
 import { TaskSummaryListComponent } from './element/task-summary-list/task-summary-list.component';
-import { AlertModule, CollapseModule, ModalModule, SortableModule } from 'ngx-bootstrap';
+import { AlertModule, CollapseModule, ModalModule, SortableModule, TooltipModule } from 'ngx-bootstrap';
 import { OcticonDirective } from './directives/octicon.directive';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { GlobalAlertsComponent } from './element/global-alerts/global-alerts.component';
@@ -52,6 +52,8 @@ import { EditorToolbarComponent } from './element/editor-toolbar/editor-toolbar.
 import { ToolbarComponent } from './element/toolbar/toolbar.component';
 import { FileTreeToolbarComponent } from './element/file-tree-toolbar/file-tree-toolbar.component';
 import { CreateFileComponent } from './modal/create-file/create-file.component';
+import { TimeAgoPipe } from 'time-ago-pipe';
+import { CopyIconComponent } from './element/copy-icon/copy-icon.component';
 
 @NgModule({
   declarations: [
@@ -88,6 +90,8 @@ import { CreateFileComponent } from './modal/create-file/create-file.component';
     ToolbarComponent,
     FileTreeToolbarComponent,
     CreateFileComponent,
+    TimeAgoPipe,
+    CopyIconComponent,
   ],
   entryComponents: [
     NewTaskDefinitionComponent,
@@ -120,6 +124,7 @@ import { CreateFileComponent } from './modal/create-file/create-file.component';
     }),
     ClipboardModule,
     NgxSpinnerModule,
+    TooltipModule.forRoot(),
   ],
   providers: [
     HttpClientModule,

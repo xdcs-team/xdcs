@@ -1,10 +1,14 @@
 package pl.edu.agh.xdcs.restapi.impl;
 
+import pl.edu.agh.xdcs.db.dao.DeploymentDescriptorDao;
+import pl.edu.agh.xdcs.db.entity.DeploymentDescriptorEntity;
 import pl.edu.agh.xdcs.db.entity.TaskDefinitionEntity;
 import pl.edu.agh.xdcs.restapi.TaskDefinitionsApi;
+import pl.edu.agh.xdcs.restapi.mapper.impl.DeploymentMapper;
 import pl.edu.agh.xdcs.restapi.mapper.impl.FileDescriptionMapper;
 import pl.edu.agh.xdcs.restapi.mapper.impl.TaskDefinitionConfigMapper;
 import pl.edu.agh.xdcs.restapi.mapper.impl.TaskDefinitionMapper;
+import pl.edu.agh.xdcs.restapi.model.DeploymentDescriptorsDto;
 import pl.edu.agh.xdcs.restapi.model.FileDto;
 import pl.edu.agh.xdcs.restapi.model.TaskDefinitionConfigDto;
 import pl.edu.agh.xdcs.restapi.model.TaskDefinitionDto;
@@ -47,6 +51,12 @@ public class TaskDefinitionsApiImpl implements TaskDefinitionsApi {
     @Inject
     private FileDescriptionMapper fileDescriptionMapper;
 
+    @Inject
+    private DeploymentMapper deploymentMapper;
+
+    @Inject
+    private DeploymentDescriptorDao deploymentDescriptorDao;
+
     private TaskDefinitionEntity findTaskDefinition(String taskDefinitionId) {
         return taskDefinitionService.getTaskDefinition(taskDefinitionId)
                 .orElseThrow(() -> new NotFoundException("Task definition not found: " + taskDefinitionId));
@@ -76,6 +86,15 @@ public class TaskDefinitionsApiImpl implements TaskDefinitionsApi {
     public Response getTaskDefinitionConfiguration(String taskDefinitionId) {
         TaskDefinitionEntity definition = findTaskDefinition(taskDefinitionId);
         return Response.ok(taskDefinitionConfigMapper.toRestEntity(definition)).build();
+    }
+
+    @Override
+    public Response getTaskDefinitionDeployments(String taskDefinitionId) {
+        List<DeploymentDescriptorEntity> deployments = deploymentDescriptorDao.findByDefinitionId(taskDefinitionId);
+        return Response.ok(new DeploymentDescriptorsDto()
+                .from(0)
+                .total(deployments.size())
+                .items(deploymentMapper.toRestEntities(deployments))).build();
     }
 
     @Override

@@ -23,8 +23,7 @@
         <lombok.version>1.18.8</lombok.version>
         <slf4j.version>1.7.26</slf4j.version>
         <swagger-annotations.version>1.5.21</swagger-annotations.version>
-        <jackson.version>2.10.0</jackson.version>
-        <jackson-databind.version>2.10.0</jackson-databind.version>
+        <jackson.version>2.10.1</jackson.version>
         <sshd.version>2.3.0</sshd.version>
         <javassist.version>3.25.0-GA</javassist.version>
         <jaxb.version>2.1</jaxb.version>
@@ -152,13 +151,18 @@
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-databind</artifactId>
-                <version>${jackson-databind.version}</version>
+                <version>${jackson.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.fasterxml.jackson.jaxrs</groupId>
                 <artifactId>jackson-jaxrs-json-provider</artifactId>
                 <version>${jackson.version}</version>
                 <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.datatype</groupId>
+                <artifactId>jackson-datatype-jsr310</artifactId>
+                <version>${jackson.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.sshd</groupId>

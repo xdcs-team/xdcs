@@ -11,7 +11,6 @@ import pl.edu.agh.xdcs.grpc.ee.GrpcContextInterceptor;
 import pl.edu.agh.xdcs.grpc.security.GrpcSecurityGenerator;
 import pl.edu.agh.xdcs.util.ApplicationStartedEvent;
 import pl.edu.agh.xdcs.util.StringUtil;
-import sun.security.provider.X509Factory;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -107,13 +106,13 @@ public class GrpcServer {
             String stringEncoded = Base64.getEncoder().encodeToString(cert.getEncoded());
 
             // Begin Certificate
-            ret.append(X509Factory.BEGIN_CERT).append('\n');
+            ret.append("-----BEGIN CERTIFICATE-----\n");
 
             StringUtil.breakByLength(stringEncoded, 65)
                     .forEach(line -> ret.append(line).append('\n'));
 
             // End Certificate
-            ret.append(X509Factory.END_CERT).append('\n').append('\n');
+            ret.append("-----END CERTIFICATE-----\n\n");
         } catch (CertificateEncodingException e) {
             throw new AssertionError(e);
         }
