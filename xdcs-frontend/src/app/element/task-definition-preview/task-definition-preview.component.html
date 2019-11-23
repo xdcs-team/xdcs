@@ -1,11 +1,57 @@
-<h2>{{definition.name}}</h2>
-<div>ID {{definition.id}}</div>
+<div class="mb-5">
+  <button class="btn btn-success float-right"
+          (click)="showDeployModal()">
+    Deploy
+  </button>
+  <a class="btn btn-outline-success float-right mr-2"
+     [routerLink]="'/task-definitions/' + definition.id">
+    Edit
+  </a>
+  <h2>{{definition.name}}</h2>
+</div>
+<div class="row">
+  <div class="col-6">
+    <div>ID {{definition.id}}</div>
+  </div>
+  <div class="col-6">
+    <h4 class="mb-3">Deployments</h4>
+    <table *ngIf="deploymentDescriptors && deploymentDescriptors.items.length > 0; else noDeployments"
+           class="table w-100">
+      <colgroup>
+        <col/>
+        <col/>
+        <col style="width: 60%;"/>
+      </colgroup>
+      <thead>
+      <tr>
+        <th scope="col">ID</th>
+        <th scope="col">Deployed</th>
+        <th scope="col">Description</th>
+      </tr>
+      </thead>
 
-<button class="btn btn-success float-right"
-        (click)="showDeployModal()">
-  Deploy
-</button>
-<a class="btn btn-outline-success float-right"
-   [routerLink]="'/task-definitions/' + definition.id">
-  Edit
-</a>
+      <tbody>
+      <ng-container *ngFor="let deployment of deploymentDescriptors.items">
+        <tr>
+          <th scope="row">
+            {{ deployment.id | slice:0:8 }}
+            <app-copy-icon [content]="deployment.id"></app-copy-icon>
+          </th>
+          <td>
+            <span tooltip="{{ deployment.timeDeployed | date:'medium' }}">
+              {{ deployment.timeDeployed | timeAgo }}
+            </span>
+          </td>
+          <td *ngIf="deployment.description; else noDescription">{{ deployment.description }}</td>
+          <ng-template #noDescription>
+            <td><i class="text-black-50">No description</i></td>
+          </ng-template>
+        </tr>
+      </ng-container>
+      </tbody>
+    </table>
+    <ng-template #noDeployments>
+      <app-no-data size="2rem" message="No deployments"></app-no-data>
+    </ng-template>
+  </div>
+</div>

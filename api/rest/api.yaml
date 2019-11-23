@@ -4,6 +4,10 @@ info:
   title: XDCS REST API
   version: 0.1.0-SNAPSHOT
 
+servers:
+  - url: http://127.0.0.1:32080/xdcs/rest
+    description: Local server run with docker-compose
+
 paths:
   /nodes:
     get:
@@ -216,6 +220,25 @@ paths:
         204:
           description: OK
 
+  /task-definitions/{taskDefinitionId}/deployments:
+    get:
+      tags:
+        - Task Definitions
+      operationId: getTaskDefinitionDeployments
+      parameters:
+        - in: path
+          name: taskDefinitionId
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeploymentDescriptorsDto'
+
   /task-definitions/{taskDefinitionId}/configuration:
     get:
       tags:
@@ -284,7 +307,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/DeploymentDto'
+                $ref: '#/components/schemas/DeploymentDescriptorDto'
 
   /deployments/{deploymentId}/workspace:
     get:
@@ -439,15 +462,30 @@ components:
         total:
           type: integer
 
-    DeploymentDto:
+    DeploymentDescriptorDto:
       type: object
       properties:
+        id:
+          type: string
         taskDefinitionId:
           type: string
-        parent:
+        description:
           type: string
-        root:
+        timeDeployed:
           type: string
+          format: 'date-time'
+
+    DeploymentDescriptorsDto:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/DeploymentDescriptorDto'
+        from:
+          type: integer
+        total:
+          type: integer
 
     FileType:
       type: string
