@@ -2,7 +2,30 @@ import { AfterViewInit, Component, Input, OnInit, ViewChild } from '@angular/cor
 import { AceEditorComponent } from 'ng2-ace-editor';
 
 import 'brace/theme/tomorrow';
+import 'brace/mode/c_cpp';
+import 'brace/mode/clojure';
+import 'brace/mode/csharp';
+import 'brace/mode/dockerfile';
+import 'brace/mode/elixir';
+import 'brace/mode/groovy';
+import 'brace/mode/haskell';
+import 'brace/mode/javascript';
 import 'brace/mode/java';
+import 'brace/mode/json';
+import 'brace/mode/julia';
+import 'brace/mode/kotlin';
+import 'brace/mode/makefile';
+import 'brace/mode/markdown';
+import 'brace/mode/plain_text';
+import 'brace/mode/properties';
+import 'brace/mode/python';
+import 'brace/mode/rust';
+import 'brace/mode/scala';
+import 'brace/mode/sh';
+import 'brace/mode/toml';
+import 'brace/mode/xml';
+import 'brace/mode/yaml';
+
 
 @Component({
   selector: 'app-code-editor',
@@ -80,9 +103,36 @@ export class CodeEditorComponent implements OnInit, AfterViewInit {
   }
 }
 
+export enum EditableMode {
+  C_CPP = 'c_cpp',
+  CLOJURE = 'clojure',
+  C_SHARP = 'csharp',
+  DOCKERFILE = 'dockerfile',
+  ELIXIR = 'elixir',
+  GROOVY = 'groovy',
+  HASKELL = 'haskell',
+  JAVASCRIPT = 'javascript',
+  JAVA = 'java',
+  JSON = 'json',
+  JULIA = 'julia',
+  KOTLIN = 'kotlin',
+  MAKEFILE = 'makefile',
+  MARKDOWN = 'markdown',
+  PLAIN_TEXT = 'plain_text',
+  PROPERTIES = 'properties',
+  PYTHON = 'python',
+  RUST = 'rust',
+  SCALA = 'scala',
+  SH = 'sh',
+  TOML = 'toml',
+  XML = 'xml',
+  YAML = 'yaml',
+}
+
 export interface Editable {
   text: string;
   modified: boolean;
+  mode: EditableMode;
 
   save(): Promise<void>;
 }
