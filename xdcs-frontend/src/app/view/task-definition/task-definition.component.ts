@@ -9,7 +9,7 @@ import { Alert, GlobalAlertsService } from '../../services/global-alerts.service
 import { TreeDirectory, TreeFileType } from '../../element/file-tree/file-tree.component';
 import { from, Observable, of } from 'rxjs';
 import { CloseCallback, ModalService } from '../../services/modal.service';
-import { CodeEditorComponent, Editable } from '../../element/code-editor/code-editor.component';
+import { CodeEditorComponent, Editable, EditableMode } from '../../element/code-editor/code-editor.component';
 
 @Component({
   selector: 'app-task-definition',
@@ -128,6 +128,7 @@ export class TaskDefinitionComponent implements OnInit {
         text: content,
         save: () => this.save(),
         modified: false,
+        mode: getModeFromPath(path),
       };
     });
   }
@@ -164,4 +165,92 @@ export class TaskDefinitionComponent implements OnInit {
 
 interface EditedFile extends Editable {
   path: string;
+}
+
+
+function getModeFromPath(path: string): EditableMode {
+  const filename = path.substr(path.lastIndexOf('/') + 1);
+  if (filename.startsWith('Dockerfile')) {
+    return EditableMode.DOCKERFILE;
+  }
+
+  if (filename.toLowerCase() === 'makefile') {
+    return EditableMode.MAKEFILE;
+  }
+
+  const extension = path.substr(path.lastIndexOf('.') + 1);
+  switch (extension) {
+    default:
+      return EditableMode.PLAIN_TEXT;
+
+    case 'js':
+      return EditableMode.JAVASCRIPT;
+
+    case 'java':
+      return EditableMode.JAVA;
+
+    case 'sh':
+      return EditableMode.SH;
+
+    case 'json':
+      return EditableMode.JSON;
+
+    case 'xml':
+      return EditableMode.XML;
+
+    case 'yaml':
+    case 'yml':
+      return EditableMode.YAML;
+
+    case 'c':
+    case 'cpp':
+    case 'h':
+    case 'hpp':
+      return EditableMode.C_CPP;
+
+    case 'cs':
+      return EditableMode.C_SHARP;
+
+    case 'clj':
+    case 'cljs':
+    case 'cljc':
+    case 'edn':
+      return EditableMode.CLOJURE;
+
+    case 'rs':
+    case 'rlib':
+      return EditableMode.RUST;
+
+    case 'scala':
+      return EditableMode.SCALA;
+
+    case 'properties':
+    case 'conf':
+      return EditableMode.PROPERTIES;
+
+    case 'toml':
+      return EditableMode.TOML;
+
+    case 'md':
+      return EditableMode.MARKDOWN;
+
+    case 'jl':
+      return EditableMode.JULIA;
+
+    case 'py':
+      return EditableMode.PYTHON;
+
+    case 'groovy':
+      return EditableMode.GROOVY;
+
+    case 'kt':
+      return EditableMode.KOTLIN;
+
+    case 'hs':
+      return EditableMode.HASKELL;
+
+    case 'ex':
+    case 'exs':
+      return EditableMode.ELIXIR;
+  }
 }
