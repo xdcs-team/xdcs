@@ -56,6 +56,7 @@ import { TimeAgoPipe } from 'time-ago-pipe';
 import { CopyIconComponent } from './element/copy-icon/copy-icon.component';
 import { UploadFileComponent } from './element/upload-file/upload-file.component';
 import { ngfModule } from 'angular-file';
+import { AutoFocusDirective } from './directives/auto-focus.directive';
 
 @NgModule({
   declarations: [
@@ -95,6 +96,7 @@ import { ngfModule } from 'angular-file';
     TimeAgoPipe,
     CopyIconComponent,
     UploadFileComponent,
+    AutoFocusDirective,
   ],
   entryComponents: [
     NewTaskDefinitionComponent,

@@ -13,6 +13,9 @@ export class CreateFileComponent implements OnInit {
   @Input()
   isDirectory = false;
 
+  @Input()
+  parent = null;
+
   @Output()
   submit = new EventEmitter<[string, CloseCallback]>();
 

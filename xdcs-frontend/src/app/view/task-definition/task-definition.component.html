@@ -8,15 +8,17 @@
     <as-split-area size="20">
       <div class="file-tree-toolbar">
         <app-file-tree-toolbar
-          (createFile)="onCreateFile($event)"
-          (createDirectory)="onCreateDirectory($event)"></app-file-tree-toolbar>
+          (createFile)="createFile('/')"
+          (createDirectory)="createDirectory('/')"></app-file-tree-toolbar>
       </div>
       <div class="split-area-container">
         <app-file-tree
           [loadHandler]="loadHandler"
           [moveHandler]="moveHandler"
           [deleteHandler]="deleteHandler"
-          [openHandler]="openHandler"></app-file-tree>
+          [openHandler]="openHandler"
+          [createDirectoryHandler]="createDirectoryHandler"
+          [createFileHandler]="createFileHandler"></app-file-tree>
       </div>
     </as-split-area>
     <as-split-area size="60">

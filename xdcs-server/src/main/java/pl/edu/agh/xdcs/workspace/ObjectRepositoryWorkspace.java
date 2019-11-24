@@ -13,6 +13,7 @@ import java.nio.file.attribute.PosixFilePermission;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -156,5 +157,15 @@ class ObjectRepositoryWorkspace implements Workspace {
     @Override
     public void setup() {
         // nothing to set up
+    }
+
+    @Override
+    public void createFile(String path, FileDescription fileDescription) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void setPermissions(String path, Set<PosixFilePermission> permissions) {
+        throw new UnsupportedOperationException();
     }
 }

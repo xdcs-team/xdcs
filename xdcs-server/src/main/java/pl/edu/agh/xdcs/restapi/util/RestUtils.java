@@ -18,12 +18,20 @@ public class RestUtils {
     }
 
     public static Response badRequest(String reason) {
-        RestErrorResponse entity = RestErrorResponse.builder()
-                .error(reason)
-                .build();
         return Response.status(Response.Status.BAD_REQUEST)
                 .type(MediaType.APPLICATION_JSON_TYPE)
-                .entity(entity)
+                .entity(RestErrorResponse.builder()
+                        .error(reason)
+                        .build())
+                .build();
+    }
+
+    public static Response unprocessableEntity(String reason) {
+        return Response.status(422)
+                .type(MediaType.APPLICATION_JSON_TYPE)
+                .entity(RestErrorResponse.builder()
+                        .error(reason)
+                        .build())
                 .build();
     }
 

@@ -6,6 +6,7 @@ import pl.edu.agh.xdcs.db.entity.TaskDefinitionEntity;
 import pl.edu.agh.xdcs.restapi.TaskDefinitionsApi;
 import pl.edu.agh.xdcs.restapi.mapper.impl.DeploymentMapper;
 import pl.edu.agh.xdcs.restapi.mapper.impl.FileDescriptionMapper;
+import pl.edu.agh.xdcs.restapi.mapper.impl.FileTypeMapper;
 import pl.edu.agh.xdcs.restapi.mapper.impl.TaskDefinitionConfigMapper;
 import pl.edu.agh.xdcs.restapi.mapper.impl.TaskDefinitionMapper;
 import pl.edu.agh.xdcs.restapi.model.DeploymentDescriptorsDto;
@@ -29,7 +30,11 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.NoSuchFileException;
+import java.nio.file.attribute.PosixFilePermission;
+import java.nio.file.attribute.PosixFilePermissions;
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 /**
  * @author Kamil Jarosz
@@ -56,6 +61,9 @@ public class TaskDefinitionsApiImpl implements TaskDefinitionsApi {
 
     @Inject
     private DeploymentDescriptorDao deploymentDescriptorDao;
+
+    @Inject
+    private FileTypeMapper fileTypeMapper;
 
     private TaskDefinitionEntity findTaskDefinition(String taskDefinitionId) {
         return taskDefinitionService.getTaskDefinition(taskDefinitionId)
@@ -132,7 +140,7 @@ public class TaskDefinitionsApiImpl implements TaskDefinitionsApi {
             TaskDefinitionEntity definition = findTaskDefinition(taskDefinitionId);
             Workspace ws = taskDefinitionService.getWorkspace(definition);
             if (ws.readFileDescription(path).orElseThrow(NotFoundException::new).getType() == FileDescription.FileType.DIRECTORY) {
-                return Response.status(422).build();
+                return RestUtils.unprocessableEntity("File is a directory");
             }
 
             InputStream file = ws.openFile(path)
@@ -165,7 +173,37 @@ public class TaskDefinitionsApiImpl implements TaskDefinitionsApi {
 
     @Override
     public Response setTaskDefinitionWorkspaceFile(String taskDefinitionId, String path, FileDto file) {
-        throw new RuntimeException();
+        FileDescription.FileType fileType = fileTypeMapper.toModelEntity(file.getType());
+        Optional<Set<PosixFilePermission>> filePermissions = Optional.ofNullable(file.getPermissions())
+                .map(PosixFilePermissions::fromString);
+        if (file.getChildren() != null && !file.getChildren().isEmpty()) {
+            return RestUtils.badRequest("Cannot change children");
+        }
+
+        TaskDefinitionEntity definition = findTaskDefinition(taskDefinitionId);
+        Workspace workspace = taskDefinitionService.getWorkspace(definition);
+        try {
+            Optional<FileDescription> desc = workspace.readFileDescription(path);
+
+            if (!desc.isPresent()) {
+                workspace.createFile(path, FileDescription.builder()
+                        .type(fileType)
+                        .permissions(filePermissions.orElse(null))
+                        .build());
+            } else {
+                if (fileType != desc.get().getType()) {
+                    return RestUtils.badRequest("Cannot change file type");
+                }
+
+                if (filePermissions.isPresent()) {
+                    workspace.setPermissions(path, filePermissions.get());
+                }
+            }
+        } catch (IOException e) {
+            return RestUtils.serverError(e);
+        }
+
+        return Response.noContent().build();
     }
 
     @Override

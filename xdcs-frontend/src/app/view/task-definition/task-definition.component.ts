@@ -6,10 +6,14 @@ import { first, flatMap, map } from 'rxjs/operators';
 import { ActivatedRoute } from '@angular/router';
 import { TaskDefinitionConfigDto } from '../../../api/models/task-definition-config-dto';
 import { Alert, GlobalAlertsService } from '../../services/global-alerts.service';
-import { TreeDirectory, TreeFileType } from '../../element/file-tree/file-tree.component';
+import { FileTreeComponent, TreeDirectory, TreeFileType } from '../../element/file-tree/file-tree.component';
 import { from, Observable, of } from 'rxjs';
-import { CloseCallback, ModalService } from '../../services/modal.service';
-import { CodeEditorComponent, Editable, EditableMode } from '../../element/code-editor/code-editor.component';
+import { ModalService } from '../../services/modal.service';
+import { Editable, EditableMode } from '../../element/code-editor/code-editor.component';
+import { FileDto } from '../../../api/models/file-dto';
+import { FileType } from '../../../api/models/file-type';
+import { CreateFileComponent } from '../../modal/create-file/create-file.component';
+import { PathUtils } from '../../utils/path-utils';
 
 @Component({
   selector: 'app-task-definition',
@@ -20,14 +24,19 @@ import { CodeEditorComponent, Editable, EditableMode } from '../../element/code-
 @NavbarItem('Task Definition')
 export class TaskDefinitionComponent implements OnInit {
   private taskDefinitionId: string;
-  taskDefinition: TaskDefinitionDto = null;
 
+  @ViewChild(FileTreeComponent, { static: false })
+  private fileTree: FileTreeComponent;
+
+  taskDefinition: TaskDefinitionDto = null;
   editedFile: EditedFile;
 
   readonly loadHandler = path => this.loadFile(path);
   readonly moveHandler = (fromPath, toPath) => this.moveFile(fromPath, toPath);
   readonly deleteHandler = path => this.deleteFile(path);
   readonly openHandler = path => this.openFile(path);
+  readonly createFileHandler = path => this.createFile(path);
+  readonly createDirectoryHandler = path => this.createDirectory(path);
 
   constructor(private taskDefinitionsService: TaskDefinitionsService,
               private route: ActivatedRoute,
@@ -130,6 +139,38 @@ export class TaskDefinitionComponent implements OnInit {
     });
   }
 
+  private createFile(path: string): void {
+    return this.modalService.show(CreateFileComponent, true, {
+      isDirectory: false,
+      parent: PathUtils.rstrip(path) + '/',
+    }).content.submit.subscribe(([filename, closeCallback]) => {
+      this.taskDefinitionsService.setTaskDefinitionWorkspaceFileContent({
+        taskDefinitionId: this.taskDefinitionId,
+        path: PathUtils.join(path, filename),
+        body: new Blob(['']),
+      }).toPromise()
+        .then(closeCallback)
+        .then(() => this.fileTree.refreshDirectory(path));
+    });
+  }
+
+  private createDirectory(path: string): void {
+    this.modalService.show(CreateFileComponent, true, {
+      isDirectory: true,
+      parent: PathUtils.rstrip(path) + '/',
+    }).content.submit.subscribe(([filename, closeCallback]) => {
+      return this.taskDefinitionsService.setTaskDefinitionWorkspaceFile({
+        taskDefinitionId: this.taskDefinitionId,
+        path: PathUtils.join(path, filename),
+        body: {
+          type: FileType.Directory,
+        } as FileDto,
+      }).toPromise()
+        .then(closeCallback)
+        .then(() => this.fileTree.refreshDirectory(path));
+    });
+  }
+
   private save(): Promise<void> {
     return this.taskDefinitionsService.setTaskDefinitionWorkspaceFileContent({
       taskDefinitionId: this.taskDefinitionId,
@@ -138,25 +179,6 @@ export class TaskDefinitionComponent implements OnInit {
     }).toPromise().then(() => {
       this.editedFile.modified = false;
     });
-  }
-
-  onCreateFile([filename, closeCallback]: [string, CloseCallback]) {
-    return this.taskDefinitionsService.setTaskDefinitionWorkspaceFileContent({
-      taskDefinitionId: this.taskDefinitionId,
-      path: this.getSelectedDirectory() + '/' + filename,
-      body: new Blob(['']),
-    }).toPromise().then(() => {
-      closeCallback();
-    });
-  }
-
-  onCreateDirectory([filename, closeCallback]: [string, CloseCallback]) {
-    // TODO implement
-  }
-
-  private getSelectedDirectory(): string {
-    // TODO implement
-    return '';
   }
 }
 

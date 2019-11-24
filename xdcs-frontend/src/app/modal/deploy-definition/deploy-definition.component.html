@@ -3,8 +3,10 @@
   <input type="text"
          class="form-control mb-3"
          id="deployment-description"
+         appAutoFocus
          placeholder="Description"
-         [(ngModel)]="description"/>
+         [(ngModel)]="description"
+         (keyup.enter)="doDeploy()"/>
 
   <input
     type="submit"
