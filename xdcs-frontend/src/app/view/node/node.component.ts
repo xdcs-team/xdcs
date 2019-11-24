@@ -12,11 +12,13 @@ import { faCircle } from '@fortawesome/free-solid-svg-icons';
   styleUrls: ['./node.component.less'],
 })
 export class NodeComponent implements OnInit {
-  node: NodeDto = null;
+  faCircle = faCircle;
+
   nodeId: string;
+  node: NodeDto = null;
+
   @Input()
   data: NodeCardData;
-  private faCircle = faCircle;
 
   constructor(private nodesService: NodesService,
               private route: ActivatedRoute) {

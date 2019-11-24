@@ -14,7 +14,7 @@ export class NodeCardsComponent implements OnInit {
   @Input()
   cards: Array<NodeCardData> = [];
 
-  private queried = false;
+  queried = false;
 
   constructor(private nodesService: NodesService) {
 

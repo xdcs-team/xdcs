@@ -7,7 +7,7 @@ import { TaskExecutionStatus } from '../task-summary-item/task-summary-item.comp
   styleUrls: ['./task-summary-list.component.less'],
 })
 export class TaskSummaryListComponent implements OnInit {
-  private TaskExecutionStatus = TaskExecutionStatus;
+  TaskExecutionStatus = TaskExecutionStatus;
 
   constructor() {
 

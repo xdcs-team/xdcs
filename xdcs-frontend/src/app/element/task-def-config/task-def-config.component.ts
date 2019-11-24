@@ -9,24 +9,24 @@ import { KernelParamDto } from '../../../api/models/kernel-param-dto';
   styleUrls: ['./task-def-config.component.less'],
 })
 export class TaskDefConfigComponent implements OnInit {
-  private faChevronUp = faChevronUp;
-  private faChevronDown = faChevronDown;
-  private faTrash = faTrash;
-  private faPlus = faPlus;
+  faChevronUp = faChevronUp;
+  faChevronDown = faChevronDown;
+  faTrash = faTrash;
+  faPlus = faPlus;
 
-  private types: Map<string, string> = new Map([
+  types: Map<string, string> = new Map([
     ['opencl', 'OpenCL'],
     ['cuda', 'CUDA'],
     ['docker', 'Docker'],
     ['script', 'Script'],
   ]);
 
-  private paramTypes: Map<string, string> = new Map([
+  paramTypes: Map<string, string> = new Map([
     ['simple', 'Simple'],
     ['pointer', 'Pointer'],
   ]);
 
-  private paramDirections: Map<string, string> = new Map([
+  paramDirections: Map<string, string> = new Map([
     ['in', 'in'],
     ['out', 'out'],
     ['inout', 'in/out'],

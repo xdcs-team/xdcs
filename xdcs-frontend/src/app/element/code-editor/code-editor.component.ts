@@ -39,7 +39,7 @@ export class CodeEditorComponent implements OnInit, AfterViewInit {
   @ViewChild('wrapper', { static: false })
   private readonly wrapper;
 
-  private readonly options = {
+  readonly options = {
     fontFamily: 'Roboto Mono',
     fontSize: '14pt',
     scrollPastEnd: 0.8,

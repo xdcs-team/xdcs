@@ -19,7 +19,7 @@ export class FullscreenListComponent {
   @Input()
   data: Array<any>;
 
-  private selected: any = undefined;
+  selected: any = undefined;
 
   constructor() {
 
