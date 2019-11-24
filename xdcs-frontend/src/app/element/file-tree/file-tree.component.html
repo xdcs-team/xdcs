@@ -1,8 +1,24 @@
-<tree-root [nodes]="nodes" [options]="options">
+<tree-root [nodes]="nodes"
+           [options]="options">
+  <ng-template #treeNodeFullTemplate let-templates="templates" let-node="node" let-index="index">
+    <div
+      [class]="node.getClass()"
+      [class.tree-node]="true"
+      [class.tree-node-expanded]="node.isExpanded && node.hasChildren"
+      [class.tree-node-collapsed]="node.isCollapsed && node.hasChildren"
+      [class.tree-node-leaf]="node.isLeaf"
+      [class.tree-node-active]="node.isActive"
+      [class.tree-node-focused]="node.isFocused"
+      [contextMenu]="node.data.model.type === TreeFileType.DIRECTORY ? directoryContextMenu : fileContextMenu"
+      [contextMenuSubject]="node">
+      <tree-node-drop-slot *ngIf="index === 0" [dropIndex]="node.index" [node]="node.parent"></tree-node-drop-slot>
+      <tree-node-wrapper [node]="node" [index]="index" [templates]="templates"></tree-node-wrapper>
+      <tree-node-children [node]="node" [templates]="templates"></tree-node-children>
+      <tree-node-drop-slot [dropIndex]="node.index + 1" [node]="node.parent"></tree-node-drop-slot>
+    </div>
+  </ng-template>
   <ng-template #treeNodeTemplate let-node let-index="index">
-     <span *ngIf="getModelFromNode(node) as model"
-           [contextMenu]="fileContextMenu"
-           [contextMenuSubject]="node">
+     <span *ngIf="getModelFromNode(node) as model">
       <fa-icon [icon]="getIcon(model, node.isExpanded)"
                [fixedWidth]="true"
                class="mr-1"></fa-icon>
@@ -44,5 +60,54 @@
     <fa-icon [icon]="faWrench"
              [fixedWidth]="true"></fa-icon>
     Attributes
+  </ng-template>
+</context-menu>
+
+<context-menu #directoryContextMenu>
+  <ng-template contextMenuItem [subMenu]="newFileContextMenu">
+    <fa-icon [icon]="faPlus"
+             [fixedWidth]="true"></fa-icon>
+    New
+  </ng-template>
+  <ng-template contextMenuItem divider="true"></ng-template>
+  <ng-template contextMenuItem (execute)="startRenaming($event.item)" [enabled]="!!renameHandler">
+    <fa-icon [icon]="farEdit"
+             [fixedWidth]="true"></fa-icon>
+    Rename
+  </ng-template>
+  <ng-template contextMenuItem (execute)="startDeleting($event.item)" [enabled]="!!deleteHandler">
+    <fa-icon [icon]="farTrashAlt"
+             [fixedWidth]="true"></fa-icon>
+    Delete
+  </ng-template>
+  <ng-template contextMenuItem divider="true"></ng-template>
+  <ng-template contextMenuItem (execute)="copyToClipboard(getModelFromNode($event.item).name)">
+    <fa-icon [icon]="farClipboard"
+             [fixedWidth]="true"></fa-icon>
+    Copy name
+  </ng-template>
+  <ng-template contextMenuItem (execute)="copyToClipboard(nodeToPath($event.item))">
+    <fa-icon [icon]="farClipboard"
+             [fixedWidth]="true"></fa-icon>
+    Copy path
+  </ng-template>
+  <ng-template contextMenuItem divider="true"></ng-template>
+  <ng-template contextMenuItem (execute)="openAttributes($event.item)">
+    <fa-icon [icon]="faWrench"
+             [fixedWidth]="true"></fa-icon>
+    Attributes
+  </ng-template>
+</context-menu>
+
+<context-menu #newFileContextMenu>
+  <ng-template contextMenuItem (execute)="startCreatingDirectory($event.item)">
+    <fa-icon [icon]="faFolder"
+             [fixedWidth]="true"></fa-icon>
+    Directory
+  </ng-template>
+  <ng-template contextMenuItem (execute)="startCreatingFile($event.item)">
+    <fa-icon [icon]="faFile"
+             [fixedWidth]="true"></fa-icon>
+    Empty file
   </ng-template>
 </context-menu>

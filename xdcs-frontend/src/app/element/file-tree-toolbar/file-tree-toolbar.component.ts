@@ -1,7 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { faFolderPlus, faPlusCircle } from '@fortawesome/free-solid-svg-icons';
-import { CloseCallback, ModalService } from '../../services/modal.service';
-import { CreateFileComponent } from '../../modal/create-file/create-file.component';
+import { ModalService } from '../../services/modal.service';
 
 @Component({
   selector: 'app-file-tree-toolbar',
@@ -16,10 +15,10 @@ export class FileTreeToolbarComponent implements OnInit {
   canCreateFile = true;
 
   @Output()
-  createFile = new EventEmitter<[string, CloseCallback]>();
+  createFile = new EventEmitter<void>();
 
   @Output()
-  createDirectory = new EventEmitter<[string, CloseCallback]>();
+  createDirectory = new EventEmitter<void>();
 
   constructor(private modalService: ModalService) {
 
@@ -30,18 +29,10 @@ export class FileTreeToolbarComponent implements OnInit {
   }
 
   doCreateFile() {
-    this.modalService.show(CreateFileComponent, true, {
-      isDirectory: false,
-    }).content.submit.subscribe(([filename, closeCallback]) => {
-      this.createFile.emit([filename, closeCallback]);
-    });
+    this.createFile.emit();
   }
 
   doCreateDirectory() {
-    this.modalService.show(CreateFileComponent, true, {
-      isDirectory: true,
-    }).content.submit.subscribe(([filename, closeCallback]) => {
-      this.createDirectory.emit([filename, closeCallback]);
-    });
+    this.createDirectory.emit();
   }
 }

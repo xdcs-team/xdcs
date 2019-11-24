@@ -1,6 +1,7 @@
 package pl.edu.agh.xdcs.workspace;
 
 import com.google.common.io.ByteStreams;
+import pl.edu.agh.xdcs.util.DeletingFileVisitor;
 import pl.edu.agh.xdcs.util.FsUtils;
 
 import java.io.IOException;
@@ -12,8 +13,10 @@ import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.attribute.PosixFileAttributeView;
 import java.nio.file.attribute.PosixFileAttributes;
+import java.nio.file.attribute.PosixFilePermission;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -38,7 +41,12 @@ class FilesystemWorkspace implements Workspace {
     @Override
     public Optional<FileDescription> readFileDescription(String path) throws IOException {
         Path resolved = resolveWorkspacePath(path);
-        PosixFileAttributes attributes = readPosixAttributes(resolved);
+        PosixFileAttributes attributes;
+        try {
+            attributes = readPosixAttributes(resolved);
+        } catch (IOException e) {
+            return Optional.empty();
+        }
 
         FileDescription.FileType type = readFileType(attributes).orElse(null);
         List<FileDescription.Entry> children;
@@ -61,13 +69,9 @@ class FilesystemWorkspace implements Workspace {
                 .build());
     }
 
-    private PosixFileAttributes readPosixAttributes(Path resolved) {
+    private PosixFileAttributes readPosixAttributes(Path resolved) throws IOException {
         PosixFileAttributeView view = Files.getFileAttributeView(resolved, PosixFileAttributeView.class);
-        try {
-            return view.readAttributes();
-        } catch (IOException e) {
-            throw new UncheckedIOException(e);
-        }
+        return view.readAttributes();
     }
 
     private Optional<FileDescription.FileType> readFileType(PosixFileAttributes attributes) {
@@ -83,12 +87,16 @@ class FilesystemWorkspace implements Workspace {
     }
 
     private FileDescription.Entry readEntry(Path path) {
-        PosixFileAttributes attributes = readPosixAttributes(path);
-        return FileDescription.Entry.builder()
-                .name(path.getFileName().toString())
-                .type(readFileType(attributes).orElse(null))
-                .permissions(attributes.permissions())
-                .build();
+        try {
+            PosixFileAttributes attributes = readPosixAttributes(path);
+            return FileDescription.Entry.builder()
+                    .name(path.getFileName().toString())
+                    .type(readFileType(attributes).orElse(null))
+                    .permissions(attributes.permissions())
+                    .build();
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
     }
 
     @Override
@@ -111,11 +119,36 @@ class FilesystemWorkspace implements Workspace {
     @Override
     public void deleteFile(String path) throws IOException {
         Path resolved = resolveWorkspacePath(path);
-        Files.deleteIfExists(resolved);
+        if (Files.isDirectory(resolved)) {
+            Files.walkFileTree(resolved, new DeletingFileVisitor());
+        } else {
+            Files.deleteIfExists(resolved);
+        }
     }
 
     @Override
     public void setup() throws IOException {
         Files.createDirectories(root);
+    }
+
+    @Override
+    public void createFile(String path, FileDescription fileDescription) throws IOException {
+        Path resolved = resolveWorkspacePath(path);
+        Files.createDirectories(resolved.getParent());
+        if (fileDescription.getType() == FileDescription.FileType.DIRECTORY) {
+            Files.createDirectory(resolved);
+        } else {
+            Files.createFile(resolved);
+        }
+
+        if (fileDescription.getPermissions() != null) {
+            Files.setPosixFilePermissions(resolved, fileDescription.getPermissions());
+        }
+    }
+
+    @Override
+    public void setPermissions(String path, Set<PosixFilePermission> permissions) throws IOException {
+        Path resolved = resolveWorkspacePath(path);
+        Files.setPosixFilePermissions(resolved, permissions);
     }
 }

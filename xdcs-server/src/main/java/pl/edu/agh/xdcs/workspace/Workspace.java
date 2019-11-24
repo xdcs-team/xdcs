@@ -5,7 +5,9 @@ import pl.edu.agh.xdcs.or.ObjectRepository;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
+import java.nio.file.attribute.PosixFilePermission;
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * @author Kamil Jarosz
@@ -28,4 +30,8 @@ public interface Workspace {
     void deleteFile(String path) throws IOException;
 
     void setup() throws IOException;
+
+    void createFile(String path, FileDescription fileDescription) throws IOException;
+
+    void setPermissions(String path, Set<PosixFilePermission> permissions) throws IOException;
 }

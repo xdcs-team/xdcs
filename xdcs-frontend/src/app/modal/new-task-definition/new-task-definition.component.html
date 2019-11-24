@@ -4,8 +4,10 @@
          class="form-control mb-3"
          id="task-definition-name"
          placeholder="Name"
+         appAutoFocus
          required="required"
-         [(ngModel)]="taskDefinition.name"/>
+         [(ngModel)]="taskDefinition.name"
+         (keyup.enter)="submit()"/>
 
   <input
     type="submit"

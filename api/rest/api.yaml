@@ -504,7 +504,6 @@ components:
             $ref: '#/components/schemas/FileEntryDto'
       required:
         - type
-        - permissions
 
     FileEntryDto:
       type: object

@@ -1,5 +1,5 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { ITreeOptions, KEYS, TREE_ACTIONS, TreeModel, TreeNode } from 'angular-tree-component';
+import { Component, Input, OnInit, ViewChild } from '@angular/core';
+import { IActionMapping, ITreeOptions, KEYS, TREE_ACTIONS, TreeComponent, TreeNode } from 'angular-tree-component';
 import {
   faExternalLinkAlt,
   faFile,
@@ -10,12 +10,14 @@ import {
   faFolder,
   faFolderOpen,
   faLink,
+  faPlus,
   faWrench,
 } from '@fortawesome/free-solid-svg-icons';
 import { faClipboard as farClipboard, faEdit as farEdit, faTrashAlt as farTrashAlt, } from '@fortawesome/free-regular-svg-icons';
 import { Alert, GlobalAlertsService } from '../../services/global-alerts.service';
 import { ClipboardService } from 'ngx-clipboard';
 import { ModalService } from '../../services/modal.service';
+import { PathUtils } from '../../utils/path-utils';
 
 @Component({
   selector: 'app-file-tree',
@@ -23,11 +25,19 @@ import { ModalService } from '../../services/modal.service';
   styleUrls: ['./file-tree.component.less'],
 })
 export class FileTreeComponent implements OnInit {
+  TreeFileType = TreeFileType;
+
   farTrashAlt = farTrashAlt;
   farEdit = farEdit;
   farClipboard = farClipboard;
   faExternalLinkAlt = faExternalLinkAlt;
   faWrench = faWrench;
+  faPlus = faPlus;
+  faFolder = faFolder;
+  faFile = faFile;
+
+  @ViewChild(TreeComponent, { static: false })
+  private treeComponent: TreeComponent;
 
   @Input()
   loadHandler: (path: string) => Promise<TreeDirectory>;
@@ -42,8 +52,13 @@ export class FileTreeComponent implements OnInit {
   renameHandler: (path: string, newName: string) => Promise<void>;
 
   @Input()
-  openHandler: (path: string) => void;
+  createFileHandler: (path: string) => void;
 
+  @Input()
+  createDirectoryHandler: (path: string) => void;
+
+  @Input()
+  openHandler: (path: string) => void;
   nodes: Array<any> = [];
   options: ITreeOptions = {
     actionMapping: {
@@ -55,7 +70,7 @@ export class FileTreeComponent implements OnInit {
             this.startOpening(node);
           }
         },
-        drop: (tree: TreeModel, node: TreeNode, $event: any, { from, to }: { from: TreeNode, to: TreeNode }) => {
+        drop: (tree, node, $event, { from, to }: { from: TreeNode, to: TreeNode }) => {
           // use from to get the dragged node.
           // use to.parent and to.index to get the drop location
           // TREE_ACTIONS.MOVE_NODE(tree, node, $event, { from, to });
@@ -68,7 +83,7 @@ export class FileTreeComponent implements OnInit {
           node.expandAll();
         },
       },
-    },
+    } as IActionMapping,
     allowDrag: (node) => {
       return true;
     },
@@ -102,7 +117,7 @@ export class FileTreeComponent implements OnInit {
             type: entry.type,
           },
           hasChildren: entry.type === TreeFileType.DIRECTORY,
-        };
+        } as NodeData;
       }));
   }
 
@@ -122,11 +137,38 @@ export class FileTreeComponent implements OnInit {
     const name = node.data.name;
     if (node.parent) {
       const parentPath = this.nodeToPath(node.parent);
-      const parentPathWithSlash = parentPath.endsWith('/') ? parentPath : parentPath + '/';
-      return parentPathWithSlash + name;
+      return PathUtils.join(parentPath, name);
     } else {
       return '/' + name;
     }
+  }
+
+  pathToNode(path: string): TreeNode {
+    const parent = PathUtils.parent(path);
+    const filename = PathUtils.filename(path);
+    if (parent && parent !== '/') {
+      const parentNode = this.pathToNode(parent);
+      if (!parentNode || !parentNode.children) {
+        return null;
+      }
+
+      for (const child of parentNode.children) {
+        if (child.data.name === filename) {
+          return child;
+        }
+      }
+
+      return null;
+    }
+
+    const roots = this.treeComponent.treeModel.roots;
+    for (const root of roots) {
+      if (root.data.name === filename) {
+        return root;
+      }
+    }
+
+    return null;
   }
 
   getIcon(file: TreeFileEntry, expanded: boolean = false) {
@@ -170,10 +212,11 @@ export class FileTreeComponent implements OnInit {
       this.deleteHandler(path).then(() => {
         this.globalAlertsService.addAlert(
           new Alert('success', 'File deleted', 'short'));
+        this.refreshDirectory(PathUtils.parent(path));
       }).catch(() => {
         this.globalAlertsService.addAlert(
           new Alert('danger', 'Failed to delete the file', 'long'));
-      }).finally(() => closeCallback());
+      }).finally(closeCallback);
     });
   }
 
@@ -182,9 +225,40 @@ export class FileTreeComponent implements OnInit {
     this.openHandler(path);
   }
 
+  startCreatingFile(node: TreeNode) {
+    const path = this.nodeToPath(node);
+    this.createFileHandler(path);
+  }
+
+  startCreatingDirectory(node: TreeNode) {
+    const path = this.nodeToPath(node);
+    this.createDirectoryHandler(path);
+  }
+
   openAttributes(node: TreeNode) {
 
   }
+
+  refreshDirectory(path: string): void {
+    const node = this.pathToNode(path);
+    if (node) {
+      this.loadChildren(node).then(children => {
+        node.data.children = children;
+        this.treeComponent.treeModel.update();
+      });
+    } else {
+      this.loadRoot();
+    }
+  }
+}
+
+interface NodeData {
+  name: string;
+  model: {
+    name: string;
+    type: TreeFileType;
+  };
+  hasChildren: boolean;
 }
 
 export enum TreeFileType {
@@ -205,4 +279,9 @@ export interface TreeFileEntry {
 
 export interface TreeDirectory {
   entries: Array<TreeFileEntry>;
+}
+
+export interface SelectedFile {
+  path: string;
+  isDirectory: boolean;
 }

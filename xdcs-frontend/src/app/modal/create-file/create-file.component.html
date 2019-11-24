@@ -1,8 +1,16 @@
 <app-modal #modal [title]="'Create a new ' + (isDirectory ? 'directory' : 'file')">
-  <input type="text"
-         class="form-control mb-3"
-         placeholder="Name"
-         [(ngModel)]="filename"/>
+  <div class="input-group mb-3">
+    <div *ngIf="parent" class="input-group-prepend">
+      <span class="input-group-text">{{ parent }}</span>
+    </div>
+    <input type="text"
+           class="form-control"
+           placeholder="Name"
+           aria-label="Name"
+           appAutoFocus
+           [(ngModel)]="filename"
+           (keyup.enter)="doSubmit()"/>
+  </div>
 
   <input
     type="submit"
