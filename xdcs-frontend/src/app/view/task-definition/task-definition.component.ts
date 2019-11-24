@@ -20,17 +20,14 @@ import { CodeEditorComponent, Editable, EditableMode } from '../../element/code-
 @NavbarItem('Task Definition')
 export class TaskDefinitionComponent implements OnInit {
   private taskDefinitionId: string;
-  private taskDefinition: TaskDefinitionDto = null;
+  taskDefinition: TaskDefinitionDto = null;
 
-  @ViewChild(CodeEditorComponent, { static: false })
-  private editor: CodeEditorComponent;
+  editedFile: EditedFile;
 
-  private editedFile: EditedFile;
-
-  private readonly loadHandler = path => this.loadFile(path);
-  private readonly moveHandler = (fromPath, toPath) => this.moveFile(fromPath, toPath);
-  private readonly deleteHandler = path => this.deleteFile(path);
-  private readonly openHandler = path => this.openFile(path);
+  readonly loadHandler = path => this.loadFile(path);
+  readonly moveHandler = (fromPath, toPath) => this.moveFile(fromPath, toPath);
+  readonly deleteHandler = path => this.deleteFile(path);
+  readonly openHandler = path => this.openFile(path);
 
   constructor(private taskDefinitionsService: TaskDefinitionsService,
               private route: ActivatedRoute,

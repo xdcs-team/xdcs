@@ -23,11 +23,11 @@ import { ModalService } from '../../services/modal.service';
   styleUrls: ['./file-tree.component.less'],
 })
 export class FileTreeComponent implements OnInit {
-  private farTrashAlt = farTrashAlt;
-  private farEdit = farEdit;
-  private farClipboard = farClipboard;
-  private faExternalLinkAlt = faExternalLinkAlt;
-  private faWrench = faWrench;
+  farTrashAlt = farTrashAlt;
+  farEdit = farEdit;
+  farClipboard = farClipboard;
+  faExternalLinkAlt = faExternalLinkAlt;
+  faWrench = faWrench;
 
   @Input()
   loadHandler: (path: string) => Promise<TreeDirectory>;
@@ -44,8 +44,8 @@ export class FileTreeComponent implements OnInit {
   @Input()
   openHandler: (path: string) => void;
 
-  private nodes: Array<any> = [];
-  private options: ITreeOptions = {
+  nodes: Array<any> = [];
+  options: ITreeOptions = {
     actionMapping: {
       mouse: {
         dblClick: (tree, node, $event) => {
@@ -110,11 +110,11 @@ export class FileTreeComponent implements OnInit {
     this.loadChildren(null).then(nodes => this.nodes = nodes);
   }
 
-  private getModelFromNode(node: TreeNode): TreeFileEntry {
+  getModelFromNode(node: TreeNode): TreeFileEntry {
     return node.data.model as TreeFileEntry;
   }
 
-  private nodeToPath(node: TreeNode): string {
+  nodeToPath(node: TreeNode): string {
     if (!node || !node.data.name) {
       return '/';
     }
@@ -129,7 +129,7 @@ export class FileTreeComponent implements OnInit {
     }
   }
 
-  private getIcon(file: TreeFileEntry, expanded: boolean = false) {
+  getIcon(file: TreeFileEntry, expanded: boolean = false) {
     switch (file.type) {
       case TreeFileType.DIRECTORY:
         return expanded ? faFolderOpen : faFolder;
@@ -150,16 +150,16 @@ export class FileTreeComponent implements OnInit {
     }
   }
 
-  private copyToClipboard(content: string) {
+  copyToClipboard(content: string) {
     this.clipboardService.copyFromContent(content);
   }
 
-  private startRenaming(node: TreeNode) {
+  startRenaming(node: TreeNode) {
     this.globalAlertsService.addAlert(
       new Alert('danger', 'Renaming files is not supported yet', 5));
   }
 
-  private startDeleting(node: TreeNode) {
+  startDeleting(node: TreeNode) {
     const path = this.nodeToPath(node);
     this.modalService.confirmation({
       title: 'Delete file',
@@ -177,12 +177,12 @@ export class FileTreeComponent implements OnInit {
     });
   }
 
-  private startOpening(node: TreeNode) {
+  startOpening(node: TreeNode) {
     const path = this.nodeToPath(node);
     this.openHandler(path);
   }
 
-  private openAttributes(node: TreeNode) {
+  openAttributes(node: TreeNode) {
 
   }
 }

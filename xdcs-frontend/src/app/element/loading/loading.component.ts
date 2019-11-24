@@ -7,23 +7,17 @@ import { NgxSpinnerService } from 'ngx-spinner';
   styleUrls: ['./loading.component.less'],
 })
 export class LoadingComponent implements OnInit, OnDestroy {
-  private name: string;
+  name: string = Math.random().toString(36).substring(2);
 
   constructor(private spinner: NgxSpinnerService) {
 
   }
 
   ngOnInit() {
-    this.spinner.show(this.getName());
+    this.spinner.show(this.name);
   }
 
   ngOnDestroy() {
-    this.spinner.hide(this.getName());
-  }
-
-  private getName() {
-    return this.name ?
-      this.name :
-      this.name = Math.random().toString(36).substring(2);
+    this.spinner.hide(this.name);
   }
 }

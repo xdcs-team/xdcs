@@ -54,6 +54,8 @@ import { FileTreeToolbarComponent } from './element/file-tree-toolbar/file-tree-
 import { CreateFileComponent } from './modal/create-file/create-file.component';
 import { TimeAgoPipe } from 'time-ago-pipe';
 import { CopyIconComponent } from './element/copy-icon/copy-icon.component';
+import { UploadFileComponent } from './element/upload-file/upload-file.component';
+import { ngfModule } from 'angular-file';
 
 @NgModule({
   declarations: [
@@ -92,6 +94,7 @@ import { CopyIconComponent } from './element/copy-icon/copy-icon.component';
     CreateFileComponent,
     TimeAgoPipe,
     CopyIconComponent,
+    UploadFileComponent,
   ],
   entryComponents: [
     NewTaskDefinitionComponent,
@@ -113,7 +116,7 @@ import { CopyIconComponent } from './element/copy-icon/copy-icon.component';
     AngularSplitModule,
     JwtModule.forRoot({
       config: {
-        tokenGetter: () => undefined,
+        tokenGetter: jwtTokenGetter,
       },
     }),
     SortableModule.forRoot(),
@@ -125,6 +128,7 @@ import { CopyIconComponent } from './element/copy-icon/copy-icon.component';
     ClipboardModule,
     NgxSpinnerModule,
     TooltipModule.forRoot(),
+    ngfModule,
   ],
   providers: [
     HttpClientModule,
@@ -141,4 +145,8 @@ import { CopyIconComponent } from './element/copy-icon/copy-icon.component';
 })
 export class AppModule {
 
+}
+
+export function jwtTokenGetter() {
+  return undefined;
 }

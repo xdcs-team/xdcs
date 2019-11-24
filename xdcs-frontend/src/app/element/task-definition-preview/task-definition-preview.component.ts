@@ -11,7 +11,7 @@ import { TaskDefinitionsService } from '../../../api/services/task-definitions.s
   styleUrls: ['./task-definition-preview.component.less'],
 })
 export class TaskDefinitionPreviewComponent implements OnInit, OnChanges {
-  private deploymentDescriptors: DeploymentDescriptorsDto;
+  deploymentDescriptors: DeploymentDescriptorsDto;
 
   @Input()
   definition: TaskDefinitionDto;
@@ -35,7 +35,7 @@ export class TaskDefinitionPreviewComponent implements OnInit, OnChanges {
     }).subscribe(deployments => this.deploymentDescriptors = deployments);
   }
 
-  private showDeployModal() {
+  showDeployModal() {
     const modal = this.modalService.show(DeployDefinitionComponent, true, {
       taskDefinitionId: this.definition.id,
     });

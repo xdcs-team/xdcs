@@ -7,13 +7,13 @@ import { faCheck, faCircleNotch, faTimes, faRedo } from '@fortawesome/free-solid
   styleUrls: ['./task-summary-item.component.less'],
 })
 export class TaskSummaryItemComponent implements OnInit {
-  private isCollapsed = true;
-  private faCircleNotch = faCircleNotch;
-  private faCheck = faCheck;
-  private faTimes = faTimes;
-  private faRedo = faRedo;
+  isCollapsed = true;
+  faCircleNotch = faCircleNotch;
+  faCheck = faCheck;
+  faTimes = faTimes;
+  faRedo = faRedo;
 
-  private TaskExecutionStatus = TaskExecutionStatus;
+  TaskExecutionStatus = TaskExecutionStatus;
 
   @Input()
   status: TaskExecutionStatus = TaskExecutionStatus.InProgress;

@@ -7,10 +7,10 @@ import { faCircle } from '@fortawesome/free-solid-svg-icons';
   styleUrls: ['./node-card.component.less'],
 })
 export class NodeCardComponent implements OnInit {
-  private hover: boolean;
+  hover: boolean;
 
-  private NodeStatus = NodeStatus;
-  private faCircle = faCircle;
+  NodeStatus = NodeStatus;
+  faCircle = faCircle;
 
   @Input()
   data: NodeCardData;

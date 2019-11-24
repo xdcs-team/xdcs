@@ -12,7 +12,7 @@ export class DeployDefinitionComponent implements OnInit {
   @ViewChild('modal', { static: false })
   private modal;
 
-  private description: string;
+  description: string;
 
   @Input()
   taskDefinitionId: string;
@@ -26,7 +26,7 @@ export class DeployDefinitionComponent implements OnInit {
 
   }
 
-  private doDeploy() {
+  doDeploy() {
     this.deploymentsService.deployTaskDefinition({
       body: {
         from: this.taskDefinitionId,

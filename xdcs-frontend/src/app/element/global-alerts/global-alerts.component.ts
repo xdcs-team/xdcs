@@ -7,7 +7,7 @@ import { GlobalAlertsService } from '../../services/global-alerts.service';
   styleUrls: ['./global-alerts.component.less'],
 })
 export class GlobalAlertsComponent implements OnInit {
-  private alerts: GlobalAlertsService;
+  alerts: GlobalAlertsService;
 
   constructor(alerts: GlobalAlertsService) {
     this.alerts = alerts;
@@ -17,7 +17,7 @@ export class GlobalAlertsComponent implements OnInit {
 
   }
 
-  private onClosed(dismissedAlert: any): void {
+  onClosed(dismissedAlert: any): void {
     this.alerts.dismiss(dismissedAlert);
   }
 }

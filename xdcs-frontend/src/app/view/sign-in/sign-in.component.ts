@@ -9,7 +9,7 @@ import { first } from 'rxjs/operators';
   styleUrls: ['./sign-in.component.less'],
 })
 export class SignInComponent implements AfterContentChecked {
-  private disabled = false;
+  disabled = false;
 
   @ViewChild('username', { static: false })
   username;
@@ -17,8 +17,7 @@ export class SignInComponent implements AfterContentChecked {
   @ViewChild('password', { static: false })
   password;
 
-  constructor(private router: Router,
-              private route: ActivatedRoute,
+  constructor(public route: ActivatedRoute,
               private authService: AuthService) {
 
   }

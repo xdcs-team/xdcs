@@ -8,7 +8,7 @@ import { TaskDefinitionDto } from '../../../api/models/task-definition-dto';
   styleUrls: ['./new-task-definition.component.less'],
 })
 export class NewTaskDefinitionComponent {
-  private taskDefinition: TaskDefinitionDto = {};
+  taskDefinition: TaskDefinitionDto = {};
 
   @ViewChild('modal', { static: false })
   private modal;
