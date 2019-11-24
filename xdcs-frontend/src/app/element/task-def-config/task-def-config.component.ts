@@ -1,5 +1,4 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { faChevronDown, faChevronUp, faPlus, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { TaskDefinitionDto } from '../../../api/models/task-definition-dto';
 import { KernelParamDto } from '../../../api/models/kernel-param-dto';
 
@@ -9,11 +8,7 @@ import { KernelParamDto } from '../../../api/models/kernel-param-dto';
   styleUrls: ['./task-def-config.component.less'],
 })
 export class TaskDefConfigComponent implements OnInit {
-  faChevronUp = faChevronUp;
-  faChevronDown = faChevronDown;
-  faTrash = faTrash;
-  faPlus = faPlus;
-
+  emptyElement: KernelParamDto = {};
   types: Map<string, string> = new Map([
     ['opencl', 'OpenCL'],
     ['cuda', 'CUDA'],
@@ -43,42 +38,10 @@ export class TaskDefConfigComponent implements OnInit {
   }
 
   ngOnInit() {
-
-  }
-
-  addKernelParam() {
     if (!this.taskDefinition.config.kernelparams) {
       this.taskDefinition.config.kernelparams = [];
     }
 
-    const param: KernelParamDto = {};
-    this.taskDefinition.config.kernelparams.push(param);
-  }
-
-  removeKernelParam(param: KernelParamDto) {
-    const params = this.taskDefinition.config.kernelparams;
-    this.taskDefinition.config.kernelparams = params.filter(item => item !== param);
-  }
-
-  moveKernelParamUp(param: KernelParamDto) {
-    const index = this.taskDefinition.config.kernelparams.indexOf(param);
-    if (index > 0 && index < this.taskDefinition.config.kernelparams.length) {
-      this.swapKernelParams(index - 1, index);
-    }
-  }
-
-  moveKernelParamDown(param: KernelParamDto) {
-    const index = this.taskDefinition.config.kernelparams.indexOf(param);
-    if (index >= 0 && index < this.taskDefinition.config.kernelparams.length - 1) {
-      this.swapKernelParams(index + 1, index);
-    }
-  }
-
-  private swapKernelParams(a, b) {
-    const params = this.taskDefinition.config.kernelparams;
-    const tmp = params[a];
-    params[a] = params[b];
-    params[b] = tmp;
   }
 
   isValid() {

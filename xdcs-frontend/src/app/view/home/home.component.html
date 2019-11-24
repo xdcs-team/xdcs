@@ -7,8 +7,11 @@
 
   <div class="headline">
     <h2>Current tasks</h2>
-    <a href="#/task/new"
-       class="btn btn-outline-success float-right">New task</a>
+    <button type="button"
+            class="btn btn-outline-success float-right"
+            appOpenModal [modal]="NewTaskComponent">New task</button>
+    <div class="clearfix"></div>
   </div>
+
   <app-task-summary-list></app-task-summary-list>
 </div>

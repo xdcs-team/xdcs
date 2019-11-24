@@ -3,6 +3,7 @@ package pl.edu.agh.xdcs.db.entity;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 import pl.edu.agh.xdcs.db.conf.JsonConverter;
+import pl.edu.agh.xdcs.or.types.KernelParameter;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -3,6 +3,7 @@ package pl.edu.agh.xdcs.services;
 import org.slf4j.Logger;
 import pl.edu.agh.xdcs.db.dao.DeploymentDescriptorDao;
 import pl.edu.agh.xdcs.db.entity.DeploymentDescriptorEntity;
+import pl.edu.agh.xdcs.db.entity.KernelParameters;
 import pl.edu.agh.xdcs.db.entity.ObjectRefEntity;
 import pl.edu.agh.xdcs.db.entity.TaskDefinitionEntity;
 import pl.edu.agh.xdcs.db.entity.TaskType;
@@ -13,6 +14,7 @@ import pl.edu.agh.xdcs.workspace.Workspace;
 
 import javax.inject.Inject;
 import javax.transaction.Transactional;
+import java.util.Optional;
 
 /**
  * @author Kamil Jarosz
@@ -66,6 +68,12 @@ public class DeploymentService {
         return Deployment.Config.builder()
                 .type(mapConfigType(definition.getType()))
                 .dockerfile(definition.getDockerfile())
+                .kernelfile(definition.getKernelFile())
+                .kernelname(definition.getKernelName())
+                .scriptfile(definition.getScriptPath())
+                .kernelParams(Optional.ofNullable(definition.getKernelParams())
+                        .map(KernelParameters::getParameters)
+                        .orElse(null))
                 .build();
     }
 

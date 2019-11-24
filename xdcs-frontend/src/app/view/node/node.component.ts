@@ -26,7 +26,7 @@ export class NodeComponent implements OnInit {
 
   ngOnInit(): void {
     this.route.params.subscribe(routeParams => {
-      this.loadNode(routeParams.id);
+      this.loadNode(routeParams.nodeId);
     });
   }
 

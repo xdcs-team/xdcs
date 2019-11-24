@@ -1,10 +1,10 @@
 package pl.edu.agh.xdcs.restapi.mapper.impl;
 
 import com.google.common.collect.ImmutableMap;
-import pl.edu.agh.xdcs.db.entity.KernelParameter;
-import pl.edu.agh.xdcs.db.entity.KernelParameter.Direction;
-import pl.edu.agh.xdcs.db.entity.KernelParameter.Type;
 import pl.edu.agh.xdcs.db.entity.KernelParameters;
+import pl.edu.agh.xdcs.or.types.KernelParameter;
+import pl.edu.agh.xdcs.or.types.KernelParameter.Direction;
+import pl.edu.agh.xdcs.or.types.KernelParameter.Type;
 import pl.edu.agh.xdcs.restapi.mapper.EnumMapper;
 import pl.edu.agh.xdcs.restapi.model.KernelParamDto;
 import pl.edu.agh.xdcs.restapi.model.KernelParamDto.DirectionEnum;
@@ -30,14 +30,18 @@ public class KernelParamsMapper {
                     .put(Direction.IN_OUT, DirectionEnum.INOUT)
                     .build());
 
-    public List<KernelParamDto> toRestEntity(KernelParameters model) {
+    public List<KernelParamDto> toRestEntity(List<KernelParameter> models) {
+        return models.stream()
+                .map(this::toRestEntity)
+                .collect(Collectors.toList());
+    }
+
+    public List<KernelParamDto> toRestEntities(KernelParameters model) {
         if (model == null) return null;
         List<KernelParameter> parameters = model.getParameters();
         if (parameters == null) return null;
 
-        return parameters.stream()
-                .map(this::toRestEntity)
-                .collect(Collectors.toList());
+        return toRestEntity(parameters);
     }
 
     public KernelParamDto toRestEntity(KernelParameter parameter) {

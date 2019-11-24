@@ -4,14 +4,14 @@ import pl.edu.agh.xdcs.db.dao.DeploymentDescriptorDao;
 import pl.edu.agh.xdcs.db.entity.DeploymentDescriptorEntity;
 import pl.edu.agh.xdcs.db.entity.TaskDefinitionEntity;
 import pl.edu.agh.xdcs.restapi.TaskDefinitionsApi;
+import pl.edu.agh.xdcs.restapi.mapper.impl.DeploymentConfigMapper;
 import pl.edu.agh.xdcs.restapi.mapper.impl.DeploymentMapper;
 import pl.edu.agh.xdcs.restapi.mapper.impl.FileDescriptionMapper;
 import pl.edu.agh.xdcs.restapi.mapper.impl.FileTypeMapper;
-import pl.edu.agh.xdcs.restapi.mapper.impl.TaskDefinitionConfigMapper;
 import pl.edu.agh.xdcs.restapi.mapper.impl.TaskDefinitionMapper;
+import pl.edu.agh.xdcs.restapi.model.DeploymentConfigDto;
 import pl.edu.agh.xdcs.restapi.model.DeploymentDescriptorsDto;
 import pl.edu.agh.xdcs.restapi.model.FileDto;
-import pl.edu.agh.xdcs.restapi.model.TaskDefinitionConfigDto;
 import pl.edu.agh.xdcs.restapi.model.TaskDefinitionDto;
 import pl.edu.agh.xdcs.restapi.model.TaskDefinitionsDto;
 import pl.edu.agh.xdcs.restapi.util.RestUtils;
@@ -51,7 +51,7 @@ public class TaskDefinitionsApiImpl implements TaskDefinitionsApi {
     private TaskDefinitionMapper taskDefinitionMapper;
 
     @Inject
-    private TaskDefinitionConfigMapper taskDefinitionConfigMapper;
+    private DeploymentConfigMapper deploymentConfigMapper;
 
     @Inject
     private FileDescriptionMapper fileDescriptionMapper;
@@ -93,7 +93,7 @@ public class TaskDefinitionsApiImpl implements TaskDefinitionsApi {
     @Override
     public Response getTaskDefinitionConfiguration(String taskDefinitionId) {
         TaskDefinitionEntity definition = findTaskDefinition(taskDefinitionId);
-        return Response.ok(taskDefinitionConfigMapper.toRestEntity(definition)).build();
+        return Response.ok(deploymentConfigMapper.toRestEntity(definition)).build();
     }
 
     @Override
@@ -165,9 +165,9 @@ public class TaskDefinitionsApiImpl implements TaskDefinitionsApi {
     }
 
     @Override
-    public Response setTaskDefinitionConfiguration(String taskDefinitionId, TaskDefinitionConfigDto config) {
+    public Response setTaskDefinitionConfiguration(String taskDefinitionId, DeploymentConfigDto config) {
         TaskDefinitionEntity definition = findTaskDefinition(taskDefinitionId);
-        taskDefinitionConfigMapper.updateModelEntity(config, definition);
+        deploymentConfigMapper.updateModelEntity(config, definition);
         return Response.noContent().build();
     }
 
