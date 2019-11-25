@@ -4,15 +4,18 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Index;
 import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import java.time.Instant;
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * @author Kamil Jarosz
@@ -35,6 +38,9 @@ public class QueuedTaskEntity extends BaseEntity implements Task {
 
     @Column(name = "CREATED_")
     private Instant created = Instant.now();
+
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true, mappedBy = "requester")
+    private Set<ResourcePatternEntity> resourcePatternEntities;
 
     public QueuedTaskEntity(String id) {
         super(id);

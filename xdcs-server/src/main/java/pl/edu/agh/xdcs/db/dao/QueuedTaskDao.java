@@ -7,6 +7,7 @@ import pl.edu.agh.xdcs.db.entity.QueuedTaskEntity;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -21,6 +22,7 @@ public class QueuedTaskDao extends EntityDaoBase<QueuedTaskEntity> {
     @SuppressWarnings("unchecked")
     public List<QueuedTaskEntity> checkCandidates(int maxResults, Duration minWaitTime) {
         Preconditions.checkArgument(maxResults > 0);
+        Objects.requireNonNull(minWaitTime);
         Instant now = Instant.now();
 
         List<QueuedTaskEntity> tasks = entityManager
