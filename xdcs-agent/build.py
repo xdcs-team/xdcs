@@ -57,6 +57,7 @@ def initialize(project):
     project.set_property('flake8_break_build', True)
     project.set_property('flake8_verbose_output', True)
     project.install_file("/etc/xdcs", "xdcs/conf/xdcs-agent.toml")
+    project.install_file("/lib/systemd/system/", "xdcs/conf/xdcs-agent.service")
 
 
 @task
