@@ -25,8 +25,7 @@ import java.util.Set;
 @NoArgsConstructor
 @Entity(name = "TaskQueue")
 @Table(name = "XDCS_TASK_QUEUE_", indexes = {
-        @Index(columnList = "LAST_CHECK_"),
-        @Index(columnList = "CREATED_")
+        @Index(columnList = "LAST_CHECK_")
 })
 public class QueuedTaskEntity extends BaseEntity implements Task {
     @OneToOne(fetch = FetchType.EAGER)
@@ -35,9 +34,6 @@ public class QueuedTaskEntity extends BaseEntity implements Task {
 
     @Column(name = "LAST_CHECK_")
     private Instant lastCheck = Instant.ofEpochSecond(0);
-
-    @Column(name = "CREATED_")
-    private Instant created = Instant.now();
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true, mappedBy = "requester")
     private Set<ResourcePatternEntity> resourcePatternEntities;
@@ -74,5 +70,10 @@ public class QueuedTaskEntity extends BaseEntity implements Task {
     @Override
     public Optional<QueuedTaskEntity> asQueued() {
         return Optional.of(this);
+    }
+
+    @Override
+    public Instant getTimeCreated() {
+        return historicalTask.getTimeCreated();
     }
 }

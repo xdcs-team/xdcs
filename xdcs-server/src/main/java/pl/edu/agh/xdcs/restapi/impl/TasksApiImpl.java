@@ -10,6 +10,8 @@ import pl.edu.agh.xdcs.restapi.mapper.impl.ResourceTypeMapper;
 import pl.edu.agh.xdcs.restapi.mapper.impl.TaskMapper;
 import pl.edu.agh.xdcs.restapi.model.TaskConditionsDto;
 import pl.edu.agh.xdcs.restapi.model.TaskCreationDto;
+import pl.edu.agh.xdcs.restapi.model.TaskDto;
+import pl.edu.agh.xdcs.restapi.model.TasksDto;
 import pl.edu.agh.xdcs.restapi.util.RestUtils;
 import pl.edu.agh.xdcs.services.TaskService;
 import pl.edu.agh.xdcs.services.sweeper.SweepAfter;
@@ -65,8 +67,13 @@ public class TasksApiImpl implements TasksApi {
     }
 
     @Override
-    public Response getTasks(Boolean historical) {
-        return RestUtils.serverError("Not implemented");
+    public Response getTasks() {
+        List<Task> tasks = taskService.getAllTasks();
+        List<TaskDto> items = taskMapper.toRestEntities(tasks);
+        return Response.ok(new TasksDto()
+                .items(items)
+                .from(0)
+                .total(items.size())).build();
     }
 
     @Override

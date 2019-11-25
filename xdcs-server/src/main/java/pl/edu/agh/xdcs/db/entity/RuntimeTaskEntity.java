@@ -9,6 +9,7 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import java.time.Instant;
 import java.util.Optional;
 
 /**
@@ -56,5 +57,10 @@ public class RuntimeTaskEntity extends BaseEntity implements Task {
     @Override
     public Optional<QueuedTaskEntity> asQueued() {
         return Optional.empty();
+    }
+
+    @Override
+    public Instant getTimeCreated() {
+        return historicalTask.getTimeCreated();
     }
 }

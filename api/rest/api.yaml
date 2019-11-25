@@ -363,12 +363,6 @@ paths:
       tags:
         - Tasks
       operationId: getTasks
-      parameters:
-        - in: query
-          name: historical
-          required: false
-          schema:
-            type: boolean
       responses:
         200:
           description: OK
@@ -628,6 +622,9 @@ components:
           type: string
         deploymentId:
           type: string
+        timeCreated:
+          type: string
+          format: 'date-time'
         state:
           type: string
           enum:

@@ -1,10 +1,15 @@
-<div>
-  <app-task-summary-item
-    taskTitle="Example task in progress"></app-task-summary-item>
-  <app-task-summary-item
-    taskTitle="Example finished task"
-    [status]="TaskExecutionStatus.Finished"></app-task-summary-item>
-  <app-task-summary-item
-    taskTitle="Example errored task"
-    [status]="TaskExecutionStatus.Errored"></app-task-summary-item>
-</div>
+<ng-container *ngIf="!tasks; else loaded">
+  <div>
+    <app-loading></app-loading>
+  </div>
+</ng-container>
+<ng-template #loaded>
+  <div *ngIf="tasks.items.length === 0">
+    <app-no-data></app-no-data>
+  </div>
+  <div *ngIf="tasks.items.length > 0">
+    <ng-container *ngFor="let task of tasks.items">
+      <app-task-summary-item [task]="task"></app-task-summary-item>
+    </ng-container>
+  </div>
+</ng-template>

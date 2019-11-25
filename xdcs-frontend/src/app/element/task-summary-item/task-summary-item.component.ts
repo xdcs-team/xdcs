@@ -1,5 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { faCheck, faCircleNotch, faTimes, faRedo } from '@fortawesome/free-solid-svg-icons';
+import { faCheck, faCircleNotch, faRedo, faTimes, faBox } from '@fortawesome/free-solid-svg-icons';
+import { faClock as farClock, faStopCircle as farStopCircle } from '@fortawesome/free-regular-svg-icons';
+import { TaskDto } from '../../../api/models/task-dto';
 
 @Component({
   selector: 'app-task-summary-item',
@@ -12,24 +14,28 @@ export class TaskSummaryItemComponent implements OnInit {
   faCheck = faCheck;
   faTimes = faTimes;
   faRedo = faRedo;
+  faBox = faBox;
+  farClock = farClock;
+  farStopCircle = farStopCircle;
 
-  TaskExecutionStatus = TaskExecutionStatus;
+  TaskState = TaskState;
 
   @Input()
-  status: TaskExecutionStatus = TaskExecutionStatus.InProgress;
-
-  @Input()
-  taskTitle = '???';
+  task: TaskDto;
 
   constructor() {
+
   }
 
   ngOnInit() {
+
   }
 }
 
-export enum TaskExecutionStatus {
-  InProgress,
-  Finished,
-  Errored,
+export enum TaskState {
+  QUEUED = 'queued',
+  IN_PROGRESS = 'in_progress',
+  FINISHED = 'finished',
+  CANCELED = 'canceled',
+  ERRORED = 'errored',
 }

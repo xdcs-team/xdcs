@@ -10,6 +10,7 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import java.time.Instant;
 import java.util.Optional;
 
 /**
@@ -27,6 +28,9 @@ public class HistoricalTaskEntity extends BaseEntity implements Task {
 
     @Column(name = "NAME_")
     private String name;
+
+    @Column(name = "CREATED_", nullable = false)
+    private Instant timeCreated = Instant.now();
 
     @Override
     public Type getType() {

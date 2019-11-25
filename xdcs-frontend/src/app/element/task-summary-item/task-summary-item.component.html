@@ -2,29 +2,41 @@
      [ngClass]="!isCollapsed ? 'shadow' : 'shadow-sm'">
   <div class="position-relative">
     <div class="card-body item-summary">
-      <span [ngSwitch]="status">
+      <span [ngSwitch]="task.state">
         <fa-icon
-          *ngSwitchCase="TaskExecutionStatus.InProgress"
+          *ngSwitchCase="TaskState.IN_PROGRESS"
           [icon]="faCircleNotch"
           [fixedWidth]="true"
           [spin]="true"
-          class="icon-warn"
+          class="icon-success"
           size="lg"></fa-icon>
         <fa-icon
-          *ngSwitchCase="TaskExecutionStatus.Finished"
+          *ngSwitchCase="TaskState.FINISHED"
           [icon]="faCheck"
           [fixedWidth]="true"
           class="icon-success"
           size="lg"></fa-icon>
         <fa-icon
-          *ngSwitchCase="TaskExecutionStatus.Errored"
+          *ngSwitchCase="TaskState.ERRORED"
           [icon]="faTimes"
+          [fixedWidth]="true"
+          class="icon-error"
+          size="lg"></fa-icon>
+        <fa-icon
+          *ngSwitchCase="TaskState.QUEUED"
+          [icon]="farClock"
+          [fixedWidth]="true"
+          class="icon-warn"
+          size="lg"></fa-icon>
+        <fa-icon
+          *ngSwitchCase="TaskState.CANCELED"
+          [icon]="farStopCircle"
           [fixedWidth]="true"
           class="icon-error"
           size="lg"></fa-icon>
       </span>
 
-      <h5 class="card-title">{{taskTitle}}</h5>
+      <h5 class="card-title">{{task.name}}</h5>
     </div>
     <a class="stretched-link"
        href="javascript:void(0)"
@@ -35,16 +47,34 @@
        [isAnimated]="true">
     <hr/>
     <div class="card-body">
-      <div class="d-flex flex-row-reverse" [ngSwitch]="status">
+      <div>
+        <ul class="list-unstyled">
+          <li>
+            <fa-icon
+              [icon]="faBox"
+              [fixedWidth]="true"></fa-icon>
+            {{task.deploymentId}}
+          </li>
+          <li>
+            <fa-icon
+              [icon]="farClock"
+              [fixedWidth]="true"></fa-icon>
+            {{task.timeCreated | timeAgo}}
+          </li>
+        </ul>
+      </div>
+
+      <div class="d-flex flex-row-reverse" [ngSwitch]="task.state">
         <a href="#/task/asdf"
            class="btn btn-outline-primary item-details-button">Details</a>
-        <a *ngSwitchCase="TaskExecutionStatus.InProgress"
+        <a *ngSwitchCase="TaskState.IN_PROGRESS"
            href="#/task/cancel"
            class="btn btn-outline-danger item-details-button">Cancel</a>
-        <a *ngSwitchCase="TaskExecutionStatus.Errored"
+        <a *ngSwitchCase="TaskState.ERRORED"
            href="#/task/retry"
            class="btn btn-outline-success item-details-button">
-          <fa-icon [icon]="faRedo"></fa-icon>Retry</a>
+          <fa-icon [icon]="faRedo"></fa-icon>
+          Retry</a>
       </div>
     </div>
   </div>
