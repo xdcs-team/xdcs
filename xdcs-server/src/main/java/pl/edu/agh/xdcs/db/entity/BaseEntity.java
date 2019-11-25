@@ -20,7 +20,7 @@ import java.util.UUID;
 @MappedSuperclass
 public abstract class BaseEntity {
     @Id
-    @Column(name = "ID_")
+    @Column(name = "ID_", nullable = false)
     @Convert(converter = UUIDConverter.class)
     private String id;
 

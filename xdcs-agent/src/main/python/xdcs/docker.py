@@ -1,9 +1,10 @@
+from __future__ import annotations
+
 import logging
 import re
 import subprocess
 from typing import Union, List
 
-from lazy import lazy
 from packaging import version
 
 from xdcs import gpu
@@ -25,27 +26,33 @@ class DockerCli:
     def __init__(self) -> None:
         self._docker_exec = xdcs().config('system.docker', 'docker')
 
-    def opt(self, opt: Union[str, List[str]]) -> None:
+    def opt(self, opt: Union[str, List[str]]) -> DockerCli:
         if isinstance(opt, str):
             self._opts.extend([opt])
         else:
             self._opts.extend(opt)
 
-    def remove_container_after_finish(self) -> None:
+        return self
+
+    def remove_container_after_finish(self) -> DockerCli:
         self._opts.extend(['--rm'])
+        return self
 
-    def container_name(self, name: str) -> None:
+    def container_name(self, name: str) -> DockerCli:
         self._opts.extend(['--name', name])
+        return self
 
-    def nvidia_all_devices(self):
+    def nvidia_all_devices(self) -> DockerCli:
         self._nvidia_all_devices = True
+        return self
 
-    def nvidia_device(self, key: str) -> None:
+    def nvidia_device(self, key: str) -> DockerCli:
         device = gpu.manager.device_by_key(key)
         if not device.is_nvidia():
             raise DockerException('Non-Nvidia devices are not supported by Docker')
 
         self._nvidia_device_ids.extend(device.nvidia_id())
+        return self
 
     def __run_docker(self, args: [str]) -> subprocess.CompletedProcess:
         return subprocess.run([self._docker_exec, *args],
@@ -81,6 +88,9 @@ class DockerCli:
     def __build_gpu_opts(self):
         device_list_str = ','.join(self._nvidia_device_ids)
 
+        if not self._nvidia_all_devices and not self._nvidia_device_ids:
+            return []
+
         if info.is_native_gpu_supported():
             if self._nvidia_all_devices:
                 return ['--gpus', 'all']
@@ -90,7 +100,7 @@ class DockerCli:
 
             return []
 
-        if info.is_native_gpu_supported():
+        if info.is_nvidia_runtime_available():
             if self._nvidia_all_devices:
                 return ['--runtime=nvidia',
                         '-e', 'NVIDIA_VISIBLE_DEVICES=all']
@@ -105,15 +115,14 @@ class DockerCli:
 
 
 class _DockerInfo:
-    @lazy
     def docker_available(self) -> bool:
         try:
+
             DockerCli().version()
             return True
         except DockerException:
             return False
 
-    @lazy
     def version(self) -> str:
         docker_version_output = DockerCli().version()
         version_search = re.search('Docker version ([0-9.]+), build ([a-f0-9]+)',
@@ -124,7 +133,6 @@ class _DockerInfo:
         else:
             raise DockerException('Unrecognized version output: ' + docker_version_output)
 
-    @lazy
     def is_native_gpu_supported(self) -> bool:
         if version.parse(self.version()) < version.parse("19.03"):
             return False
@@ -139,7 +147,6 @@ class _DockerInfo:
                 return False
             raise e
 
-    @lazy
     def is_nvidia_runtime_available(self) -> bool:
         try:
             DockerCli() \

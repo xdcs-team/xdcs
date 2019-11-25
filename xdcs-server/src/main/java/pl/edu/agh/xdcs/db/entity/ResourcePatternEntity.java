@@ -3,7 +3,8 @@ package pl.edu.agh.xdcs.db.entity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import pl.edu.agh.xdcs.db.conf.PatternConverter;
+import pl.edu.agh.xdcs.db.conf.WildcardPatternConverter;
+import pl.edu.agh.xdcs.util.WildcardPattern;
 
 import javax.persistence.Column;
 import javax.persistence.Convert;
@@ -12,7 +13,6 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import java.util.regex.Pattern;
 
 /**
  * @author Kamil Jarosz
@@ -20,20 +20,24 @@ import java.util.regex.Pattern;
 @Getter
 @Setter
 @NoArgsConstructor
-@Entity(name = "Resource")
+@Entity(name = "ResourcePattern")
 @Table(name = "XDCS_RES_PATTERN_")
 public class ResourcePatternEntity extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "REQUESTER_")
+    @JoinColumn(name = "REQUESTER_", nullable = false)
     private QueuedTaskEntity requester;
 
-    @Column(name = "TYPE_")
+    @Column(name = "TYPE_", nullable = false)
     private ResourceType type;
 
-    @Column(name = "AGENT_NAME_PATTERN_")
-    @Convert(converter = PatternConverter.class)
-    private Pattern agentNamePattern;
+    @Column(name = "AGENT_NAME_PATTERN_", nullable = false)
+    @Convert(converter = WildcardPatternConverter.class)
+    private WildcardPattern agentNamePattern;
+
+    @Column(name = "KEY_PATTERN_", nullable = false)
+    @Convert(converter = WildcardPatternConverter.class)
+    private WildcardPattern resourceKeyPattern;
 
     @Column(name = "QUANTITY_")
-    private long quantity;
+    private int quantity;
 }

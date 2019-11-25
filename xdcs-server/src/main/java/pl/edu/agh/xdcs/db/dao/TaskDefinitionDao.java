@@ -7,7 +7,7 @@ import java.util.List;
 /**
  * @author Kamil Jarosz
  */
-public class TaskDefinitionDao extends DaoBase<TaskDefinitionEntity> {
+public class TaskDefinitionDao extends EntityDaoBase<TaskDefinitionEntity> {
     @Override
     protected Class<TaskDefinitionEntity> getEntityClass() {
         return TaskDefinitionEntity.class;

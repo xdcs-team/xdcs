@@ -6,6 +6,7 @@ import pl.edu.agh.xdcs.restapi.NodesApi;
 import pl.edu.agh.xdcs.restapi.mapper.impl.NodeMapper;
 
 import javax.inject.Inject;
+import javax.transaction.Transactional;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.Response;
 import java.util.Collection;
@@ -13,6 +14,7 @@ import java.util.Collection;
 /**
  * @author Kamil Jarosz
  */
+@Transactional
 public class NodesApiImpl implements NodesApi {
     @Inject
     private AgentManager agentManager;

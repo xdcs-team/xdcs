@@ -35,6 +35,15 @@ public class RestUtils {
                 .build();
     }
 
+    public static Response serverError(String reason) {
+        return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                .type(MediaType.APPLICATION_JSON_TYPE)
+                .entity(RestErrorResponse.builder()
+                        .error(reason)
+                        .build())
+                .build();
+    }
+
     public static Response serverError(Throwable cause) {
         logger.error("Server error occurred", cause);
         RestErrorResponse entity = RestErrorResponse.builder()

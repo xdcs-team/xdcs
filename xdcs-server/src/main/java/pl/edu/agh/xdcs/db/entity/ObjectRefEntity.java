@@ -20,10 +20,10 @@ import javax.persistence.Table;
 @Entity(name = "ObjectRef")
 @Table(name = "XDCS_OR_REF_")
 public class ObjectRefEntity extends BaseEntity {
-    @Column(name = "REF_OBJ_ID_", length = 40)
+    @Column(name = "REF_OBJ_ID_", length = 40, nullable = false)
     private String referencedObjectId;
 
-    @Column(name = "REF_OBJ_TYPE_", length = 256)
+    @Column(name = "REF_OBJ_TYPE_", length = 256, nullable = false)
     @Convert(converter = ClassConverter.class)
     private Class<? extends ObjectBase> referencedObjectType;
 

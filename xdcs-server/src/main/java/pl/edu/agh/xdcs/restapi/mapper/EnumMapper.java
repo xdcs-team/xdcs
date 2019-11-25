@@ -14,18 +14,25 @@ public class EnumMapper<M extends Enum<M>, R extends Enum<R>> implements SimpleM
     private final Function<M, R> modelToRest;
     private final Function<R, M> restToModel;
 
+    protected EnumMapper(Map<M, R> mapping) {
+        this(HashBiMap.create(mapping));
+    }
+
+    protected EnumMapper(BiMap<M, R> mapping) {
+        this(mapping::get, mapping.inverse()::get);
+    }
+
     protected EnumMapper(Function<M, R> modelToRest, Function<R, M> restToModel) {
         this.modelToRest = modelToRest;
         this.restToModel = restToModel;
     }
 
     public static <A extends Enum<A>, B extends Enum<B>> EnumMapper<A, B> forMapping(Map<A, B> mapping) {
-        return forMapping(HashBiMap.create(mapping));
+        return new EnumMapper<>(mapping);
     }
 
     public static <A extends Enum<A>, B extends Enum<B>> EnumMapper<A, B> forMapping(BiMap<A, B> mapping) {
-        BiMap<B, A> reverseMapping = mapping.inverse();
-        return new EnumMapper<>(mapping::get, reverseMapping::get);
+        return new EnumMapper<>(mapping);
     }
 
     @Override

@@ -9,6 +9,7 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import java.util.Optional;
 
 /**
  * @author Kamil Jarosz
@@ -18,8 +19,42 @@ import javax.persistence.Table;
 @NoArgsConstructor
 @Entity(name = "RuntimeTask")
 @Table(name = "XDCS_TASK_")
-public class RuntimeTaskEntity extends BaseEntity {
+public class RuntimeTaskEntity extends BaseEntity implements Task {
     @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "ID_", nullable = false)
     private HistoricalTaskEntity historicalTask;
+
+    public RuntimeTaskEntity(String id) {
+        super(id);
+    }
+
+    @Override
+    public Type getType() {
+        return Type.RUNTIME;
+    }
+
+    @Override
+    public String getName() {
+        return historicalTask.getName();
+    }
+
+    @Override
+    public DeploymentDescriptorEntity getDeploymentDescriptor() {
+        return historicalTask.getDeploymentDescriptor();
+    }
+
+    @Override
+    public HistoricalTaskEntity asHistorical() {
+        return historicalTask;
+    }
+
+    @Override
+    public Optional<RuntimeTaskEntity> asRuntime() {
+        return Optional.of(this);
+    }
+
+    @Override
+    public Optional<QueuedTaskEntity> asQueued() {
+        return Optional.empty();
+    }
 }
