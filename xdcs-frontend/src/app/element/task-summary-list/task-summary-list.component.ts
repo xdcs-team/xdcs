@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { TaskExecutionStatus } from '../task-summary-item/task-summary-item.component';
+import { TasksService } from '../../../api/services/tasks.service';
+import { TasksDto } from '../../../api/models';
 
 @Component({
   selector: 'app-task-summary-list',
@@ -7,13 +8,18 @@ import { TaskExecutionStatus } from '../task-summary-item/task-summary-item.comp
   styleUrls: ['./task-summary-list.component.less'],
 })
 export class TaskSummaryListComponent implements OnInit {
-  TaskExecutionStatus = TaskExecutionStatus;
+  tasks: TasksDto = null;
 
-  constructor() {
+  constructor(private tasksService: TasksService) {
 
   }
 
   ngOnInit() {
+    this.loadTasks();
+  }
 
+  private loadTasks() {
+    this.tasksService.getTasks({})
+      .subscribe(tasks => this.tasks = tasks);
   }
 }

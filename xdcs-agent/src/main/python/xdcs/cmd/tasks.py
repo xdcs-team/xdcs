@@ -51,7 +51,8 @@ class RunDockerTaskCmd(Command):
         image_id = DockerCli().build(self._workspace_path, dockerfile)
         logger.info('Docker built, image ID: ' + image_id)
 
-        docker_cli = DockerCli()
-        docker_cli.remove_container_after_finish()
-        docker_cli.container_name('xdcs_' + self._deployment_id)
-        docker_cli.run(image_id)
+        DockerCli() \
+            .remove_container_after_finish() \
+            .nvidia_all_devices() \
+            .container_name('xdcs_' + self._deployment_id) \
+            .run(image_id)

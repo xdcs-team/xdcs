@@ -1,5 +1,7 @@
 package pl.edu.agh.xdcs.db.entity;
 
+import java.time.Instant;
+import java.time.OffsetDateTime;
 import java.util.Optional;
 
 /**
@@ -19,6 +21,8 @@ public interface Task {
     Optional<RuntimeTaskEntity> asRuntime();
 
     Optional<QueuedTaskEntity> asQueued();
+
+    Instant getTimeCreated();
 
     enum Type {
         HISTORICAL,

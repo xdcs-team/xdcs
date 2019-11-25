@@ -27,8 +27,9 @@ public class QueuedTaskDao extends EntityDaoBase<QueuedTaskEntity> {
 
         List<QueuedTaskEntity> tasks = entityManager
                 .createQuery("select q from TaskQueue as q " +
+                        "inner join HisTask h on h.id = q.id " +
                         "where q.lastCheck < :maxLastCheck " +
-                        "order by q.created asc")
+                        "order by h.timeCreated asc")
                 .setParameter("maxLastCheck", now.minus(minWaitTime))
                 .setMaxResults(maxResults)
                 .getResultList();
