@@ -24,6 +24,11 @@ public class Agent {
     @Setter
     private InetSocketAddress tunnelEndpoint;
 
+    @Override
+    public String toString() {
+        return name + "/" + address;
+    }
+
     public enum Status {
         UNAVAILABLE,
         READY,

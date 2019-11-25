@@ -12,6 +12,7 @@ import pl.edu.agh.xdcs.restapi.model.TaskConditionsDto;
 import pl.edu.agh.xdcs.restapi.model.TaskCreationDto;
 import pl.edu.agh.xdcs.restapi.util.RestUtils;
 import pl.edu.agh.xdcs.services.TaskService;
+import pl.edu.agh.xdcs.services.sweeper.SweepAfter;
 import pl.edu.agh.xdcs.util.UriResolver;
 import pl.edu.agh.xdcs.util.WildcardPattern;
 
@@ -69,6 +70,7 @@ public class TasksApiImpl implements TasksApi {
     }
 
     @Override
+    @SweepAfter(message = "after task started by REST")
     public Response startTask(TaskCreationDto taskCreation) {
         TaskService.TaskCreationWizard taskCreationWizard = taskService.newTask()
                 .name(taskCreation.getName())
