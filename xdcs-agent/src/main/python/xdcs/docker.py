@@ -125,7 +125,7 @@ class _DockerInfo:
 
     def version(self) -> str:
         docker_version_output = DockerCli().version()
-        version_search = re.search('Docker version ([0-9.]+), build ([a-f0-9]+)',
+        version_search = re.search('Docker version ([0-9.]+)(.*)',
                                    docker_version_output, re.IGNORECASE)
 
         if version_search:
