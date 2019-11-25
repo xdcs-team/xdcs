@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 /**
  * @author Kamil Jarosz
  */
-public class TaskQueueDao extends DaoBase<QueuedTaskEntity> {
+public class QueuedTaskDao extends EntityDaoBase<QueuedTaskEntity> {
     @Override
     protected Class<QueuedTaskEntity> getEntityClass() {
         return QueuedTaskEntity.class;

@@ -18,6 +18,7 @@ import pl.edu.agh.xdcs.workspace.FileDescription;
 import pl.edu.agh.xdcs.workspace.Workspace;
 
 import javax.inject.Inject;
+import javax.transaction.Transactional;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -27,6 +28,7 @@ import java.io.InputStream;
 /**
  * @author Kamil Jarosz
  */
+@Transactional
 public class DeploymentsApiImpl implements DeploymentsApi {
     @Inject
     private Logger logger;
@@ -45,8 +47,6 @@ public class DeploymentsApiImpl implements DeploymentsApi {
 
     @Inject
     private DeploymentMapper deploymentMapper;
-
-
 
     @Override
     public Response getDeployment(String deploymentId) {
@@ -75,7 +75,7 @@ public class DeploymentsApiImpl implements DeploymentsApi {
             FileDto file = fileDescriptionMapper.toRestEntity(desc);
             return Response.ok(file).build();
         } catch (IOException e) {
-            return handleIOError(e);
+            return RestUtils.serverError(e);
         }
     }
 
@@ -86,12 +86,7 @@ public class DeploymentsApiImpl implements DeploymentsApi {
             InputStream file = workspace.openFile(path).orElseThrow(NotFoundException::new);
             return Response.ok(file, MediaType.APPLICATION_OCTET_STREAM).build();
         } catch (IOException e) {
-            return handleIOError(e);
+            return RestUtils.serverError(e);
         }
-    }
-
-    private Response handleIOError(IOException e) {
-        logger.error("IO error occurred", e);
-        return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
     }
 }

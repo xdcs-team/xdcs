@@ -7,7 +7,7 @@ import java.util.List;
 /**
  * @author Kamil Jarosz
  */
-public class DeploymentDescriptorDao extends DaoBase<DeploymentDescriptorEntity> {
+public class DeploymentDescriptorDao extends EntityDaoBase<DeploymentDescriptorEntity> {
     @Override
     protected Class<DeploymentDescriptorEntity> getEntityClass() {
         return DeploymentDescriptorEntity.class;

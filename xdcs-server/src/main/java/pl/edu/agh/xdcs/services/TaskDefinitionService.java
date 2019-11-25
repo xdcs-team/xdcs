@@ -23,7 +23,7 @@ public class TaskDefinitionService {
     private WorkspaceService workspaceService;
 
     public Optional<TaskDefinitionEntity> getTaskDefinition(String taskDefinitionId) {
-        return Optional.ofNullable(taskDefinitionDao.find(taskDefinitionId));
+        return taskDefinitionDao.find(taskDefinitionId);
     }
 
     public List<TaskDefinitionEntity> getTaskDefinitions(int from, int limit) {

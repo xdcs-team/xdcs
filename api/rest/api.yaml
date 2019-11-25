@@ -413,6 +413,25 @@ paths:
               schema:
                 $ref: '#/components/schemas/TaskDto'
 
+  /tasks/{taskId}/conditions:
+    get:
+      tags:
+        - Tasks
+      operationId: getTaskConditions
+      parameters:
+        - in: path
+          name: taskId
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TaskConditionsDto'
+
 components:
   schemas:
     NodesDto:
@@ -605,6 +624,8 @@ components:
       properties:
         id:
           type: string
+        name:
+          type: string
         deploymentId:
           type: string
         state:
@@ -645,3 +666,11 @@ components:
             - opencl
         quantity:
           type: integer
+
+    TaskConditionsDto:
+      type: object
+      properties:
+        resources:
+          type: array
+          items:
+            $ref: '#/components/schemas/ResourceDto'

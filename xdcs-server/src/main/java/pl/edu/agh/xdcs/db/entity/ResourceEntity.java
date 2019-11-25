@@ -21,16 +21,16 @@ import javax.persistence.Table;
 @Table(name = "XDCS_RESOURCE_")
 public class ResourceEntity extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "OWNER_ID_")
+    @JoinColumn(name = "OWNER_ID_", nullable = false)
     private AgentEntity owner;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "LOCKED_BY_")
     private RuntimeTaskEntity lockedBy;
 
-    @Column(name = "TYPE_")
+    @Column(name = "TYPE_", nullable = false)
     private ResourceType type;
 
-    @Column(name = "PATH_")
+    @Column(name = "PATH_", nullable = false)
     private String resourcePath;
 }

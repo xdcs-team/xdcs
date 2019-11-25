@@ -23,6 +23,9 @@ public class Deployment implements ObjectBase {
     @JsonProperty("def")
     private String definitionId;
 
+    @JsonProperty("descriptor")
+    private String descriptorId;
+
     @JsonProperty("root")
     private String root;
 

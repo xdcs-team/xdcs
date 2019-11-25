@@ -42,26 +42,26 @@ public class DeploymentService {
     }
 
     public String deploy(TaskDefinitionEntity definition, String description) {
+        // write the workspace to the filesystem
         ObjectRepositoryWorkspaceWriter writer = ObjectRepositoryWorkspaceWriter.forObjectRepository(objectRepository);
         String root = writer.write(definitionService.getWorkspace(definition));
+
+        DeploymentDescriptorEntity desc = new DeploymentDescriptorEntity();
         Deployment deployment = Deployment.builder()
                 .definitionId(definition.getId())
+                .descriptorId(desc.getId())
                 .root(root)
                 .config(buildDeploymentConfig(definition))
                 .build();
-
+        // store the deployment
         String deploymentId = objectRepository.store(deployment);
-        addDeploymentDescriptor(definition, deploymentId, description);
-        logger.info("Task definition " + definition.getId() + " deployed: " + deploymentId);
-        return deploymentId;
-    }
 
-    private void addDeploymentDescriptor(TaskDefinitionEntity definition, String deploymentId, String description) {
-        DeploymentDescriptorEntity desc = new DeploymentDescriptorEntity();
         desc.setDefinition(definition);
         desc.setDeploymentRef(ObjectRefEntity.of(deploymentId, Deployment.class));
         desc.setDescription(description);
         deploymentDescriptorDao.persist(desc);
+        logger.info("Task definition " + definition.getId() + " deployed: " + deploymentId);
+        return deploymentId;
     }
 
     private Deployment.Config buildDeploymentConfig(TaskDefinitionEntity definition) {
