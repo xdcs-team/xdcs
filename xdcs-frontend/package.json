@@ -27,6 +27,7 @@
     "@auth0/angular-jwt": "^3.0.0",
     "@fortawesome/angular-fontawesome": "~0.5.0",
     "@fortawesome/fontawesome-svg-core": "^1.2.19",
+    "@fortawesome/free-brands-svg-icons": "^5.11.2",
     "@fortawesome/free-regular-svg-icons": "^5.11.2",
     "@fortawesome/free-solid-svg-icons": "^5.11.2",
     "@primer/octicons": "^9.1.1",
