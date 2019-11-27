@@ -1,5 +1,6 @@
 package pl.edu.agh.xdcs.restapi.mapper.impl;
 
+import pl.edu.agh.xdcs.db.dao.DeploymentDescriptorDao;
 import pl.edu.agh.xdcs.db.entity.DeploymentDescriptorEntity;
 import pl.edu.agh.xdcs.or.types.Deployment;
 import pl.edu.agh.xdcs.restapi.model.DeploymentDescriptorDto;
@@ -22,6 +23,9 @@ public class DeploymentMapper {
     @Inject
     private DeploymentConfigMapper deploymentConfigMapper;
 
+    @Inject
+    private DeploymentDescriptorDao deploymentDescriptorDao;
+
     public List<DeploymentDescriptorDto> toRestEntities(Collection<DeploymentDescriptorEntity> model) {
         return model.stream()
                 .map(this::toRestEntity)
@@ -37,10 +41,18 @@ public class DeploymentMapper {
         return dto;
     }
 
-    public DeploymentDto toRestEntity(Deployment model) {
+    public DeploymentDto toRestEntity(String deploymentId, Deployment model) {
         DeploymentDto deploymentDto = new DeploymentDto();
+        deploymentDto.setId(deploymentId);
         deploymentDto.setTaskDefinitionId(model.getDefinitionId());
         deploymentDto.setConfig(deploymentConfigMapper.toRestEntity(model.getConfig()));
+
+        DeploymentDescriptorEntity desc = deploymentDescriptorDao.find(model.getDescriptorId())
+                .orElse(null);
+        if(desc != null){
+            deploymentDto.setDescription(desc.getDescription());
+            deploymentDto.setTimeDeployed(desc.getTimeDeployed().atOffset(userContext.getCurrentZoneOffset()));
+        }
         return deploymentDto;
     }
 }

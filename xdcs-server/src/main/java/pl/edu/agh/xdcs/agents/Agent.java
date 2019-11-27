@@ -29,6 +29,10 @@ public class Agent {
         return name + "/" + address;
     }
 
+    public boolean isReady() {
+        return this.status == Status.READY;
+    }
+
     public enum Status {
         UNAVAILABLE,
         READY,

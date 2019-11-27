@@ -1,11 +1,12 @@
 import { Component } from '@angular/core';
 import { TaskDefinitionsService } from '../../../api/services/task-definitions.service';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { first } from 'rxjs/operators';
 import { NodesDto } from '../../../api/models/nodes-dto';
 import { NodesService } from '../../../api/services/nodes.service';
-import { DeploymentDto, NodeDto } from '../../../api/models';
+import { DeploymentDto, NodeDto, ResourceDto, TaskCreationDto, TaskDefinitionDto } from '../../../api/models';
 import { DeploymentsService } from '../../../api/services/deployments.service';
+import { TasksService } from '../../../api/services/tasks.service';
 
 @Component({
   selector: 'app-task-creation',
@@ -13,17 +14,27 @@ import { DeploymentsService } from '../../../api/services/deployments.service';
   styleUrls: ['./task-creation.component.less'],
 })
 export class TaskCreationComponent {
-  nodes: Array<NodeDto> = [];
-  emptyNode: NodeDto = {};
   deploymentId: string;
   deployment: DeploymentDto;
-  usedNodes: Array<NodeDto> = [];
+  definition: TaskDefinitionDto;
+  nodes: Array<NodeDto>;
   files: Map<string, File> = new Map([]);
+
+  taskName = '';
+  resources: Array<ResourceDto> = [];
+  emptyResource: ResourceDto = {
+    agent: '',
+    key: '',
+    quantity: 1,
+    type: 'cpu',
+  };
 
   constructor(private taskDefinitionsService: TaskDefinitionsService,
               private route: ActivatedRoute,
+              private router: Router,
               private nodesService: NodesService,
-              private deploymentService: DeploymentsService) {
+              private deploymentService: DeploymentsService,
+              private tasksService: TasksService) {
 
   }
 
@@ -41,6 +52,10 @@ export class TaskCreationComponent {
     }).pipe(first()).subscribe(dp => {
       this.deployment = dp;
       this.loadFilesMap();
+
+      this.taskDefinitionsService.getTaskDefinition({
+        taskDefinitionId: dp.taskDefinitionId,
+      }).pipe(first()).subscribe(definition => this.definition = definition);
     });
 
     this.nodesService.getNodes()
@@ -58,5 +73,17 @@ export class TaskCreationComponent {
         }
       });
     }
+  }
+
+  submitTask() {
+    this.tasksService.startTask({
+      body: {
+        name: this.taskName,
+        deploymentId: this.deploymentId,
+        resources: this.resources,
+      } as TaskCreationDto,
+    }).subscribe(() => {
+      this.router.navigateByUrl('/');
+    });
   }
 }

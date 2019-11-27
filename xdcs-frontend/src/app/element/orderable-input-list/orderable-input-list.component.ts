@@ -2,7 +2,7 @@ import { Component, ContentChild, Input, TemplateRef } from '@angular/core';
 import { faChevronDown, faChevronUp, faPlus, faTrash } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
-  selector: 'app-list-manager',
+  selector: 'app-orderable-input-list',
   templateUrl: './orderable-input-list.component.html',
   styleUrls: ['./orderable-input-list.component.less'],
 })

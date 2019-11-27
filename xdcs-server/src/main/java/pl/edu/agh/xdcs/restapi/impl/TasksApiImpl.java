@@ -83,6 +83,10 @@ public class TasksApiImpl implements TasksApi {
                 .name(taskCreation.getName())
                 .deploymentId(taskCreation.getDeploymentId());
 
+        if (taskCreation.getResources().isEmpty()) {
+            return RestUtils.badRequest("No resources");
+        }
+
         taskCreation.getResources().forEach(res -> {
             ResourceType type = resourceTypeMapper.toModelEntity(res.getType());
             WildcardPattern agentPattern = WildcardPattern.parse(res.getAgent());

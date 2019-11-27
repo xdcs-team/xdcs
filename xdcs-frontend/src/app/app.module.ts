@@ -19,7 +19,7 @@ import { NodeComponent } from './view/node/node.component';
 import { NodePreviewComponent } from './element/node-preview/node-preview.component';
 import { TaskSummaryItemComponent } from './element/task-summary-item/task-summary-item.component';
 import { TaskSummaryListComponent } from './element/task-summary-list/task-summary-list.component';
-import { AlertModule, CollapseModule, ModalModule, SortableModule, TooltipModule } from 'ngx-bootstrap';
+import { AlertModule, CollapseModule, ModalModule, SortableModule, TooltipModule, TypeaheadModule } from 'ngx-bootstrap';
 import { OcticonDirective } from './directives/octicon.directive';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { GlobalAlertsComponent } from './element/global-alerts/global-alerts.component';
@@ -138,6 +138,7 @@ import { AutoFocusDirective } from './directives/auto-focus.directive';
     NgxSpinnerModule,
     TooltipModule.forRoot(),
     ngfModule,
+    TypeaheadModule.forRoot(),
   ],
   providers: [
     HttpClientModule,
