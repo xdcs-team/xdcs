@@ -57,6 +57,7 @@ public class GrpcSshServer {
         logger.info("Initializing GRPC server on port " + port);
 
         server = SshServer.setUpDefaultServer();
+        server.getProperties().put(SshServer.IDLE_TIMEOUT, 0);
         server.setPort(port);
         server.setScheduledExecutorService(scheduledExecutorService);
         server.setKeyPairProvider(new SimpleGeneratorHostKeyProvider(Paths.get("serverkey")));

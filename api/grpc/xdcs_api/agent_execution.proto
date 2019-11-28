@@ -7,12 +7,23 @@ package xdcs.agent;
 
 import "xdcs_api/common.proto";
 
-message DeploymentId {
+message TaskSubmit {
     string deploymentId = 1;
+    string taskId = 2;
+}
+
+message TaskId {
+    string taskId = 1;
 }
 
 service TaskRunner {
-    rpc Submit (DeploymentId) returns (OkResponse) {
+    rpc Submit (TaskSubmit) returns (OkResponse) {
+
+    }
+}
+
+service TaskReporting {
+    rpc ReportCompletion (TaskId) returns (OkResponse) {
 
     }
 }
