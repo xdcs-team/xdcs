@@ -87,6 +87,7 @@ public class TaskSweeper {
             WildcardPattern agentNamePattern = resourcePattern.getAgentNamePattern();
             Optional<Agent> matchedAgent = agentManager.getAllAgents()
                     .stream()
+                    .filter(Agent::isReady)
                     .filter(agent -> agentNamePattern.matches(agent.getName()))
                     .findAny();
             if (!matchedAgent.isPresent()) {

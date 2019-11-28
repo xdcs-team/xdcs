@@ -51,7 +51,7 @@
     <ng-container *ngIf="taskDefinition.config.kernelparams.length === 0">
       <app-no-data message="No parameters" size="1em"></app-no-data>
     </ng-container>
-    <app-list-manager [data]="taskDefinition.config.kernelparams"
+    <app-orderable-input-list [data]="taskDefinition.config.kernelparams"
                       [emptyElement]="emptyElement">
       <ng-template #content let-item="element">
 
@@ -74,7 +74,7 @@
                placeholder="Name"
                [(ngModel)]="item.name"/>
       </ng-template>
-    </app-list-manager>
+    </app-orderable-input-list>
   </ng-container>
 
 

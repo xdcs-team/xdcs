@@ -31,9 +31,6 @@ import java.io.InputStream;
 @Transactional
 public class DeploymentsApiImpl implements DeploymentsApi {
     @Inject
-    private Logger logger;
-
-    @Inject
     private UriResolver resolver;
 
     @Inject
@@ -51,7 +48,7 @@ public class DeploymentsApiImpl implements DeploymentsApi {
     @Override
     public Response getDeployment(String deploymentId) {
         Deployment deployment = deploymentService.getDeployment(deploymentId);
-        DeploymentDto deploymentDto = deploymentMapper.toRestEntity(deployment);
+        DeploymentDto deploymentDto = deploymentMapper.toRestEntity(deploymentId, deployment);
         return Response.ok(deploymentDto).build();
     }
 

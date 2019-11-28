@@ -495,6 +495,11 @@ components:
           type: string
         taskDefinitionId:
           type: string
+        description:
+          type: string
+        timeDeployed:
+          type: string
+          format: 'date-time'
         config:
           $ref: '#/components/schemas/DeploymentConfigDto'
 
@@ -663,6 +668,11 @@ components:
             - opencl
         quantity:
           type: integer
+      required:
+        - agent
+        - key
+        - type
+        - quantity
 
     TaskConditionsDto:
       type: object
