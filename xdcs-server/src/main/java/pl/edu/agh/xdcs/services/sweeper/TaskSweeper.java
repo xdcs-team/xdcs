@@ -3,8 +3,8 @@ package pl.edu.agh.xdcs.services.sweeper;
 import org.slf4j.Logger;
 import pl.edu.agh.xdcs.agents.Agent;
 import pl.edu.agh.xdcs.agents.AgentManager;
-import pl.edu.agh.xdcs.api.DeploymentId;
 import pl.edu.agh.xdcs.api.TaskRunnerGrpc;
+import pl.edu.agh.xdcs.api.TaskSubmit;
 import pl.edu.agh.xdcs.db.dao.QueuedTaskDao;
 import pl.edu.agh.xdcs.db.dao.ResourcePatternDao;
 import pl.edu.agh.xdcs.db.dao.RuntimeTaskDao;
@@ -121,8 +121,9 @@ public class TaskSweeper {
         for (Agent agent : agents) {
             TaskRunnerGrpc.TaskRunnerBlockingStub taskRunner = sessionManager.getStubProducer(agent)
                     .getTaskRunnerBlockingStub();
-            taskRunner.submit(DeploymentId.newBuilder()
+            taskRunner.submit(TaskSubmit.newBuilder()
                     .setDeploymentId(deploymentId)
+                    .setTaskId(task.getId())
                     .build());
         }
     }

@@ -5,6 +5,7 @@ import pl.edu.agh.xdcs.db.dao.DeploymentDescriptorDao;
 import pl.edu.agh.xdcs.db.dao.HistoricalTaskDao;
 import pl.edu.agh.xdcs.db.dao.QueuedTaskDao;
 import pl.edu.agh.xdcs.db.dao.ResourcePatternDao;
+import pl.edu.agh.xdcs.db.dao.RuntimeTaskDao;
 import pl.edu.agh.xdcs.db.dao.TaskDao;
 import pl.edu.agh.xdcs.db.entity.DeploymentDescriptorEntity;
 import pl.edu.agh.xdcs.db.entity.HistoricalTaskEntity;
@@ -34,6 +35,9 @@ public class TaskService {
     private HistoricalTaskDao historicalTaskDao;
 
     @Inject
+    private RuntimeTaskDao runtimeTaskDao;
+
+    @Inject
     private TaskDao taskDao;
 
     @Inject
@@ -59,6 +63,10 @@ public class TaskService {
 
     public TaskCreationWizard newTask() {
         return new TaskCreationWizard();
+    }
+
+    public void reportCompletion(String taskId) {
+        runtimeTaskDao.removeById(taskId);
     }
 
     public class TaskCreationWizard {

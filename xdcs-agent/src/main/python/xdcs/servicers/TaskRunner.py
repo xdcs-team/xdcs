@@ -8,9 +8,10 @@ from xdcs_api.common_pb2 import OkResponse
 class TaskRunner(TaskRunnerServicer):
     def Submit(self, request, context):
         deployment_id = request.deploymentId
-        self.__execute_async(deployment_id)
+        task_id = request.taskId
+        self.__execute_async(deployment_id, task_id)
         return OkResponse()
 
     @asynchronous
-    def __execute_async(self, deployment_id):
-        xdcs().execute(RunTaskCmd(deployment_id))
+    def __execute_async(self, deployment_id, task_id):
+        xdcs().execute(RunTaskCmd(deployment_id, task_id))
