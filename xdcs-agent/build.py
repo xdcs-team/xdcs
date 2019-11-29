@@ -41,7 +41,6 @@ def initialize(project):
     project.depends_on('pyopencl')
     project.depends_on('distro')
     project.depends_on('packaging')
-    project.depends_on('lazy')
 
     # This dependency should be optional
     # as it requires CUDA to be installed.

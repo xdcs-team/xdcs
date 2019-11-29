@@ -4,7 +4,7 @@ import pl.edu.agh.xdcs.or.ObjectRepository;
 import pl.edu.agh.xdcs.or.ObjectRepositoryIOException;
 import pl.edu.agh.xdcs.or.types.BlobStream;
 import pl.edu.agh.xdcs.or.types.Tree;
-import pl.edu.agh.xdcs.restapi.mapper.UnsatisfiedMappingException;
+import pl.edu.agh.xdcs.mapper.UnsatisfiedMappingException;
 
 import java.io.IOException;
 import java.util.ArrayList;

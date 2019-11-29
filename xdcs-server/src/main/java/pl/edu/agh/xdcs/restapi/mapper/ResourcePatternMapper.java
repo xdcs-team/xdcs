@@ -1,7 +1,7 @@
 package pl.edu.agh.xdcs.restapi.mapper;
 
 import pl.edu.agh.xdcs.db.entity.ResourcePatternEntity;
-import pl.edu.agh.xdcs.restapi.mapper.impl.ResourceTypeMapper;
+import pl.edu.agh.xdcs.restapi.mapper.ResourceTypeMapper;
 import pl.edu.agh.xdcs.restapi.model.ResourceDto;
 
 import javax.inject.Inject;
@@ -17,7 +17,7 @@ public class ResourcePatternMapper {
         return new ResourceDto()
                 .agent(pattern.getAgentNamePattern().toString())
                 .key(pattern.getResourceKeyPattern().toString())
-                .type(resourceTypeMapper.toRestEntity(pattern.getType()))
+                .type(resourceTypeMapper.toApiEntity(pattern.getType()))
                 .quantity(pattern.getQuantity());
     }
 }

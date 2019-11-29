@@ -1,7 +1,7 @@
-package pl.edu.agh.xdcs.restapi.mapper.impl;
+package pl.edu.agh.xdcs.restapi.mapper;
 
-import pl.edu.agh.xdcs.restapi.mapper.SimpleMapper;
-import pl.edu.agh.xdcs.restapi.mapper.UnsatisfiedMappingException;
+import pl.edu.agh.xdcs.mapper.SimpleMapper;
+import pl.edu.agh.xdcs.mapper.UnsatisfiedMappingException;
 import pl.edu.agh.xdcs.restapi.model.FileType;
 import pl.edu.agh.xdcs.workspace.FileDescription;
 
@@ -24,7 +24,7 @@ public class FileTypeMapper implements SimpleMapper<FileDescription.FileType, Fi
     }
 
     @Override
-    public FileType toRestEntity(FileDescription.FileType model) {
+    public FileType toApiEntity(FileDescription.FileType model) {
         switch (model) {
             case REGULAR:
                 return FileType.REGULAR;

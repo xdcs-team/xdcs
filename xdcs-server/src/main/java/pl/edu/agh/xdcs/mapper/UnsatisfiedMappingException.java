@@ -1,4 +1,4 @@
-package pl.edu.agh.xdcs.restapi.mapper;
+package pl.edu.agh.xdcs.mapper;
 
 /**
  * @author Kamil Jarosz

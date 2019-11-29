@@ -9,6 +9,8 @@ from packaging import version
 
 from xdcs import gpu
 from xdcs.app import xdcs
+from xdcs.decorators import lazy, asynchronous
+from xdcs.log_handling import LogHandler
 
 logger = logging.getLogger(__name__)
 
@@ -60,18 +62,30 @@ class DockerCli:
                               stderr=subprocess.PIPE,
                               text=True)
 
-    def run(self, image: str) -> None:
+    def run(self, image: str, log_handler: LogHandler = None) -> None:
         opts = [*self._opts, *self.__build_gpu_opts()]
         proc = subprocess.Popen([self._docker_exec, 'run', *opts, image],
                                 stdout=subprocess.PIPE,
                                 stderr=subprocess.PIPE)
-        for line in proc.stdout:
-            logger.info(line.decode("utf-8").rstrip('\n'))
+
+        if log_handler is not None:
+            self._consume_stdout(log_handler, proc)
+            self._consume_stderr(log_handler, proc)
 
         proc.wait()
 
         if proc.returncode != 0:
             raise DockerException('Docker run failed: ' + str(proc.stderr.read().decode("utf-8")))
+
+    @asynchronous
+    def _consume_stdout(self, log_handler: LogHandler, proc: subprocess.Popen):
+        for line in proc.stdout:
+            log_handler.out_bytes(line.strip(b'\n'))
+
+    @asynchronous
+    def _consume_stderr(self, log_handler: LogHandler, proc: subprocess.Popen):
+        for line in proc.stderr:
+            log_handler.err_bytes(line.strip(b'\n'))
 
     def build(self, directory, dockerfile) -> str:
         proc = self.__run_docker(['build', '-q', '-f', dockerfile, directory])
@@ -115,6 +129,7 @@ class DockerCli:
 
 
 class _DockerInfo:
+    @lazy
     def docker_available(self) -> bool:
         try:
 
@@ -123,6 +138,7 @@ class _DockerInfo:
         except DockerException:
             return False
 
+    @lazy
     def version(self) -> str:
         docker_version_output = DockerCli().version()
         version_search = re.search('Docker version ([0-9.]+)(.*)',
@@ -133,6 +149,7 @@ class _DockerInfo:
         else:
             raise DockerException('Unrecognized version output: ' + docker_version_output)
 
+    @lazy
     def is_native_gpu_supported(self) -> bool:
         if version.parse(self.version()) < version.parse("19.03"):
             return False
@@ -147,6 +164,7 @@ class _DockerInfo:
                 return False
             raise e
 
+    @lazy
     def is_nvidia_runtime_available(self) -> bool:
         try:
             DockerCli() \

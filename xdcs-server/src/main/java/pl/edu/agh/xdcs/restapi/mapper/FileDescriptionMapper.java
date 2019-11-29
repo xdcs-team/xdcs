@@ -1,6 +1,6 @@
-package pl.edu.agh.xdcs.restapi.mapper.impl;
+package pl.edu.agh.xdcs.restapi.mapper;
 
-import pl.edu.agh.xdcs.restapi.mapper.SimpleMapper;
+import pl.edu.agh.xdcs.mapper.SimpleMapper;
 import pl.edu.agh.xdcs.restapi.model.FileDto;
 import pl.edu.agh.xdcs.util.FsUtils;
 import pl.edu.agh.xdcs.workspace.FileDescription;
@@ -30,16 +30,16 @@ public class FileDescriptionMapper implements SimpleMapper<FileDescription, File
     }
 
     @Override
-    public FileDto toRestEntity(FileDescription model) {
+    public FileDto toApiEntity(FileDescription model) {
         FileDto dto = new FileDto();
-        dto.setType(typeMapper.toRestEntity(model.getType()));
+        dto.setType(typeMapper.toApiEntity(model.getType()));
         dto.setPermissions(FsUtils.permissionsToString(model.getPermissions()));
         List<FileDescription.Entry> children = model.getChildren();
         if (children != null) {
             dto.setChildren(children.stream()
                     .sorted(FileDescription.Entry.DIRECTORIES_FIRST
                             .thenComparing(FileDescription.Entry::getName))
-                    .map(entryMapper::toRestEntity)
+                    .map(entryMapper::toApiEntity)
                     .collect(Collectors.toList()));
         }
         return dto;

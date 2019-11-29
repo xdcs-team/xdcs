@@ -1,7 +1,7 @@
 package pl.edu.agh.xdcs.grpc.context;
 
 import pl.edu.agh.xdcs.grpc.session.GrpcSession;
-import pl.edu.agh.xdcs.grpc.scope.SessionScoped;
+import pl.edu.agh.xdcs.grpc.scope.GrpcSessionScoped;
 
 import javax.enterprise.inject.Alternative;
 
@@ -11,6 +11,6 @@ import javax.enterprise.inject.Alternative;
 @Alternative
 public class SessionContext extends StackableKeyedContext<GrpcSession> {
     public SessionContext() {
-        super(SessionScoped.class, false);
+        super(GrpcSessionScoped.class, false);
     }
 }

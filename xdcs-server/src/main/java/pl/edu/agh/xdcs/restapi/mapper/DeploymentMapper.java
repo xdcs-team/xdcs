@@ -1,4 +1,4 @@
-package pl.edu.agh.xdcs.restapi.mapper.impl;
+package pl.edu.agh.xdcs.restapi.mapper;
 
 import pl.edu.agh.xdcs.db.dao.DeploymentDescriptorDao;
 import pl.edu.agh.xdcs.db.entity.DeploymentDescriptorEntity;

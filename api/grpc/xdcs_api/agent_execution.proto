@@ -6,6 +6,7 @@ option java_package = "pl.edu.agh.xdcs.api";
 package xdcs.agent;
 
 import "xdcs_api/common.proto";
+import "google/protobuf/timestamp.proto";
 
 message TaskSubmit {
     string deploymentId = 1;
@@ -16,6 +17,23 @@ message TaskId {
     string taskId = 1;
 }
 
+message Logs {
+    string taskId = 1;
+    repeated LogLine lines = 2;
+
+    message LogLine {
+        google.protobuf.Timestamp timestamp = 1;
+        LogType type = 2;
+        bytes contents = 3;
+    }
+
+    enum LogType {
+        INTERNAL = 0;
+        STDOUT = 1;
+        STDERR = 2;
+    }
+}
+
 service TaskRunner {
     rpc Submit (TaskSubmit) returns (OkResponse) {
 
@@ -24,6 +42,10 @@ service TaskRunner {
 
 service TaskReporting {
     rpc ReportCompletion (TaskId) returns (OkResponse) {
+
+    }
+
+    rpc UploadLogs (Logs) returns (OkResponse) {
 
     }
 }
