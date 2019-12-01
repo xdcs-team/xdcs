@@ -1,11 +1,10 @@
 package pl.edu.agh.xdcs.restapi.impl;
 
-import org.slf4j.Logger;
 import pl.edu.agh.xdcs.db.entity.TaskDefinitionEntity;
 import pl.edu.agh.xdcs.or.types.Deployment;
 import pl.edu.agh.xdcs.restapi.DeploymentsApi;
-import pl.edu.agh.xdcs.restapi.mapper.impl.DeploymentMapper;
-import pl.edu.agh.xdcs.restapi.mapper.impl.FileDescriptionMapper;
+import pl.edu.agh.xdcs.restapi.mapper.DeploymentMapper;
+import pl.edu.agh.xdcs.restapi.mapper.FileDescriptionMapper;
 import pl.edu.agh.xdcs.restapi.model.DeploymentDto;
 import pl.edu.agh.xdcs.restapi.model.DeploymentRequestDto;
 import pl.edu.agh.xdcs.restapi.model.FileDto;
@@ -69,7 +68,7 @@ public class DeploymentsApiImpl implements DeploymentsApi {
         try {
             Workspace workspace = deploymentService.getWorkspaceForDeployment(deploymentId);
             FileDescription desc = workspace.readFileDescription(path).orElseThrow(NotFoundException::new);
-            FileDto file = fileDescriptionMapper.toRestEntity(desc);
+            FileDto file = fileDescriptionMapper.toApiEntity(desc);
             return Response.ok(file).build();
         } catch (IOException e) {
             return RestUtils.serverError(e);

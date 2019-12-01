@@ -18,6 +18,7 @@ import pl.edu.agh.xdcs.security.Token;
 import javax.inject.Inject;
 import java.net.SocketAddress;
 import java.util.Objects;
+import java.util.function.Supplier;
 
 /**
  * A {@link ServerInterceptor} which provides GRPC-related contexts to
@@ -49,47 +50,55 @@ public class GrpcContextInterceptor implements ServerInterceptor {
             ServerCall<ReqT, RespT> call,
             Metadata headers,
             ServerCallHandler<ReqT, RespT> next) {
-        ServerCall.Listener<ReqT> delegate = next.startCall(call, headers);
-        return new ServerCall.Listener<ReqT>() {
-            @Override
-            public void onMessage(ReqT message) {
-                intercept(call, headers, () -> delegate.onMessage(message));
-            }
+        GrpcSession session = authorizeAgent(call, headers);
+        return runWithContext(call, session, () -> {
+            ServerCall.Listener<ReqT> delegate = next.startCall(call, headers);
+            return new ServerCall.Listener<ReqT>() {
+                @Override
+                public void onMessage(ReqT message) {
+                    runWithContext(call, session, () -> delegate.onMessage(message));
+                }
 
-            @Override
-            public void onHalfClose() {
-                intercept(call, headers, delegate::onHalfClose);
-            }
+                @Override
+                public void onHalfClose() {
+                    runWithContext(call, session, delegate::onHalfClose);
+                }
 
-            @Override
-            public void onCancel() {
-                intercept(call, headers, delegate::onCancel);
-                rendezvousContext.evict(call);
-            }
+                @Override
+                public void onCancel() {
+                    runWithContext(call, session, delegate::onCancel);
+                    rendezvousContext.evict(call);
+                }
 
-            @Override
-            public void onComplete() {
-                intercept(call, headers, delegate::onComplete);
-                rendezvousContext.evict(call);
-            }
+                @Override
+                public void onComplete() {
+                    runWithContext(call, session, delegate::onComplete);
+                    rendezvousContext.evict(call);
+                }
 
-            @Override
-            public void onReady() {
-                intercept(call, headers, delegate::onReady);
-            }
-        };
+                @Override
+                public void onReady() {
+                    runWithContext(call, session, delegate::onReady);
+                }
+            };
+        });
     }
 
-    private void intercept(ServerCall call, Metadata headers, Runnable r) {
+    private void runWithContext(ServerCall call, GrpcSession session, Runnable r) {
+        runWithContext(call, session, () -> {
+            r.run();
+            return null;
+        });
+    }
+
+    private <R> R runWithContext(ServerCall call, GrpcSession session, Supplier<R> r) {
         SocketAddress clientAddress = call.getAttributes().get(Grpc.TRANSPORT_ATTR_REMOTE_ADDR);
-        GrpcSession session = authorizeAgent(call, headers);
-        if (session == null) return;
 
         agentContext.enter(clientAddress);
         sessionContext.enter(session);
         rendezvousContext.enter(call);
         try {
-            r.run();
+            return r.get();
         } finally {
             rendezvousContext.exit();
             sessionContext.exit();

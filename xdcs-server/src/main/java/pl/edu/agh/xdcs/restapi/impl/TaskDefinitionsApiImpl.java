@@ -4,11 +4,11 @@ import pl.edu.agh.xdcs.db.dao.DeploymentDescriptorDao;
 import pl.edu.agh.xdcs.db.entity.DeploymentDescriptorEntity;
 import pl.edu.agh.xdcs.db.entity.TaskDefinitionEntity;
 import pl.edu.agh.xdcs.restapi.TaskDefinitionsApi;
-import pl.edu.agh.xdcs.restapi.mapper.impl.DeploymentConfigMapper;
-import pl.edu.agh.xdcs.restapi.mapper.impl.DeploymentMapper;
-import pl.edu.agh.xdcs.restapi.mapper.impl.FileDescriptionMapper;
-import pl.edu.agh.xdcs.restapi.mapper.impl.FileTypeMapper;
-import pl.edu.agh.xdcs.restapi.mapper.impl.TaskDefinitionMapper;
+import pl.edu.agh.xdcs.restapi.mapper.DeploymentConfigMapper;
+import pl.edu.agh.xdcs.restapi.mapper.DeploymentMapper;
+import pl.edu.agh.xdcs.restapi.mapper.FileDescriptionMapper;
+import pl.edu.agh.xdcs.restapi.mapper.FileTypeMapper;
+import pl.edu.agh.xdcs.restapi.mapper.TaskDefinitionMapper;
 import pl.edu.agh.xdcs.restapi.model.DeploymentConfigDto;
 import pl.edu.agh.xdcs.restapi.model.DeploymentDescriptorsDto;
 import pl.edu.agh.xdcs.restapi.model.FileDto;
@@ -112,7 +112,7 @@ public class TaskDefinitionsApiImpl implements TaskDefinitionsApi {
             FileDescription description = taskDefinitionService.getWorkspace(definition)
                     .readFileDescription(path)
                     .orElseThrow(NotFoundException::new);
-            return Response.ok(fileDescriptionMapper.toRestEntity(description)).build();
+            return Response.ok(fileDescriptionMapper.toApiEntity(description)).build();
         } catch (NoSuchFileException e) {
             return Response.status(Response.Status.NOT_FOUND).build();
         } catch (IOException e) {

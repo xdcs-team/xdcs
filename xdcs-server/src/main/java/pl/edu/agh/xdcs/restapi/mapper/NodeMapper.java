@@ -1,4 +1,4 @@
-package pl.edu.agh.xdcs.restapi.mapper.impl;
+package pl.edu.agh.xdcs.restapi.mapper;
 
 import pl.edu.agh.xdcs.agents.Agent;
 import pl.edu.agh.xdcs.restapi.model.NodeDto;

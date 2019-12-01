@@ -2,7 +2,7 @@ package pl.edu.agh.xdcs.grpc.context;
 
 import pl.edu.agh.xdcs.grpc.scope.AgentScoped;
 import pl.edu.agh.xdcs.grpc.scope.RendezvousScoped;
-import pl.edu.agh.xdcs.grpc.scope.SessionScoped;
+import pl.edu.agh.xdcs.grpc.scope.GrpcSessionScoped;
 
 import javax.enterprise.inject.Produces;
 import javax.enterprise.inject.spi.BeanManager;
@@ -22,7 +22,7 @@ public class GrpcContextProducer {
 
     @Produces
     public SessionContext getSessionContext() {
-        return (SessionContext) beanManager.getContext(SessionScoped.class);
+        return (SessionContext) beanManager.getContext(GrpcSessionScoped.class);
     }
 
     @Produces

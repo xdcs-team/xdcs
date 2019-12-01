@@ -3,7 +3,7 @@ package pl.edu.agh.xdcs.restapi.impl;
 import pl.edu.agh.xdcs.agents.Agent;
 import pl.edu.agh.xdcs.agents.AgentManager;
 import pl.edu.agh.xdcs.restapi.NodesApi;
-import pl.edu.agh.xdcs.restapi.mapper.impl.NodeMapper;
+import pl.edu.agh.xdcs.restapi.mapper.NodeMapper;
 
 import javax.inject.Inject;
 import javax.transaction.Transactional;

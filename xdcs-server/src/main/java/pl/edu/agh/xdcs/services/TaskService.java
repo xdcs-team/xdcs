@@ -3,20 +3,24 @@ package pl.edu.agh.xdcs.services;
 import com.google.common.base.Preconditions;
 import pl.edu.agh.xdcs.db.dao.DeploymentDescriptorDao;
 import pl.edu.agh.xdcs.db.dao.HistoricalTaskDao;
+import pl.edu.agh.xdcs.db.dao.LogLineDao;
 import pl.edu.agh.xdcs.db.dao.QueuedTaskDao;
 import pl.edu.agh.xdcs.db.dao.ResourcePatternDao;
 import pl.edu.agh.xdcs.db.dao.RuntimeTaskDao;
 import pl.edu.agh.xdcs.db.dao.TaskDao;
 import pl.edu.agh.xdcs.db.entity.DeploymentDescriptorEntity;
 import pl.edu.agh.xdcs.db.entity.HistoricalTaskEntity;
+import pl.edu.agh.xdcs.db.entity.LogLineEntity;
 import pl.edu.agh.xdcs.db.entity.QueuedTaskEntity;
 import pl.edu.agh.xdcs.db.entity.ResourcePatternEntity;
 import pl.edu.agh.xdcs.db.entity.ResourceType;
+import pl.edu.agh.xdcs.db.entity.RuntimeTaskEntity;
 import pl.edu.agh.xdcs.db.entity.Task;
 import pl.edu.agh.xdcs.util.WildcardPattern;
 
 import javax.inject.Inject;
 import javax.transaction.Transactional;
+import java.time.Instant;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
@@ -49,6 +53,9 @@ public class TaskService {
     @Inject
     private ResourcePatternDao resourcePatternDao;
 
+    @Inject
+    private LogLineDao logLineDao;
+
     public Optional<Task> getTaskById(String taskId) {
         return taskDao.findById(taskId);
     }
@@ -67,6 +74,15 @@ public class TaskService {
 
     public void reportCompletion(String taskId) {
         runtimeTaskDao.removeById(taskId);
+    }
+
+    public void saveLog(RuntimeTaskEntity task, Instant time, LogLineEntity.LogType type, byte[] contents) {
+        LogLineEntity logLine = new LogLineEntity();
+        logLine.setTask(task.asHistorical());
+        logLine.setType(type);
+        logLine.setTime(time);
+        logLine.setContents(contents);
+        logLineDao.persist(logLine);
     }
 
     public class TaskCreationWizard {

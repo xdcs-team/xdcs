@@ -7,6 +7,7 @@ from xdcs.cmd import Command
 from xdcs.cmd.object_repository import FetchDeploymentCmd, DumpObjectRepositoryTreeCmd
 from xdcs.cmd.task_reporting import ReportTaskCompletionCmd
 from xdcs.docker import DockerCli
+from xdcs.log_handling import UploadingLogHandler, PassThroughLogHandler
 
 logger = logging.getLogger(__name__)
 
@@ -56,10 +57,11 @@ class RunDockerTaskCmd(Command):
         image_id = DockerCli().build(self._workspace_path, dockerfile)
         logger.info('Docker built, image ID: ' + image_id)
 
-        DockerCli() \
-            .remove_container_after_finish() \
-            .nvidia_all_devices() \
-            .container_name('xdcs_' + self._deployment_id) \
-            .run(image_id)
+        with UploadingLogHandler(self._task_id) as log_handler:
+            DockerCli() \
+                .remove_container_after_finish() \
+                .nvidia_all_devices() \
+                .container_name('xdcs_' + self._deployment_id) \
+                .run(image_id, log_handler.combine(PassThroughLogHandler(logger)))
 
         xdcs().execute(ReportTaskCompletionCmd(self._task_id))

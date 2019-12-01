@@ -1,6 +1,6 @@
-package pl.edu.agh.xdcs.restapi.mapper.impl;
+package pl.edu.agh.xdcs.restapi.mapper;
 
-import pl.edu.agh.xdcs.restapi.mapper.SimpleMapper;
+import pl.edu.agh.xdcs.mapper.SimpleMapper;
 import pl.edu.agh.xdcs.restapi.model.FileEntryDto;
 import pl.edu.agh.xdcs.util.FsUtils;
 import pl.edu.agh.xdcs.workspace.FileDescription;
@@ -23,9 +23,9 @@ public class FileEntryMapper implements SimpleMapper<FileDescription.Entry, File
     }
 
     @Override
-    public FileEntryDto toRestEntity(FileDescription.Entry model) {
+    public FileEntryDto toApiEntity(FileDescription.Entry model) {
         FileEntryDto dto = new FileEntryDto();
-        dto.setType(typeMapper.toRestEntity(model.getType()));
+        dto.setType(typeMapper.toApiEntity(model.getType()));
         dto.setPermissions(FsUtils.permissionsToString(model.getPermissions()));
         dto.setName(model.getName());
         return dto;

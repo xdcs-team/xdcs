@@ -1,8 +1,8 @@
-package pl.edu.agh.xdcs.restapi.mapper.impl;
+package pl.edu.agh.xdcs.restapi.mapper;
 
 import com.google.common.collect.ImmutableMap;
 import pl.edu.agh.xdcs.db.entity.Task;
-import pl.edu.agh.xdcs.restapi.mapper.EnumMapper;
+import pl.edu.agh.xdcs.mapper.EnumMapper;
 import pl.edu.agh.xdcs.restapi.model.TaskDto;
 import pl.edu.agh.xdcs.security.web.UserContext;
 
@@ -35,7 +35,7 @@ public class TaskMapper {
         TaskDto dto = new TaskDto();
         dto.setId(model.getId());
         dto.setName(model.getName());
-        dto.setState(stateMapper.toRestEntity(model.getType()));
+        dto.setState(stateMapper.toApiEntity(model.getType()));
         dto.setDeploymentId(model.getDeploymentDescriptor().getDeploymentRef().getReferencedObjectId());
         dto.setTimeCreated(model.getTimeCreated().atOffset(userContext.getCurrentZoneOffset()));
         return dto;

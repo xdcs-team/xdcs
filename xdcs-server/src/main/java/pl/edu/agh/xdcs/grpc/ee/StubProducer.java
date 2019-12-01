@@ -2,7 +2,7 @@ package pl.edu.agh.xdcs.grpc.ee;
 
 import pl.edu.agh.xdcs.api.HeartbeatGrpc;
 import pl.edu.agh.xdcs.api.TaskRunnerGrpc;
-import pl.edu.agh.xdcs.grpc.scope.SessionScoped;
+import pl.edu.agh.xdcs.grpc.scope.GrpcSessionScoped;
 import pl.edu.agh.xdcs.grpc.session.GrpcSession;
 
 import javax.enterprise.inject.Produces;
@@ -11,7 +11,7 @@ import javax.inject.Inject;
 /**
  * @author Kamil Jarosz
  */
-@SessionScoped
+@GrpcSessionScoped
 public class StubProducer {
     private final GrpcSession session;
 

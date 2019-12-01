@@ -1,11 +1,11 @@
-package pl.edu.agh.xdcs.restapi.mapper.impl;
+package pl.edu.agh.xdcs.restapi.mapper;
 
 import com.google.common.collect.ImmutableMap;
 import pl.edu.agh.xdcs.db.entity.TaskDefinitionEntity;
 import pl.edu.agh.xdcs.db.entity.TaskType;
 import pl.edu.agh.xdcs.or.types.Deployment;
 import pl.edu.agh.xdcs.or.types.Deployment.ConfigType;
-import pl.edu.agh.xdcs.restapi.mapper.EnumMapper;
+import pl.edu.agh.xdcs.mapper.EnumMapper;
 import pl.edu.agh.xdcs.restapi.model.DeploymentConfigDto;
 import pl.edu.agh.xdcs.restapi.model.DeploymentConfigDto.TypeEnum;
 
@@ -38,7 +38,7 @@ public class DeploymentConfigMapper {
 
     public DeploymentConfigDto toRestEntity(TaskDefinitionEntity model) {
         DeploymentConfigDto dto = new DeploymentConfigDto();
-        dto.setType(typeMapper.toRestEntity(model.getType()));
+        dto.setType(typeMapper.toApiEntity(model.getType()));
         dto.setDockerfile(model.getDockerfile());
         dto.setKernelfile(model.getKernelFile());
         dto.setKernelname(model.getKernelName());
@@ -48,7 +48,7 @@ public class DeploymentConfigMapper {
 
     public DeploymentConfigDto toRestEntity(Deployment.Config model) {
         DeploymentConfigDto deploymentConfigDto = new DeploymentConfigDto();
-        deploymentConfigDto.setType(deploymentTypeMapper.toRestEntity(model.getType()));
+        deploymentConfigDto.setType(deploymentTypeMapper.toApiEntity(model.getType()));
         deploymentConfigDto.setDockerfile(model.getDockerfile());
         deploymentConfigDto.setScriptfile(model.getScriptfile());
         deploymentConfigDto.setKernelfile(model.getKernelfile());

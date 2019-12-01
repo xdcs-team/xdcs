@@ -10,7 +10,7 @@ import pl.edu.agh.xdcs.or.ObjectRepository;
 import pl.edu.agh.xdcs.or.types.Blob;
 import pl.edu.agh.xdcs.or.types.Deployment;
 import pl.edu.agh.xdcs.or.types.Tree;
-import pl.edu.agh.xdcs.restapi.mapper.UnsatisfiedMappingException;
+import pl.edu.agh.xdcs.mapper.UnsatisfiedMappingException;
 
 import javax.inject.Inject;
 import java.util.HashSet;

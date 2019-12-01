@@ -1,8 +1,8 @@
-package pl.edu.agh.xdcs.restapi.mapper.impl;
+package pl.edu.agh.xdcs.restapi.mapper;
 
 import com.google.common.collect.EnumBiMap;
 import pl.edu.agh.xdcs.db.entity.ResourceType;
-import pl.edu.agh.xdcs.restapi.mapper.EnumMapper;
+import pl.edu.agh.xdcs.mapper.EnumMapper;
 import pl.edu.agh.xdcs.restapi.model.ResourceDto;
 
 /**

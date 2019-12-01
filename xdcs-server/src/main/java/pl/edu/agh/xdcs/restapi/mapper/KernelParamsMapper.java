@@ -1,11 +1,11 @@
-package pl.edu.agh.xdcs.restapi.mapper.impl;
+package pl.edu.agh.xdcs.restapi.mapper;
 
 import com.google.common.collect.ImmutableMap;
 import pl.edu.agh.xdcs.db.entity.KernelParameters;
 import pl.edu.agh.xdcs.or.types.KernelParameter;
 import pl.edu.agh.xdcs.or.types.KernelParameter.Direction;
 import pl.edu.agh.xdcs.or.types.KernelParameter.Type;
-import pl.edu.agh.xdcs.restapi.mapper.EnumMapper;
+import pl.edu.agh.xdcs.mapper.EnumMapper;
 import pl.edu.agh.xdcs.restapi.model.KernelParamDto;
 import pl.edu.agh.xdcs.restapi.model.KernelParamDto.DirectionEnum;
 import pl.edu.agh.xdcs.restapi.model.KernelParamDto.TypeEnum;
@@ -47,8 +47,8 @@ public class KernelParamsMapper {
     public KernelParamDto toRestEntity(KernelParameter parameter) {
         KernelParamDto dto = new KernelParamDto();
         dto.setName(parameter.getName());
-        dto.setType(kernelTypeMapper.toRestEntity(parameter.getType()));
-        dto.setDirection(kernelDirectionMapper.toRestEntity(parameter.getDirection()));
+        dto.setType(kernelTypeMapper.toApiEntity(parameter.getType()));
+        dto.setDirection(kernelDirectionMapper.toApiEntity(parameter.getDirection()));
         return dto;
     }
 
