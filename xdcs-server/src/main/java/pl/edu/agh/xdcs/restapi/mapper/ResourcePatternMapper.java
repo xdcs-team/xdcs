@@ -1,7 +1,6 @@
 package pl.edu.agh.xdcs.restapi.mapper;
 
 import pl.edu.agh.xdcs.db.entity.ResourcePatternEntity;
-import pl.edu.agh.xdcs.restapi.mapper.ResourceTypeMapper;
 import pl.edu.agh.xdcs.restapi.model.ResourceDto;
 
 import javax.inject.Inject;

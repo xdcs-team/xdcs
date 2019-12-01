@@ -16,8 +16,10 @@ import pl.edu.agh.xdcs.db.entity.ResourcePatternEntity;
 import pl.edu.agh.xdcs.db.entity.ResourceType;
 import pl.edu.agh.xdcs.db.entity.RuntimeTaskEntity;
 import pl.edu.agh.xdcs.db.entity.Task;
+import pl.edu.agh.xdcs.events.AgentLoggedEvent;
 import pl.edu.agh.xdcs.util.WildcardPattern;
 
+import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 import java.time.Instant;
@@ -56,6 +58,9 @@ public class TaskService {
     @Inject
     private LogLineDao logLineDao;
 
+    @Inject
+    private Event<AgentLoggedEvent> agentLoggedEvent;
+
     public Optional<Task> getTaskById(String taskId) {
         return taskDao.findById(taskId);
     }
@@ -76,13 +81,20 @@ public class TaskService {
         runtimeTaskDao.removeById(taskId);
     }
 
-    public void saveLog(RuntimeTaskEntity task, Instant time, LogLineEntity.LogType type, byte[] contents) {
+    public void saveLog(Task task, Instant time, LogLineEntity.LogType type, byte[] contents) {
         LogLineEntity logLine = new LogLineEntity();
         logLine.setTask(task.asHistorical());
         logLine.setType(type);
         logLine.setTime(time);
         logLine.setContents(contents);
         logLineDao.persist(logLine);
+        agentLoggedEvent.fire(AgentLoggedEvent.builder()
+                .logLine(logLine)
+                .build());
+    }
+
+    public List<LogLineEntity> getLogs(Task task, Instant from, Instant to) {
+        return logLineDao.findByPeriod(task.getId(), from, to);
     }
 
     public class TaskCreationWizard {

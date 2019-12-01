@@ -1,13 +1,16 @@
 package pl.edu.agh.xdcs.restapi.impl;
 
+import pl.edu.agh.xdcs.db.entity.LogLineEntity;
 import pl.edu.agh.xdcs.db.entity.QueuedTaskEntity;
 import pl.edu.agh.xdcs.db.entity.ResourcePatternEntity;
 import pl.edu.agh.xdcs.db.entity.ResourceType;
 import pl.edu.agh.xdcs.db.entity.Task;
 import pl.edu.agh.xdcs.restapi.TasksApi;
+import pl.edu.agh.xdcs.restapi.mapper.LogLineMapper;
 import pl.edu.agh.xdcs.restapi.mapper.ResourcePatternMapper;
 import pl.edu.agh.xdcs.restapi.mapper.ResourceTypeMapper;
 import pl.edu.agh.xdcs.restapi.mapper.TaskMapper;
+import pl.edu.agh.xdcs.restapi.model.LogsDto;
 import pl.edu.agh.xdcs.restapi.model.TaskConditionsDto;
 import pl.edu.agh.xdcs.restapi.model.TaskCreationDto;
 import pl.edu.agh.xdcs.restapi.model.TaskDto;
@@ -17,11 +20,16 @@ import pl.edu.agh.xdcs.services.TaskService;
 import pl.edu.agh.xdcs.services.sweeper.SweepAfter;
 import pl.edu.agh.xdcs.util.UriResolver;
 import pl.edu.agh.xdcs.util.WildcardPattern;
+import pl.edu.agh.xdcs.util.WsUriResolver;
+import pl.edu.agh.xdcs.ws.impl.LogsWebSocket;
 
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 import javax.ws.rs.NotFoundException;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -45,6 +53,15 @@ public class TasksApiImpl implements TasksApi {
     @Inject
     private ResourcePatternMapper resourcePatternMapper;
 
+    @Inject
+    private LogLineMapper logLineMapper;
+
+    @Inject
+    private WsUriResolver wsUriResolver;
+
+    @Context
+    private UriInfo uriInfo;
+
     @Override
     public Response getTask(String taskId) {
         Task task = taskService.getTaskById(taskId)
@@ -64,6 +81,22 @@ public class TasksApiImpl implements TasksApi {
                         .map(resourcePatternMapper::toRestEntity)
                         .collect(Collectors.toList())))
                 .build();
+    }
+
+    @Override
+    public Response getTaskLogs(String taskId, OffsetDateTime from, OffsetDateTime to) {
+        Task task = taskService.getTaskById(taskId)
+                .orElseThrow(() -> new NotFoundException("Task not found: " + taskId));
+        LogsDto logs = new LogsDto();
+        logs.setWebsocketUrl(wsUriResolver.of(LogsWebSocket.class, uriInfo, taskId).toString());
+
+        List<LogLineEntity> lines = taskService.getLogs(
+                task,
+                from == null ? null : from.toInstant(),
+                to == null ? null : to.toInstant());
+
+        logs.setItems(logLineMapper.toRestEntities(lines));
+        return Response.ok(logs).build();
     }
 
     @Override

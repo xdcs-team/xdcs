@@ -1,0 +1,26 @@
+pre.log-output {
+  color: white;
+  background-color: #252525;
+  white-space: normal;
+  display: block;
+  cursor: text;
+  margin: 0;
+  padding: 0;
+}
+
+.log-line {
+  padding: 0 10px;
+  display: flex;
+
+  .line-number {
+    user-select: none;
+    margin-right: 10px;
+    text-align: right;
+    min-width: 4ch;
+    filter: brightness(50%);
+  }
+
+  .line-contents {
+    flex-grow: 1;
+  }
+}

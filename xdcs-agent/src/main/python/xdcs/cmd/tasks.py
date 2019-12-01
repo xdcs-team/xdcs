@@ -61,7 +61,8 @@ class RunDockerTaskCmd(Command):
             DockerCli() \
                 .remove_container_after_finish() \
                 .nvidia_all_devices() \
-                .container_name('xdcs_' + self._deployment_id) \
+                .container_name('xdcs_' + self._task_id) \
+                .allocate_pseudo_tty() \
                 .run(image_id, log_handler.combine(PassThroughLogHandler(logger)))
 
         xdcs().execute(ReportTaskCompletionCmd(self._task_id))

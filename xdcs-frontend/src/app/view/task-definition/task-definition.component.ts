@@ -6,7 +6,7 @@ import { first, flatMap, map } from 'rxjs/operators';
 import { ActivatedRoute } from '@angular/router';
 import { Alert, GlobalAlertsService } from '../../services/global-alerts.service';
 import { FileTreeComponent, TreeDirectory, TreeFileType } from '../../element/file-tree/file-tree.component';
-import { from, Observable, of } from 'rxjs';
+import { from, of } from 'rxjs';
 import { ModalService } from '../../services/modal.service';
 import { DeploymentConfigDto } from '../../../api/models/deployment-config-dto';
 import { Editable, EditableMode } from '../../element/code-editor/code-editor.component';
@@ -14,6 +14,7 @@ import { FileDto } from '../../../api/models/file-dto';
 import { FileType } from '../../../api/models/file-type';
 import { CreateFileComponent } from '../../modal/create-file/create-file.component';
 import { PathUtils } from '../../utils/path-utils';
+import { BlobUtils } from '../../utils/blob-utils';
 
 @Component({
   selector: 'app-task-definition',
@@ -107,14 +108,7 @@ export class TaskDefinitionComponent implements OnInit {
       taskDefinitionId: this.taskDefinitionId, path,
     }).pipe(
       first(),
-      flatMap(blob => new Observable<string>(observer => {
-        // convert blob to string
-        const reader = new FileReader();
-        reader.onload = () => {
-          observer.next(reader.result as string);
-        };
-        reader.readAsText(blob, 'utf-8');
-      }))
+      flatMap(blob => from(BlobUtils.toString(blob, 'utf-8')))
     ).pipe(flatMap(content => {
       if (this.editedFile && this.editedFile.modified) {
         return from(this.modalService.confirmation({

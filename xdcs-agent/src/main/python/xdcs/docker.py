@@ -36,6 +36,10 @@ class DockerCli:
 
         return self
 
+    def allocate_pseudo_tty(self) -> DockerCli:
+        self._opts.extend(['-t'])
+        return self
+
     def remove_container_after_finish(self) -> DockerCli:
         self._opts.extend(['--rm'])
         return self

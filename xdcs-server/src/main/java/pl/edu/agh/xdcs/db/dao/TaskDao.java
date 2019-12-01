@@ -5,6 +5,7 @@ import pl.edu.agh.xdcs.db.entity.QueuedTaskEntity;
 import pl.edu.agh.xdcs.db.entity.RuntimeTaskEntity;
 import pl.edu.agh.xdcs.db.entity.Task;
 
+import javax.persistence.NoResultException;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -35,16 +36,20 @@ public class TaskDao extends DaoBase {
     }
 
     public Optional<Task> findById(String taskId) {
-        Object[] results = (Object[]) entityManager
-                .createQuery("select h, r, q " +
-                        "from HisTask h " +
-                        "left join RuntimeTask r on h.id = r.id " +
-                        "left join TaskQueue q on h.id = q.id " +
-                        "where h.id = :taskId")
-                .setParameter("taskId", taskId)
-                .getSingleResult();
+        try {
+            Object[] results = (Object[]) entityManager
+                    .createQuery("select h, r, q " +
+                            "from HisTask h " +
+                            "left join RuntimeTask r on h.id = r.id " +
+                            "left join TaskQueue q on h.id = q.id " +
+                            "where h.id = :taskId")
+                    .setParameter("taskId", taskId)
+                    .getSingleResult();
 
-        return mapResultsToTask(results);
+            return mapResultsToTask(results);
+        } catch (NoResultException e) {
+            return Optional.empty();
+        }
     }
 
     @SuppressWarnings("unchecked")
