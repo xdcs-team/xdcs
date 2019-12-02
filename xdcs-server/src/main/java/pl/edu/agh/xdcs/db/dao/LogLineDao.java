@@ -1,9 +1,11 @@
 package pl.edu.agh.xdcs.db.dao;
 
+import pl.edu.agh.xdcs.db.DbUtils;
 import pl.edu.agh.xdcs.db.entity.LogLineEntity;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * @author Kamil Jarosz
@@ -19,11 +21,11 @@ public class LogLineDao extends EntityDaoBase<LogLineEntity> {
         return entityManager.createQuery("select ll from LogLine ll " +
                 "where " +
                 "ll.task.id = :taskId and " +
-                "(:from is null or ll.time >= :from) and " +
-                "(:to is null or ll.time <= :to)")
+                "ll.time >= :f and " +
+                "ll.time <= :t")
                 .setParameter("taskId", taskId)
-                .setParameter("from", from)
-                .setParameter("to", to)
+                .setParameter("f", Optional.ofNullable(from).orElse(DbUtils.MIN_INSTANT))
+                .setParameter("t", Optional.ofNullable(to).orElse(DbUtils.MAX_INSTANT))
                 .getResultList();
     }
 }

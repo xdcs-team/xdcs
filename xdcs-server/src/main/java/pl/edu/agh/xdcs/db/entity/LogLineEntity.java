@@ -11,7 +11,6 @@ import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.Index;
 import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import java.time.Instant;
@@ -40,7 +39,6 @@ public class LogLineEntity extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private LogType type;
 
-    @Lob
     @Column(name = "CONTENTS_", nullable = false)
     private byte[] contents;
 
