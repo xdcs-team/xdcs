@@ -58,15 +58,15 @@ public class Deployment implements ObjectBase {
 
         @JsonProperty("kernelfile")
         @JsonInclude(JsonInclude.Include.NON_EMPTY)
-        private String kernelfile;
+        private String kernelFile;
 
         @JsonProperty("kernelname")
         @JsonInclude(JsonInclude.Include.NON_EMPTY)
-        private String kernelname;
+        private String kernelName;
 
         @JsonProperty("scriptfile")
         @JsonInclude(JsonInclude.Include.NON_EMPTY)
-        private String scriptfile;
+        private String scriptFile;
 
         @JsonProperty("kernelparams")
         @JsonInclude(JsonInclude.Include.NON_EMPTY)

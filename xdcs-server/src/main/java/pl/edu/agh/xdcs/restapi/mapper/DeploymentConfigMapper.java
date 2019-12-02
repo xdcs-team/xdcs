@@ -50,9 +50,9 @@ public class DeploymentConfigMapper {
         DeploymentConfigDto deploymentConfigDto = new DeploymentConfigDto();
         deploymentConfigDto.setType(deploymentTypeMapper.toApiEntity(model.getType()));
         deploymentConfigDto.setDockerfile(model.getDockerfile());
-        deploymentConfigDto.setScriptfile(model.getScriptfile());
-        deploymentConfigDto.setKernelfile(model.getKernelfile());
-        deploymentConfigDto.setKernelname(model.getKernelname());
+        deploymentConfigDto.setScriptfile(model.getScriptFile());
+        deploymentConfigDto.setKernelfile(model.getKernelFile());
+        deploymentConfigDto.setKernelname(model.getKernelName());
         deploymentConfigDto.setKernelparams(Optional.ofNullable(model.getKernelParams())
                 .map(kernelParamsMapper::toRestEntity)
                 .orElse(null));

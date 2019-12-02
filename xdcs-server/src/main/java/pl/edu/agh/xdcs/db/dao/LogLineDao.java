@@ -22,7 +22,8 @@ public class LogLineDao extends EntityDaoBase<LogLineEntity> {
                 "where " +
                 "ll.task.id = :taskId and " +
                 "ll.time >= :f and " +
-                "ll.time <= :t")
+                "ll.time <= :t " +
+                "order by ll.time")
                 .setParameter("taskId", taskId)
                 .setParameter("f", Optional.ofNullable(from).orElse(DbUtils.MIN_INSTANT))
                 .setParameter("t", Optional.ofNullable(to).orElse(DbUtils.MAX_INSTANT))
