@@ -5,6 +5,7 @@
         version="2.1">
     <persistence-unit name="xdcs">
         <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
+        <jta-data-source>java:jboss/datasources/xdcs</jta-data-source>
         <class>pl.edu.agh.xdcs.db.entity.TaskDefinitionEntity</class>
         <class>pl.edu.agh.xdcs.db.entity.ObjectRefEntity</class>
         <class>pl.edu.agh.xdcs.db.entity.DeploymentDescriptorEntity</class>
@@ -14,10 +15,7 @@
         <class>pl.edu.agh.xdcs.db.entity.ResourcePatternEntity</class>
         <class>pl.edu.agh.xdcs.db.entity.RuntimeTaskEntity</class>
         <properties>
-            <property name="javax.persistence.jdbc.driver" value="org.h2.Driver"/>
-            <property name="javax.persistence.jdbc.url" value="jdbc:h2:mem:xdcs;DB_CLOSE_DELAY=-1"/>
-            <property name="javax.persistence.jdbc.user" value="sa"/>
-            <property name="javax.persistence.jdbc.password" value=""/>
+            <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQL10Dialect"/>
             <property name="hibernate.show_sql" value="true"/>
             <property name="hibernate.hbm2ddl.auto" value="update"/>
         </properties>

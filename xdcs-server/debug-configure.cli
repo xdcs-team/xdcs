@@ -1,7 +1,0 @@
-embed-server --std-out=echo
-
-/subsystem=logging/logger=pl.edu.agh.xdcs:add
-/subsystem=logging/logger=pl.edu.agh.xdcs:write-attribute(name=level, value=DEBUG)
-/subsystem=logging/console-handler=CONSOLE:write-attribute(name=level, value=DEBUG)
-
-stop-embedded-server
