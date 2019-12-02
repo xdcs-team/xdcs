@@ -13,10 +13,10 @@ import { DeploymentsService } from '../../../api/services/deployments.service';
 export class NewTaskComponent {
   @ViewChild('modal', { static: false })
   modal;
-  taskDefinition: TaskDefinitionDto = {};
-  deploymentList: Array<DeploymentDescriptorDto> = [];
-  definitionList: Array<TaskDefinitionDto> = [];
-  deployment: DeploymentDescriptorDto = {};
+  definitions: Array<TaskDefinitionDto> = null;
+  definitionId: string = null;
+  deployments: Array<DeploymentDescriptorDto> = null;
+  deploymentId: string = null;
 
   constructor(private taskDefinitionsService: TaskDefinitionsService,
               private deploymentsService: DeploymentsService,
@@ -26,20 +26,21 @@ export class NewTaskComponent {
 
   ngOnInit(): void {
     this.taskDefinitionsService.getTaskDefinitions({})
-      .subscribe(definitions => this.definitionList = definitions.items);
+      .subscribe(definitions => this.definitions = definitions.items);
   }
 
   isValid() {
-    return this.taskDefinition !== null;
+    return this.deploymentId !== null;
   }
 
   submit() {
     this.modal.closeModal();
-    this.router.navigateByUrl('/new-task/' + this.deployment.id);
+    this.router.navigateByUrl('/new-task/' + this.deploymentId);
   }
 
-  onDefinitionChange(taskDefinition: TaskDefinitionDto) {
-    this.taskDefinitionsService.getTaskDefinitionDeployments({ taskDefinitionId: taskDefinition.id })
-      .subscribe(deployments => this.deploymentList = deployments.items);
+  onDefinitionChange() {
+    this.taskDefinitionsService.getTaskDefinitionDeployments({
+      taskDefinitionId: this.definitionId,
+    }).subscribe(deployments => this.deployments = deployments.items);
   }
 }
