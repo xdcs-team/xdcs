@@ -12,7 +12,7 @@ import java.util.Objects;
 /**
  * @author Kamil Jarosz
  */
-public class JsonConverter<T> implements AttributeConverter<Object, String> {
+public class JsonConverter<T> implements AttributeConverter<T, byte[]> {
     private final ObjectMapper objectMapper = new ObjectMapper();
     private final TypeReference<T> type;
     private final Class<T> clazz;
@@ -28,18 +28,18 @@ public class JsonConverter<T> implements AttributeConverter<Object, String> {
     }
 
     @Override
-    public String convertToDatabaseColumn(Object attribute) {
+    public byte[] convertToDatabaseColumn(T attribute) {
         if (attribute == null) return null;
 
         try {
-            return objectMapper.writeValueAsString(attribute);
+            return objectMapper.writeValueAsBytes(attribute);
         } catch (JsonProcessingException e) {
             throw new UncheckedIOException(e);
         }
     }
 
     @Override
-    public Object convertToEntityAttribute(String dbData) {
+    public T convertToEntityAttribute(byte[] dbData) {
         if (dbData == null) return null;
 
         try {

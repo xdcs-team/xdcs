@@ -47,10 +47,11 @@ export class OrderableInputListComponent {
     }
   }
 
-  createTemplateContext(element?: any) {
+  createTemplateContext(element: any, index: number) {
     return {
       element,
       data: this.data,
+      index,
     };
   }
 

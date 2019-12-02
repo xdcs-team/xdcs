@@ -3,6 +3,7 @@ package pl.edu.agh.xdcs.restapi.util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.ws.rs.BadRequestException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.net.URI;
@@ -54,5 +55,17 @@ public class RestUtils {
                 .type(MediaType.APPLICATION_JSON_TYPE)
                 .entity(entity)
                 .build();
+    }
+
+    public static void checkNotNull(Object object, String message) {
+        if (object == null) {
+            throw new BadRequestException(message, badRequest(message));
+        }
+    }
+
+    public static void check(boolean condition, String message) {
+        if (!condition) {
+            throw new BadRequestException(message, badRequest(message));
+        }
     }
 }

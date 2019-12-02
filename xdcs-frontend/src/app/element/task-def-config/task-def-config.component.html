@@ -74,10 +74,9 @@
     </ng-container>
     <app-orderable-input-list [data]="taskDefinition.config.kernelparams"
                               [emptyElement]="emptyElement">
-      <ng-template #content let-item="element">
-
+      <ng-template #content let-item="element" let-index="index">
         <select [(ngModel)]="item.type"
-                name="type"
+                [name]="'kernelParamType' + index"
                 class="custom-select">
           <option selected disabled [ngValue]="null">Type</option>
           <option
@@ -85,7 +84,7 @@
             [ngValue]="t.key">{{ t.value }}</option>
         </select>
         <select [(ngModel)]="item.direction"
-                name="direction"
+                [name]="'kernelParamDirection' + index"
                 class="custom-select">
           <option selected disabled [ngValue]="null">Direction</option>
           <option
@@ -96,11 +95,10 @@
                class="form-control"
                placeholder="Name"
                [(ngModel)]="item.name"
-               name="name"/>
+               [name]="'kernelParamName' + index"/>
       </ng-template>
     </app-orderable-input-list>
   </ng-container>
-
 
   <div class="mb-3" *ngIf="['docker'].includes(taskDefinition.config.type)">
     <label for="conf-dockerfile">Dockerfile</label>
@@ -131,11 +129,9 @@
     </div>
   </div>
 
-  <input
-    type="submit"
+  <button
     class="btn btn-primary float-right mt-3"
     [disabled]="form.invalid"
-    (click)="saveConfiguration()"
-    value="Save"/>
+    (click)="saveConfiguration()">Save</button>
   <div class="clearfix"></div>
 </form>
