@@ -44,14 +44,6 @@ export class TaskDefConfigComponent implements OnInit {
 
   }
 
-  isValid() {
-    if (this.taskDefinition.config.type === null) {
-      return false;
-    }
-
-    return true;
-  }
-
   saveConfiguration() {
     this.submit.emit(this.taskDefinition);
   }
