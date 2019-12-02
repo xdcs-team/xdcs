@@ -31,7 +31,7 @@ export class TaskDefConfigComponent implements OnInit {
   taskDefinition: TaskDefinitionDto;
 
   @Output()
-  submit = new EventEmitter<TaskDefinitionDto>();
+  save = new EventEmitter<TaskDefinitionDto>();
 
   constructor() {
 
@@ -45,6 +45,6 @@ export class TaskDefConfigComponent implements OnInit {
   }
 
   saveConfiguration() {
-    this.submit.emit(this.taskDefinition);
+    this.save.emit(this.taskDefinition);
   }
 }

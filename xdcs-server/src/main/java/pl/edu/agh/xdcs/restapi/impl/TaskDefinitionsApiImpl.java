@@ -166,6 +166,9 @@ public class TaskDefinitionsApiImpl implements TaskDefinitionsApi {
 
     @Override
     public Response setTaskDefinitionConfiguration(String taskDefinitionId, DeploymentConfigDto config) {
+        RestUtils.checkNotNull(config, "No body");
+        RestUtils.checkNotNull(taskDefinitionId, "No task definition");
+
         TaskDefinitionEntity definition = findTaskDefinition(taskDefinitionId);
         deploymentConfigMapper.updateModelEntity(config, definition);
         return Response.noContent().build();

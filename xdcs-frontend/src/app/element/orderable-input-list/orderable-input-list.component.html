@@ -1,4 +1,4 @@
-<ng-container *ngFor="let param of data">
+<ng-container *ngFor="let param of data; let i = index">
   <div class="input-group mb-1">
     <div class="input-group-prepend">
       <a (click)="moveElementUp(param)"
@@ -13,7 +13,7 @@
       </a>
     </div>
     <ng-template *ngIf="contentTemplateRef"
-                 [ngTemplateOutletContext]="createTemplateContext(param)"
+                 [ngTemplateOutletContext]="createTemplateContext(param, i)"
                  [ngTemplateOutlet]="contentTemplateRef"></ng-template>
     <div class="input-group-append">
       <a (click)="removeElement(param)"

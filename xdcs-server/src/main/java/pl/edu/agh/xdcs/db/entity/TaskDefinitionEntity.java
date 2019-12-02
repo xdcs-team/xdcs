@@ -1,11 +1,11 @@
 package pl.edu.agh.xdcs.db.entity;
 
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.Column;
-import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -20,10 +20,12 @@ import javax.persistence.Table;
 @Entity(name = "TaskDefinition")
 @Table(name = "XDCS_TASK_DEF_")
 public class TaskDefinitionEntity extends BaseEntity {
+    private static final KernelParameters.Converter KERN_PARAMS_CONVERTER = new KernelParameters.Converter();
+
     @Column(name = "NAME_")
     private String name;
 
-    @Column(name = "TYPE_")
+    @Column(name = "TYPE_", length = 10)
     @Enumerated(value = EnumType.STRING)
     private TaskType type;
 
@@ -34,12 +36,20 @@ public class TaskDefinitionEntity extends BaseEntity {
     private String kernelName;
 
     @Column(name = "KERN_PARAMS_")
-    @Convert(converter = KernelParameters.Converter.class)
-    private KernelParameters kernelParams;
+    @Getter(AccessLevel.NONE)
+    private byte[] kernelParams;
 
-    @Column(name = "SCRIPT_PATH_")
+    @Column(name = "SCRIPT_PATH_", length = 511)
     private String scriptPath;
 
-    @Column(name = "DOCKERFILE_")
+    @Column(name = "DOCKERFILE_", length = 511)
     private String dockerfile;
+
+    public KernelParameters getKernelParams() {
+        return KERN_PARAMS_CONVERTER.convertToEntityAttribute(kernelParams);
+    }
+
+    public void setKernelParams(KernelParameters kernelParameters) {
+        kernelParams = KERN_PARAMS_CONVERTER.convertToDatabaseColumn(kernelParameters);
+    }
 }
