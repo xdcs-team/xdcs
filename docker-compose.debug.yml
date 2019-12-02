@@ -22,3 +22,22 @@ services:
       - "32082:8082"
       - "32090:9990"
       - "32087:8787"
+    volumes:
+      - xdcs-data:/opt/jboss/wildfly/xdcs
+    depends_on:
+      - xdcs-db
+
+  xdcs-db:
+    image: postgres
+    ports:
+      - "35432:5432"
+    environment:
+      - POSTGRES_DB=xdcs
+      - POSTGRES_USER=xdcs
+      - POSTGRES_PASSWORD=xdcs
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+
+volumes:
+  postgres-data:
+  xdcs-data:

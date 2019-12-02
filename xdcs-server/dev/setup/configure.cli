@@ -1,0 +1,18 @@
+embed-server --std-out=echo
+
+/subsystem=logging/logger=pl.edu.agh.xdcs:add
+/subsystem=logging/logger=pl.edu.agh.xdcs:write-attribute(name=level, value=DEBUG)
+/subsystem=logging/console-handler=CONSOLE:write-attribute(name=level, value=DEBUG)
+
+/subsystem=datasources/jdbc-driver=postgresql:add( \
+    driver-name=postgresql, \
+    driver-module-name=org.postgresql, \
+    driver-class-name=org.postgresql.Driver)
+/subsystem=datasources/data-source=xdcs:add( \
+    jndi-name=java:jboss/datasources/xdcs, \
+    driver-name=postgresql, \
+    connection-url=jdbc:postgresql://xdcs-db:5432/xdcs, \
+    user-name=xdcs, \
+    password=xdcs)
+
+stop-embedded-server

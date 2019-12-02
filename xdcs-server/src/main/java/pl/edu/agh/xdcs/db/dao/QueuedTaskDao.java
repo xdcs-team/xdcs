@@ -38,13 +38,16 @@ public class QueuedTaskDao extends EntityDaoBase<QueuedTaskEntity> {
                 .map(BaseEntity::getId)
                 .collect(Collectors.toList());
 
-        entityManager
-                .createQuery("update TaskQueue as q " +
-                        "set q.lastCheck = :lastChecked " +
-                        "where q.id in :ids")
-                .setParameter("lastChecked", now)
-                .setParameter("ids", ids)
-                .executeUpdate();
+        if (!ids.isEmpty()) {
+            entityManager
+                    .createQuery("update TaskQueue as q " +
+                            "set q.lastCheck = :lastChecked " +
+                            "where q.id in :ids")
+                    .setParameter("lastChecked", now)
+                    .setParameter("ids", ids)
+                    .executeUpdate();
+        }
+
         return tasks;
     }
 }
