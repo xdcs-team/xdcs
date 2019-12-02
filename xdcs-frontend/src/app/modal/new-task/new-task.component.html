@@ -1,28 +1,42 @@
 <app-modal #modal title="New task">
-  <label>Select definition</label>
-  <select class="form-control custom-select"
-          [(ngModel)]="taskDefinition.id"
-          (change)='onDefinitionChange(taskDefinition)'>
-          required>
-    <option *ngFor="let element of definitionList"
-            [ngValue]="element.id">{{ element.name }}</option>
-  </select>
+  <ng-container *ngIf="!definitions">
+    <app-loading></app-loading>
+  </ng-container>
 
-  <ng-container *ngIf="taskDefinition.id != null">
+  <ng-container *ngIf="definitions && definitions.length == 0">
+    <app-no-data message="No definitions" size="1em"></app-no-data>
+  </ng-container>
+
+  <ng-container *ngIf="definitions && definitions.length > 0">
+    <label>Select definition</label>
+    <select class="form-control custom-select"
+            [(ngModel)]="definitionId"
+            (change)="onDefinitionChange()"
+            required>
+      <option *ngFor="let element of definitions"
+              [ngValue]="element.id">{{ element.name }}</option>
+    </select>
+  </ng-container>
+
+  <ng-container *ngIf="deployments && deployments.length == 0">
+    <app-no-data message="No deployments" size="1em"></app-no-data>
+  </ng-container>
+
+  <ng-container *ngIf="deployments && deployments.length > 0">
     <hr/>
     <label>Select deployment</label>
     <select class="form-control custom-select"
-            [(ngModel)]="deployment.id"
+            [(ngModel)]="deploymentId"
             required>
-      <option *ngFor="let element of deploymentList"
+      <option *ngFor="let element of deployments"
               [ngValue]="element.id">{{ element.id }}</option>
     </select>
-
   </ng-container>
+
   <input
     type="submit"
     class="btn btn-primary float-right mt-3"
-    [ngClass]="isValid() ? '' : 'disabled'"
+    [disabled]="!isValid()"
     (click)="submit()"
     value="Create"/>
   <div class="clearfix"></div>
