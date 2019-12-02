@@ -9,7 +9,8 @@ from packaging import version
 
 from xdcs import gpu
 from xdcs.app import xdcs
-from xdcs.decorators import lazy, asynchronous
+from xdcs.decorators import lazy
+from xdcs.exec import exec_cmd, ExecFailedException
 from xdcs.log_handling import LogHandler
 
 logger = logging.getLogger(__name__)
@@ -68,28 +69,10 @@ class DockerCli:
 
     def run(self, image: str, log_handler: LogHandler = None) -> None:
         opts = [*self._opts, *self.__build_gpu_opts()]
-        proc = subprocess.Popen([self._docker_exec, 'run', *opts, image],
-                                stdout=subprocess.PIPE,
-                                stderr=subprocess.PIPE)
-
-        if log_handler is not None:
-            self._consume_stdout(log_handler, proc)
-            self._consume_stderr(log_handler, proc)
-
-        proc.wait()
-
-        if proc.returncode != 0:
-            raise DockerException('Docker run failed: ' + str(proc.stderr.read().decode("utf-8")))
-
-    @asynchronous
-    def _consume_stdout(self, log_handler: LogHandler, proc: subprocess.Popen):
-        for line in proc.stdout:
-            log_handler.out_bytes(line.strip(b'\n'))
-
-    @asynchronous
-    def _consume_stderr(self, log_handler: LogHandler, proc: subprocess.Popen):
-        for line in proc.stderr:
-            log_handler.err_bytes(line.strip(b'\n'))
+        try:
+            exec_cmd([self._docker_exec, 'run', *opts, image], log_handler)
+        except ExecFailedException as e:
+            raise DockerException('Docker run failed', e)
 
     def build(self, directory, dockerfile) -> str:
         proc = self.__run_docker(['build', '-q', '-f', dockerfile, directory])
