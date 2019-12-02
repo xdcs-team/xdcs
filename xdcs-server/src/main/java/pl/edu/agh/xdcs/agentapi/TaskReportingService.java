@@ -50,8 +50,7 @@ public class TaskReportingService extends TaskReportingGrpc.TaskReportingImplBas
     }
 
     private void saveLogLines(String taskId, List<Logs.LogLine> linesList) {
-        RuntimeTaskEntity task = taskService.getTaskById(taskId)
-                .flatMap(Task::asRuntime)
+        Task task = taskService.getTaskById(taskId)
                 .orElseThrow(() -> new RuntimeException("Runtime task not found: " + taskId));
 
         linesList.forEach(line -> {

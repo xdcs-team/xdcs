@@ -1,0 +1,12 @@
+<pre *ngIf="convert" class="log-output">
+  <ng-container *ngFor="let line of lines">
+    <div class="log-line">
+      <div class="line-number" tooltip="{{ line.time | date:timePopupFormat }}">
+        {{ line.lineNumber }}
+      </div>
+      <div class="line-contents">
+        <app-ansi-to-html [convert]="convert" [data]="line.contents"></app-ansi-to-html>
+      </div>
+    </div>
+  </ng-container>
+</pre>

@@ -60,6 +60,9 @@ import { OrderableInputListComponent } from './element/orderable-input-list/orde
 import { UploadFileComponent } from './element/upload-file/upload-file.component';
 import { ngfModule } from 'angular-file';
 import { AutoFocusDirective } from './directives/auto-focus.directive';
+import { TaskLogComponent } from './view/task-log/task-log.component';
+import { LogPreviewComponent } from './element/log-preview/log-preview.component';
+import { AnsiToHtmlComponent } from './element/ansi-to-html/ansi-to-html.component';
 
 @NgModule({
   declarations: [
@@ -103,6 +106,9 @@ import { AutoFocusDirective } from './directives/auto-focus.directive';
     CopyIconComponent,
     UploadFileComponent,
     AutoFocusDirective,
+    TaskLogComponent,
+    LogPreviewComponent,
+    AnsiToHtmlComponent,
   ],
   entryComponents: [
     NewTaskDefinitionComponent,

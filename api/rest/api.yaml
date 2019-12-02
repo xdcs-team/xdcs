@@ -426,6 +426,39 @@ paths:
               schema:
                 $ref: '#/components/schemas/TaskConditionsDto'
 
+  /tasks/{taskId}/logs:
+    get:
+      tags:
+        - Log Handling
+      operationId: getTaskLogs
+      parameters:
+        - in: path
+          name: taskId
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: from
+          required: false
+          schema:
+            type: string
+            format: 'date-time'
+          description: Return logs logged after the specified time (inclusive)
+        - in: query
+          name: to
+          required: false
+          schema:
+            type: string
+            format: 'date-time'
+          description: Return logs logged before the specified time (inclusive)
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LogsDto'
+
 components:
   schemas:
     NodesDto:
@@ -681,3 +714,36 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/ResourceDto'
+
+    LogsDto:
+      type: object
+      properties:
+        websocketUrl:
+          type: string
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/LogDto'
+      required:
+        - items
+        - websocketUrl
+
+    LogDto:
+      type: object
+      properties:
+        time:
+          type: string
+          format: 'date-time'
+        type:
+          type: string
+          enum:
+            - int
+            - out
+            - err
+        contents:
+          type: string
+          format: byte
+      required:
+        - time
+        - type
+        - contents

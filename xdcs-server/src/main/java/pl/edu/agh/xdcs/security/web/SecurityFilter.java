@@ -7,6 +7,8 @@ import javax.inject.Inject;
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
+import javax.ws.rs.container.ContainerResponseContext;
+import javax.ws.rs.container.ContainerResponseFilter;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.Provider;
 import java.net.URI;
@@ -16,7 +18,7 @@ import java.util.Optional;
  * @author Kamil Jarosz
  */
 @Provider
-public class SecurityFilter implements ContainerRequestFilter {
+public class SecurityFilter implements ContainerRequestFilter, ContainerResponseFilter {
     private static final String AUTH_PREFIX = RestApplication.CONTEXT_ROOT + AuthApplication.class.getAnnotation(ApplicationPath.class).value();
     private static final String SCHEME = "Bearer ";
 
@@ -56,5 +58,10 @@ public class SecurityFilter implements ContainerRequestFilter {
         }
 
         userContext.setUsername(username.get());
+    }
+
+    @Override
+    public void filter(ContainerRequestContext requestContext, ContainerResponseContext responseContext) {
+        userContext.clear();
     }
 }
