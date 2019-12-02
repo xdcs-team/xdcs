@@ -9,7 +9,6 @@ import pl.edu.agh.xdcs.api.Logs;
 import pl.edu.agh.xdcs.api.OkResponse;
 import pl.edu.agh.xdcs.api.TaskId;
 import pl.edu.agh.xdcs.api.TaskReportingGrpc;
-import pl.edu.agh.xdcs.db.entity.RuntimeTaskEntity;
 import pl.edu.agh.xdcs.db.entity.Task;
 import pl.edu.agh.xdcs.grpc.Service;
 import pl.edu.agh.xdcs.services.TaskService;

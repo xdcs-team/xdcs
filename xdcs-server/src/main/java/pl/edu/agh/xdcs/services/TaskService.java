@@ -14,7 +14,6 @@ import pl.edu.agh.xdcs.db.entity.LogLineEntity;
 import pl.edu.agh.xdcs.db.entity.QueuedTaskEntity;
 import pl.edu.agh.xdcs.db.entity.ResourcePatternEntity;
 import pl.edu.agh.xdcs.db.entity.ResourceType;
-import pl.edu.agh.xdcs.db.entity.RuntimeTaskEntity;
 import pl.edu.agh.xdcs.db.entity.Task;
 import pl.edu.agh.xdcs.events.AgentLoggedEvent;
 import pl.edu.agh.xdcs.util.WildcardPattern;
