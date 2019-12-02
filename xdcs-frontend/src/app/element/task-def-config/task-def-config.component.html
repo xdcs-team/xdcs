@@ -1,25 +1,32 @@
-<div>
+<form #form="ngForm">
   <label for="conf-name">Task definition name</label>
-  <input type="text"
-         class="form-control mb-3"
-         id="conf-name"
-         placeholder="Enter name"
-         required
-         [(ngModel)]="taskDefinition.name"/>
+  <div class="mb-3">
+    <input type="text"
+           class="form-control"
+           id="conf-name"
+           placeholder="Enter name"
+           required
+           #name="ngModel"
+           [(ngModel)]="taskDefinition.name"
+           name="task-definition-name"/>
+    <div [hidden]="name.untouched || name.valid" class="invalid-feedback">
+      Name cannot be empty
+    </div>
+  </div>
 
-  <label for="conf-type">Task type</label>
-  <select class="form-control custom-select"
-          id="conf-type"
-          [(ngModel)]="taskDefinition.config.type"
-          aria-describedby="conf-type-help"
-          required>
-    <option selected disabled [ngValue]="null">Type</option>
-    <option *ngFor="let t of types | keyvalue"
-            [ngValue]="t.key">{{ t.value }}</option>
-  </select>
-  <small id="conf-type-help" class="form-text text-muted">
-    Task type
-  </small>
+  <div class="mb-3">
+    <label for="conf-type">Task type</label>
+    <select class="form-control custom-select"
+            id="conf-type"
+            [(ngModel)]="taskDefinition.config.type"
+            [ngModelOptions]="{standalone: true}"
+            aria-describedby="conf-type-help"
+            required>
+      <option selected disabled [ngValue]="null">Type</option>
+      <option *ngFor="let t of types | keyvalue"
+              [ngValue]="t.key">{{ t.value }}</option>
+    </select>
+  </div>
 
   <hr/>
 
@@ -28,21 +35,35 @@
   </ng-container>
 
   <ng-container *ngIf="['opencl', 'cuda'].includes(taskDefinition.config.type)">
-    <label for="conf-kernel-file">Kernel file</label>
-    <input type="text"
-           class="form-control mb-3"
-           id="conf-kernel-file"
-           placeholder="Kernel file"
-           required="required"
-           [(ngModel)]="taskDefinition.config.kernelfile"/>
+    <div class="mb-3">
+      <label for="conf-kernel-file">Kernel file</label>
+      <input type="text"
+             class="form-control"
+             id="conf-kernel-file"
+             placeholder="Kernel file"
+             required
+             #kernelFile="ngModel"
+             [(ngModel)]="taskDefinition.config.kernelfile"
+             name="kernelfile"/>
+      <div [hidden]="kernelFile.untouched || kernelFile.valid" class="invalid-feedback">
+        Kernel file cannot be empty
+      </div>
+    </div>
 
-    <label for="conf-kernel-name">Kernel name</label>
-    <input type="text"
-           class="form-control mb-3"
-           id="conf-kernel-name"
-           placeholder="Kernel name"
-           required="required"
-           [(ngModel)]="taskDefinition.config.kernelname"/>
+    <div class="mb-3">
+      <label for="conf-kernel-name">Kernel name</label>
+      <input type="text"
+             class="form-control"
+             id="conf-kernel-name"
+             placeholder="Kernel name"
+             required
+             #kernelName="ngModel"
+             [(ngModel)]="taskDefinition.config.kernelname"
+             name="kernelname"/>
+      <div [hidden]="kernelName.untouched || kernelName.valid" class="invalid-feedback">
+        Kernel name cannot be empty
+      </div>
+    </div>
 
     <div class="headline mb-3">
       <label>Kernel parameters</label>
@@ -52,10 +73,11 @@
       <app-no-data message="No parameters" size="1em"></app-no-data>
     </ng-container>
     <app-orderable-input-list [data]="taskDefinition.config.kernelparams"
-                      [emptyElement]="emptyElement">
+                              [emptyElement]="emptyElement">
       <ng-template #content let-item="element">
 
         <select [(ngModel)]="item.type"
+                name="type"
                 class="custom-select">
           <option selected disabled [ngValue]="null">Type</option>
           <option
@@ -63,6 +85,7 @@
             [ngValue]="t.key">{{ t.value }}</option>
         </select>
         <select [(ngModel)]="item.direction"
+                name="direction"
                 class="custom-select">
           <option selected disabled [ngValue]="null">Direction</option>
           <option
@@ -72,35 +95,47 @@
         <input type="text"
                class="form-control"
                placeholder="Name"
-               [(ngModel)]="item.name"/>
+               [(ngModel)]="item.name"
+               name="name"/>
       </ng-template>
     </app-orderable-input-list>
   </ng-container>
 
 
-  <ng-container *ngIf="['docker'].includes(taskDefinition.config.type)">
+  <div class="mb-3" *ngIf="['docker'].includes(taskDefinition.config.type)">
     <label for="conf-dockerfile">Dockerfile</label>
     <input type="text"
-           class="form-control mb-3"
+           class="form-control"
            id="conf-dockerfile"
            placeholder="Dockerfile"
-           [(ngModel)]="taskDefinition.config.dockerfile"/>
-  </ng-container>
+           #dockerfile="ngModel"
+           [(ngModel)]="taskDefinition.config.dockerfile"
+           name="dockerfile"/>
+    <small class="form-text text-muted" [hidden]="dockerfile.model">
+      The default Dockerfile will be used
+    </small>
+  </div>
 
-  <ng-container *ngIf="['script'].includes(taskDefinition.config.type)">
+  <div class="mb-3" *ngIf="['script'].includes(taskDefinition.config.type)">
     <label for="conf-script-path">Script path</label>
     <input type="text"
-           class="form-control mb-3"
+           class="form-control"
            id="conf-script-path"
            placeholder="Script path"
-           [(ngModel)]="taskDefinition.config.scriptfile"/>
-  </ng-container>
+           #scriptPath="ngModel"
+           required
+           [(ngModel)]="taskDefinition.config.scriptfile"
+           name="scriptfile"/>
+    <div [hidden]="scriptPath.untouched || scriptPath.valid" class="invalid-feedback">
+      Script path cannot be empty
+    </div>
+  </div>
 
   <input
     type="submit"
     class="btn btn-primary float-right mt-3"
-    [ngClass]="isValid() ? '' : 'disabled'"
+    [disabled]="form.invalid"
     (click)="saveConfiguration()"
     value="Save"/>
   <div class="clearfix"></div>
-</div>
+</form>
