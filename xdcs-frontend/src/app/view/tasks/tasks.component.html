@@ -1,0 +1,19 @@
+<app-navbar [fullscreenMode]="true"></app-navbar>
+<app-fullscreen-list [data]="tasks">
+  <ng-template #header let-item="header">
+    <div>
+      <button type="button"
+              class="btn btn-outline-success float-right"
+              appOpenModal [modal]="NewTaskComponent">New task</button>
+      <div class="clearfix"></div>
+    </div>
+  </ng-template>
+  <ng-template #element let-item="element">
+      <app-task-status-icon [size]="'sm'" [task]="item"></app-task-status-icon>
+    {{item.name}}
+  </ng-template>
+
+  <ng-template #details let-item="selected">
+    <app-task-result-preview [task]="item"></app-task-result-preview>
+  </ng-template>
+</app-fullscreen-list>

@@ -2,40 +2,7 @@
      [ngClass]="!isCollapsed ? 'shadow' : 'shadow-sm'">
   <div class="position-relative">
     <div class="card-body item-summary">
-      <span [ngSwitch]="task.state">
-        <fa-icon
-          *ngSwitchCase="TaskState.IN_PROGRESS"
-          [icon]="faCircleNotch"
-          [fixedWidth]="true"
-          [spin]="true"
-          class="icon-success"
-          size="lg"></fa-icon>
-        <fa-icon
-          *ngSwitchCase="TaskState.FINISHED"
-          [icon]="faCheck"
-          [fixedWidth]="true"
-          class="icon-success"
-          size="lg"></fa-icon>
-        <fa-icon
-          *ngSwitchCase="TaskState.ERRORED"
-          [icon]="faTimes"
-          [fixedWidth]="true"
-          class="icon-error"
-          size="lg"></fa-icon>
-        <fa-icon
-          *ngSwitchCase="TaskState.QUEUED"
-          [icon]="farClock"
-          [fixedWidth]="true"
-          class="icon-warn"
-          size="lg"></fa-icon>
-        <fa-icon
-          *ngSwitchCase="TaskState.CANCELED"
-          [icon]="farStopCircle"
-          [fixedWidth]="true"
-          class="icon-error"
-          size="lg"></fa-icon>
-      </span>
-
+      <app-task-status-icon [size]="'lg'" [task]="task"></app-task-status-icon>
       <h5 class="card-title">{{task.name}}</h5>
     </div>
     <a class="stretched-link"

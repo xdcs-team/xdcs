@@ -60,14 +60,18 @@ import { OrderableInputListComponent } from './element/orderable-input-list/orde
 import { UploadFileComponent } from './element/upload-file/upload-file.component';
 import { ngfModule } from 'angular-file';
 import { AutoFocusDirective } from './directives/auto-focus.directive';
-import { TaskLogComponent } from './view/task-log/task-log.component';
 import { LogPreviewComponent } from './element/log-preview/log-preview.component';
 import { AnsiToHtmlComponent } from './element/ansi-to-html/ansi-to-html.component';
+import { TasksComponent } from './view/tasks/tasks.component';
+import { TaskResultPreviewComponent } from './element/task-result-preview/task-result-preview.component';
+import { TabsModule } from 'ngx-bootstrap/tabs';
+import { TaskStatusIconComponent } from './element/task-status-icon/task-status-icon.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     NavbarComponent,
+    TaskStatusIconComponent,
     NodeCardComponent,
     NodeCardsComponent,
     SignInComponent,
@@ -106,9 +110,10 @@ import { AnsiToHtmlComponent } from './element/ansi-to-html/ansi-to-html.compone
     CopyIconComponent,
     UploadFileComponent,
     AutoFocusDirective,
-    TaskLogComponent,
     LogPreviewComponent,
     AnsiToHtmlComponent,
+    TasksComponent,
+    TaskResultPreviewComponent,
   ],
   entryComponents: [
     NewTaskDefinitionComponent,
@@ -126,6 +131,7 @@ import { AnsiToHtmlComponent } from './element/ansi-to-html/ansi-to-html.compone
     BrowserAnimationsModule,
     CollapseModule.forRoot(),
     AlertModule.forRoot(),
+    TabsModule.forRoot(),
     FontAwesomeModule,
     AceEditorModule,
     AngularSplitModule,
