@@ -1,4 +1,4 @@
-import { Component, ContentChild, Input, TemplateRef } from '@angular/core';
+import { Component, ContentChild, EventEmitter, Input, Output, TemplateRef } from '@angular/core';
 
 @Component({
   selector: 'app-fullscreen-list',
@@ -19,7 +19,11 @@ export class FullscreenListComponent {
   @Input()
   data: Array<any>;
 
+  @Input()
   selected: any = undefined;
+
+  @Output()
+  selectedChange = new EventEmitter<any>();
 
   constructor() {
 
@@ -30,5 +34,10 @@ export class FullscreenListComponent {
       element,
       selected: this.selected,
     };
+  }
+
+  select(selected: any) {
+    this.selected = selected;
+    this.selectedChange.emit(selected);
   }
 }

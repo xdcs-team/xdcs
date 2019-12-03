@@ -15,6 +15,7 @@ import { FileType } from '../../../api/models/file-type';
 import { CreateFileComponent } from '../../modal/create-file/create-file.component';
 import { PathUtils } from '../../utils/path-utils';
 import { BlobUtils } from '../../utils/blob-utils';
+import { faAngleLeft } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
   selector: 'app-task-definition',
@@ -24,6 +25,8 @@ import { BlobUtils } from '../../utils/blob-utils';
 })
 @NavbarItem('Task Definition')
 export class TaskDefinitionComponent implements OnInit {
+  faAngleLeft = faAngleLeft;
+
   private taskDefinitionId: string;
 
   @ViewChild(FileTreeComponent, { static: false })

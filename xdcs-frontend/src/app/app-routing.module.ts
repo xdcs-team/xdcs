@@ -18,8 +18,9 @@ export const routes: Routes = [
     children: [
       { path: '', redirectTo: 'home', pathMatch: 'full' },
       { path: 'home', component: HomeComponent },
-      { path: 'task-definitions', component: TaskDefinitionsComponent },
-      { path: 'task-definitions/:definitionId', component: TaskDefinitionComponent },
+      { path: 'task-definitions', redirectTo: 'task-definitions/' },
+      { path: 'task-definitions/:definitionId', component: TaskDefinitionsComponent },
+      { path: 'task-definition-edit/:definitionId', component: TaskDefinitionComponent },
       { path: 'nodes', component: NodesComponent },
       { path: 'nodes/:nodeId', component: NodeComponent },
       { path: 'new-task/:deploymentId', component: TaskCreationComponent },
