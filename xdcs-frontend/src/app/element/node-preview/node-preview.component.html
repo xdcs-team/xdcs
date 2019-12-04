@@ -1,4 +1,30 @@
-<h2>{{node.name}}</h2>
-<div>ID {{node.id}}</div>
-
-
+<div class="content">
+  <div class="headline">
+    <h2>
+      <span class="mr-1">
+        <app-node-status-icon [node]="node" [size]="'xs'"></app-node-status-icon>
+      </span>
+      {{node.name}}
+    </h2>
+  </div>
+  <table class="table table-borderless">
+    <tbody>
+    <tr>
+      <th scope="row">ID</th>
+      <td>{{node.id}}</td>
+    </tr>
+    <tr>
+      <th scope="row">Time created</th>
+      <td>{{node.name}}</td>
+    </tr>
+    <tr>
+      <th scope="row">IP Address</th>
+      <td>{{node.address}}</td>
+    </tr>
+    <tr>
+      <th scope="row">Status</th>
+      <td>{{node.status}}</td>
+    </tr>
+    </tbody>
+  </table>
+</div>

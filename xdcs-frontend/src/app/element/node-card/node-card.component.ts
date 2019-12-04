@@ -1,16 +1,12 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { faCircle } from '@fortawesome/free-solid-svg-icons';
+import { Component, Input } from '@angular/core';
 
 @Component({
   selector: 'app-node-card',
   templateUrl: './node-card.component.html',
   styleUrls: ['./node-card.component.less'],
 })
-export class NodeCardComponent implements OnInit {
+export class NodeCardComponent {
   hover: boolean;
-
-  NodeStatus = NodeStatus;
-  faCircle = faCircle;
 
   @Input()
   data: NodeCardData;
@@ -19,25 +15,12 @@ export class NodeCardComponent implements OnInit {
   routerLink: string;
 
   constructor() {
-
-  }
-
-  ngOnInit() {
-
   }
 }
 
 export class NodeCardData {
   name: string;
   address: string;
-  status: NodeStatus;
+  status: string;
   routerLink: string;
-}
-
-export enum NodeStatus {
-  Unknown,
-  Offline,
-  Unavailable,
-  Ready,
-  Busy,
 }

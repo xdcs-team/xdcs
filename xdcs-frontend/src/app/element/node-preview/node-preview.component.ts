@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { NodeDto } from '../../../api/models/node-dto';
 
 @Component({
@@ -6,15 +6,11 @@ import { NodeDto } from '../../../api/models/node-dto';
   templateUrl: './node-preview.component.html',
   styleUrls: ['./node-preview.component.less'],
 })
-export class NodePreviewComponent implements OnInit {
+
+export class NodePreviewComponent {
   @Input()
   node: NodeDto;
 
   constructor() {
-
-  }
-
-  ngOnInit() {
-
   }
 }

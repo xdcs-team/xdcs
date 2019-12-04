@@ -1,0 +1,8 @@
+<fa-icon
+  [icon]="faCircle"
+  [ngClass]="node.status == 'ready' ? 'icon-success' :
+             node.status == 'offline' ? 'icon-error' :
+             node.status == 'unavailable' ? 'icon-warn icon-pulse-1' :
+             node.status == 'busy' ? 'icon-warn' :
+             'icon-greyed-out'"
+  size="{{size}}"></fa-icon>
