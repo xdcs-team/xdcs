@@ -4,11 +4,11 @@
   </div>
 </ng-container>
 <ng-template #loaded>
-  <div *ngIf="tasks.items.length === 0">
+  <div *ngIf="tasks.length === 0">
     <app-no-data></app-no-data>
   </div>
-  <div *ngIf="tasks.items.length > 0">
-    <ng-container *ngFor="let task of tasks.items">
+  <div *ngIf="tasks.length > 0">
+    <ng-container *ngFor="let task of tasks">
       <app-task-summary-item [task]="task"></app-task-summary-item>
     </ng-container>
   </div>

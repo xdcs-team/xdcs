@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { TasksService } from '../../../api/services/tasks.service';
-import { TasksDto } from '../../../api/models';
+import { TaskDto } from '../../../api/models';
 
 @Component({
   selector: 'app-task-summary-list',
@@ -8,10 +8,9 @@ import { TasksDto } from '../../../api/models';
   styleUrls: ['./task-summary-list.component.less'],
 })
 export class TaskSummaryListComponent implements OnInit {
-  tasks: TasksDto = null;
+  tasks: Array<TaskDto> = null;
 
   constructor(private tasksService: TasksService) {
-
   }
 
   ngOnInit() {
@@ -20,6 +19,8 @@ export class TaskSummaryListComponent implements OnInit {
 
   private loadTasks() {
     this.tasksService.getTasks({})
-      .subscribe(tasks => this.tasks = tasks);
+      .subscribe(tasks => {
+        this.tasks = tasks.items.filter(task => task.state === 'queued' || task.state === 'in_progress');
+      });
   }
 }
