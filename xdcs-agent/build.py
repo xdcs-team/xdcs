@@ -1,9 +1,9 @@
 import fnmatch
 import os
 import shutil
-
 import sys
-from pybuilder.core import use_plugin, init, task, dependents, depends
+
+from pybuilder.core import use_plugin, init, task, dependents, depends, Author
 from pybuilder.plugins.core_plugin import clean, compile_sources
 from pybuilder.plugins.python.flake8_plugin import analyze
 
@@ -16,10 +16,14 @@ use_plugin("python.flake8")
 use_plugin("exec")
 
 name = "xdcs-agent"
-
 version = "0.1.0.dev"
 default_task = "publish"
-
+long_description = "XDCS Distributed Computing Software"
+authors = [Author('Kamil Jarosz', 'kjarosz@student.agh.edu.pl'),
+           Author('Krystian Zycinski', 'zycinski@student.agh.edu.pl'),
+           Author('Adam Szczerba', 'adamszczerba19@gmail.com'),
+           Author('Jan Rodzon', 'rodzonjan@wp.pl')]
+url = 'https://github.com/xdcs-team/xdcs'
 
 @init
 def check_version():
@@ -52,6 +56,7 @@ def initialize(project):
         "xdcs-agent = xdcs.agent_cli:main"])
     project.set_property('flake8_break_build', True)
     project.set_property('flake8_verbose_output', True)
+    project.install_file("/etc/xdcs", "xdcs/conf/xdcs-agent.toml")
 
 
 @task
