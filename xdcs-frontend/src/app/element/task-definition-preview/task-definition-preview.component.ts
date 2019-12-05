@@ -22,6 +22,9 @@ export class TaskDefinitionPreviewComponent implements OnInit, OnChanges {
   }
 
   ngOnInit() {
+    this.modalService.onHide.subscribe(() => {
+      this.fetchDeploymentDescriptors();
+    });
     this.fetchDeploymentDescriptors();
   }
 
