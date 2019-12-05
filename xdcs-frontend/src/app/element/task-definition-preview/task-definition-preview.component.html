@@ -4,7 +4,7 @@
     Deploy
   </button>
   <a class="btn btn-outline-success float-right mr-2"
-     [routerLink]="'/task-definitions/' + definition.id">
+     [routerLink]="['/', 'task-definition-edit', definition.id]">
     Edit
   </a>
   <h2>{{definition.name}}</h2>

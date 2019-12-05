@@ -1,4 +1,4 @@
-<div class="flex-fill">
+<div class="flex-fill" *ngIf="data">
   <as-split unit="percent"
             appSizeFill [fillHeight]="true">
     <as-split-area size="30" class="left-window">
@@ -17,7 +17,7 @@
                        [ngTemplateOutletContext]="createTemplateContext(element)"></ng-template>
           <a class="stretched-link"
              href="javascript:void(0)"
-             (click)="selected = element"></a>
+             (click)="select(element)"></a>
         </div>
       </div>
     </as-split-area>
@@ -32,3 +32,4 @@
     </as-split-area>
   </as-split>
 </div>
+<app-loading *ngIf="!data"></app-loading>
