@@ -7,7 +7,7 @@ from os import path
 from xdcs.app import xdcs
 from xdcs.cmd import Command
 from xdcs.cmd.object_repository import FetchDeploymentCmd, DumpObjectRepositoryTreeCmd
-from xdcs.cmd.task_reporting import ReportTaskCompletionCmd
+from xdcs.cmd.task_reporting import ReportTaskCompletionCmd, ReportTaskFailureCmd
 from xdcs.docker import DockerCli
 from xdcs.exec import exec_cmd
 from xdcs.log_handling import UploadingLogHandler, PassThroughLogHandler
@@ -38,9 +38,9 @@ class RunTaskCmd(Command):
 
             constructor_args = [workspace_path, deployment, self._deployment_id, self._task_id]
             if config_type == 'docker':
-                xdcs().execute(RunDockerTaskCmd(*constructor_args))
+                xdcs().execute(HandleExceptionCmd(RunDockerTaskCmd(*constructor_args), self._task_id))
             elif config_type == 'script':
-                xdcs().execute(RunScriptTaskCmd(*constructor_args))
+                xdcs().execute(HandleExceptionCmd(RunScriptTaskCmd(*constructor_args), self._task_id))
             else:
                 raise Exception('Unsupported task type ' + config_type)
         logger.info('Deployment finished: ' + self._deployment_id)
@@ -101,3 +101,19 @@ class RunScriptTaskCmd(_RunDeploymentBasedTaskCmd):
             exec_cmd([script_path], log_handler)
 
         xdcs().execute(ReportTaskCompletionCmd(self._task_id))
+
+
+class HandleExceptionCmd(Command):
+    _delegate: Command
+
+    def __init__(self, delegate: Command, task_id) -> None:
+        self._delegate = delegate
+        self._task_id = task_id
+
+    def execute(self):
+        try:
+            self._delegate.execute()
+        except Exception as e:
+            logger.error("Error while executing task: " + str(e))
+            xdcs().execute(ReportTaskFailureCmd(self._task_id))
+            raise e

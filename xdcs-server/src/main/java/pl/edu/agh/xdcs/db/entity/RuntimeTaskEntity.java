@@ -35,6 +35,11 @@ public class RuntimeTaskEntity extends BaseEntity implements Task {
     }
 
     @Override
+    public Optional<Result> getResult() {
+        return historicalTask.getResult();
+    }
+
+    @Override
     public String getName() {
         return historicalTask.getName();
     }

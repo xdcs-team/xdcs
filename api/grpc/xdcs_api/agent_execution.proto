@@ -48,4 +48,8 @@ service TaskReporting {
     rpc UploadLogs (Logs) returns (OkResponse) {
 
     }
+
+    rpc ReportFailure (TaskId) returns (OkResponse) {
+
+    }
 }

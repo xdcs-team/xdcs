@@ -15,15 +15,10 @@ import java.util.stream.Collectors;
  * @author Kamil Jarosz
  */
 public class TaskMapper {
-    private EnumMapper<Task.Type, TaskDto.StateEnum> stateMapper = EnumMapper.forMapping(
-            ImmutableMap.<Task.Type, TaskDto.StateEnum>builder()
-                    .put(Task.Type.RUNTIME, TaskDto.StateEnum.IN_PROGRESS)
-                    .put(Task.Type.HISTORICAL, TaskDto.StateEnum.FINISHED)
-                    .put(Task.Type.QUEUED, TaskDto.StateEnum.QUEUED)
-                    .build());
-
     @Inject
     private UserContext userContext;
+    @Inject
+    private StateMapper stateMapper;
 
     public List<TaskDto> toRestEntities(Collection<Task> model) {
         return model.stream()
@@ -35,7 +30,7 @@ public class TaskMapper {
         TaskDto dto = new TaskDto();
         dto.setId(model.getId());
         dto.setName(model.getName());
-        dto.setState(stateMapper.toApiEntity(model.getType()));
+        dto.setState(stateMapper.map(model));
         dto.setDeploymentId(model.getDeploymentDescriptor().getDeploymentRef().getReferencedObjectId());
         dto.setTimeCreated(model.getTimeCreated().atOffset(userContext.getCurrentZoneOffset()));
         return dto;

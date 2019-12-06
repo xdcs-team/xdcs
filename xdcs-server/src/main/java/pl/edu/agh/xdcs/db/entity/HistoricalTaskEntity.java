@@ -6,6 +6,8 @@ import lombok.Setter;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -32,9 +34,18 @@ public class HistoricalTaskEntity extends BaseEntity implements Task {
     @Column(name = "CREATED_", nullable = false)
     private Instant timeCreated = Instant.now();
 
+    @Column(name = "RESULT_")
+    @Enumerated(EnumType.STRING)
+    private Result result;
+
     @Override
     public Type getType() {
         return Type.HISTORICAL;
+    }
+
+    @Override
+    public Optional<Result> getResult() {
+        return Optional.ofNullable(result);
     }
 
     @Override

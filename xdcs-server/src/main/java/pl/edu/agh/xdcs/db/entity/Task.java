@@ -9,6 +9,8 @@ import java.util.Optional;
 public interface Task {
     Type getType();
 
+    Optional<Result> getResult();
+
     String getId();
 
     String getName();
@@ -27,5 +29,11 @@ public interface Task {
         HISTORICAL,
         RUNTIME,
         QUEUED,
+    }
+
+    enum Result {
+        FINISHED,
+        ERRORED,
+        CANCELED,
     }
 }
