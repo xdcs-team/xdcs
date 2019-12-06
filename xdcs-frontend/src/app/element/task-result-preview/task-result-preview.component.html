@@ -1,0 +1,33 @@
+<div class="content">
+  <div class="headline">
+    <h2>
+      <app-task-status-icon [size]="'sm'" [task]="task"></app-task-status-icon>
+      {{task.name}}</h2>
+  </div>
+  <table class="table table-borderless">
+    <tbody>
+    <tr>
+      <th scope="row">ID</th>
+      <td>{{task.id}}</td>
+    </tr>
+    <tr>
+      <th scope="row">Deployment ID</th>
+      <td>{{task.deploymentId}}</td>
+    </tr>
+    <tr>
+      <th scope="row">Time created</th>
+      <td>{{task.timeCreated | date:'medium'}}</td>
+    </tr>
+    <tr>
+      <th scope="row">State</th>
+      <td>{{task.state}}</td>
+    </tr>
+    </tbody>
+  </table>
+  <tabset>
+    <tab heading="Logs">
+      <app-log-preview [lines]="logLines"></app-log-preview>
+    </tab>
+    <tab heading="Results"> ¯\_(ツ)_/¯</tab>
+  </tabset>
+</div>

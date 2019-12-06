@@ -8,7 +8,7 @@ import { AuthGuard } from './auth/auth.guard';
 import { NodeComponent } from './view/node/node.component';
 import { NodesComponent } from './view/nodes/nodes.component';
 import { TaskCreationComponent } from './view/task-creation/task-creation.component';
-import { TaskLogComponent } from './view/task-log/task-log.component';
+import { TasksComponent } from './view/tasks/tasks.component';
 
 export const routes: Routes = [
   { path: 'sign-in', component: SignInComponent },
@@ -24,7 +24,7 @@ export const routes: Routes = [
       { path: 'nodes', component: NodesComponent },
       { path: 'nodes/:nodeId', component: NodeComponent },
       { path: 'new-task/:deploymentId', component: TaskCreationComponent },
-      { path: 'task-log/:taskId', component: TaskLogComponent },
+      { path: 'tasks', component: TasksComponent },
     ],
   },
 ];

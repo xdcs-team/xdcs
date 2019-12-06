@@ -4,6 +4,7 @@ import { navbarItemNames } from '../../services/navbar.service';
 import { TaskDefinitionsComponent } from '../../view/task-definitions/task-definitions.component';
 import { AuthService } from '../../auth/auth.service';
 import { NodesListComponent } from '../nodes-list/nodes-list.component';
+import { TasksComponent } from '../../view/tasks/tasks.component';
 
 @Component({
   selector: 'app-navbar',
@@ -19,6 +20,10 @@ export class NavbarComponent implements OnInit {
     {
       path: '/nodes',
       component: NodesListComponent,
+    },
+    {
+      path: '/tasks',
+      component: TasksComponent,
     },
   ];
 
