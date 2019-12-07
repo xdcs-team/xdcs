@@ -14,8 +14,6 @@ import { NavbarComponent } from './element/navbar/navbar.component';
 import { SignInComponent } from './view/sign-in/sign-in.component';
 import { HomeComponent } from './view/home/home.component';
 import { NodesComponent } from './view/nodes/nodes.component';
-import { NodesListComponent } from './element/nodes-list/nodes-list.component';
-import { NodeComponent } from './view/node/node.component';
 import { NodePreviewComponent } from './element/node-preview/node-preview.component';
 import { TaskSummaryItemComponent } from './element/task-summary-item/task-summary-item.component';
 import { TaskSummaryListComponent } from './element/task-summary-list/task-summary-list.component';
@@ -62,6 +60,8 @@ import { ngfModule } from 'angular-file';
 import { AutoFocusDirective } from './directives/auto-focus.directive';
 import { LogPreviewComponent } from './element/log-preview/log-preview.component';
 import { AnsiToHtmlComponent } from './element/ansi-to-html/ansi-to-html.component';
+import { NodeStatusIconComponent } from './element/note-status-icon/node-status-icon.component';
+import { NodeBasicInfoComponent } from './element/node-basic-info/node-basic-info.component';
 import { TasksComponent } from './view/tasks/tasks.component';
 import { TaskResultPreviewComponent } from './element/task-result-preview/task-result-preview.component';
 import { TabsModule } from 'ngx-bootstrap/tabs';
@@ -77,12 +77,11 @@ import { TaskStatusIconComponent } from './element/task-status-icon/task-status-
     SignInComponent,
     HomeComponent,
     NodesComponent,
-    NodeComponent,
     NodePreviewComponent,
-    NodesListComponent,
     TaskSummaryItemComponent,
     TaskSummaryListComponent,
     OcticonDirective,
+    NodeStatusIconComponent,
     GlobalAlertsComponent,
     CodeEditorComponent,
     TaskDefinitionsComponent,
@@ -114,6 +113,7 @@ import { TaskStatusIconComponent } from './element/task-status-icon/task-status-
     AnsiToHtmlComponent,
     TasksComponent,
     TaskResultPreviewComponent,
+    NodeBasicInfoComponent,
   ],
   entryComponents: [
     NewTaskDefinitionComponent,

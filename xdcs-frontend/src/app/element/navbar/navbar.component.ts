@@ -3,7 +3,7 @@ import { Route, Router } from '@angular/router';
 import { navbarItemNames } from '../../services/navbar.service';
 import { TaskDefinitionsComponent } from '../../view/task-definitions/task-definitions.component';
 import { AuthService } from '../../auth/auth.service';
-import { NodesListComponent } from '../nodes-list/nodes-list.component';
+import { NodesComponent } from '../../view/nodes/nodes.component';
 import { TasksComponent } from '../../view/tasks/tasks.component';
 
 @Component({
@@ -19,7 +19,7 @@ export class NavbarComponent implements OnInit {
     },
     {
       path: '/nodes',
-      component: NodesListComponent,
+      component: NodesComponent,
     },
     {
       path: '/tasks',

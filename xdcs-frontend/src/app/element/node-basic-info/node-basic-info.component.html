@@ -1,0 +1,13 @@
+<div class="row">
+  <div class="col-auto status-col">
+    <div>
+      <span class="mr-3">
+        <app-node-status-icon [node]="data"></app-node-status-icon>
+      </span>
+    </div>
+  </div>
+  <div class="col details-col">
+    <h5 [ngClass]="!data.name ? 'unknown-name' : ''" class="card-title">{{data.name}}</h5>
+    <p class="card-text">{{data.address}}</p>
+  </div>
+</div>

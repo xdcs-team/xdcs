@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { NodeCardData, NodeStatus } from '../node-card/node-card.component';
+import { NodeCardData } from '../node-card/node-card.component';
 import { NodesService } from '../../../api/services/nodes.service';
 import { NodesDto } from '../../../api/models/nodes-dto';
 import { NodeDto } from '../../../api/models/node-dto';
@@ -17,7 +17,6 @@ export class NodeCardsComponent implements OnInit {
   queried = false;
 
   constructor(private nodesService: NodesService) {
-
   }
 
   ngOnInit() {
@@ -33,23 +32,8 @@ export class NodeCardsComponent implements OnInit {
     return {
       name: node.name,
       address: node.address,
-      status: this.mapNodeStatus(node.status),
+      status: node.status,
       routerLink: '/nodes/' + node.id,
     };
-  }
-
-  private mapNodeStatus(status: 'offline' | 'unavailable' | 'ready' | 'busy'): NodeStatus {
-    switch (status) {
-      case 'ready':
-        return NodeStatus.Ready;
-      case 'offline':
-        return NodeStatus.Offline;
-      case 'unavailable':
-        return NodeStatus.Unavailable;
-      case 'busy':
-        return NodeStatus.Busy;
-      default:
-        return NodeStatus.Unknown;
-    }
   }
 }
