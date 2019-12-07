@@ -1,4 +1,4 @@
-package pl.edu.agh.xdcs.agentapi;
+package pl.edu.agh.xdcs.agentapi.impl;
 
 import com.google.protobuf.Timestamp;
 import io.grpc.stub.StreamObserver;

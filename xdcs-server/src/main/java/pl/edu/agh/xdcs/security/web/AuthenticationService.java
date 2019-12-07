@@ -65,7 +65,7 @@ public class AuthenticationService {
     public String authenticate(String username, String password) throws AuthenticationException {
         for (WebAuthenticator authenticator : authenticators) {
             if (authenticator.authenticate(username, password)) {
-                return issuer.issueToken(username, getRefreshTokenExpirationTime(), TokenIssuer.TokenType.AUTH_CODE);
+                return issuer.issueToken(username, getAuthCodeExpirationTime(), TokenIssuer.TokenType.AUTH_CODE);
             }
         }
 

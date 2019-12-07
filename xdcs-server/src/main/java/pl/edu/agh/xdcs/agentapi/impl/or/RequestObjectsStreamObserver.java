@@ -1,4 +1,4 @@
-package pl.edu.agh.xdcs.agentapi.or;
+package pl.edu.agh.xdcs.agentapi.impl.or;
 
 import io.grpc.stub.StreamObserver;
 import lombok.AllArgsConstructor;

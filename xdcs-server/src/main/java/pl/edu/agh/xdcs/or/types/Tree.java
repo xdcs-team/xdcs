@@ -27,7 +27,6 @@ import java.util.regex.Pattern;
  */
 @EqualsAndHashCode
 public class Tree implements ObjectBase {
-    @JsonProperty("entries")
     private List<Entry> entries;
 
     private Tree(List<Entry> entries) {

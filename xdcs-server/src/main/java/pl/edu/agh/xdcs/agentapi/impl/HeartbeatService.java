@@ -1,4 +1,4 @@
-package pl.edu.agh.xdcs.agentapi;
+package pl.edu.agh.xdcs.agentapi.impl;
 
 import io.grpc.stub.StreamObserver;
 import org.slf4j.Logger;
