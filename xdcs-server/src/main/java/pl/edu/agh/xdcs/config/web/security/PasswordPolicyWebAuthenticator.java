@@ -6,6 +6,7 @@ import pl.edu.agh.xdcs.config.SecurityPasswordPolicy;
 import pl.edu.agh.xdcs.config.WebSecurityConfiguration;
 import pl.edu.agh.xdcs.config.util.ReferencedFileLoader;
 import pl.edu.agh.xdcs.security.web.WebAuthenticator;
+import pl.edu.agh.xdcs.security.web.authenticators.LdapWebAuthenticator;
 import pl.edu.agh.xdcs.security.web.authenticators.ShadowFileWebAuthenticator;
 import pl.edu.agh.xdcs.util.Eager;
 import pl.edu.agh.xdcs.util.Enabled;
@@ -33,6 +34,7 @@ public class PasswordPolicyWebAuthenticator implements WebAuthenticator {
             .match(SecurityPasswordPolicy.InlinePass.class, this::parseDirective)
             .match(SecurityPasswordPolicy.AllowAll.class, this::parseDirective)
             .match(SecurityPasswordPolicy.File.class, this::parseDirective)
+            .match(SecurityPasswordPolicy.Ldap.class, LdapWebAuthenticator::new)
             .other(directive -> {
                 throw new RuntimeException("Unknown directive: " + directive);
             })

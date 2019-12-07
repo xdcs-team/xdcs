@@ -26,6 +26,7 @@ services:
       - xdcs-data:/opt/jboss/wildfly/xdcs
     depends_on:
       - xdcs-db
+      - xdcs-ldap
 
   xdcs-db:
     image: postgres
@@ -45,6 +46,22 @@ services:
     environment:
       - PGADMIN_DEFAULT_EMAIL=admin@example.com
       - PGADMIN_DEFAULT_PASSWORD=admin
+
+  xdcs-ldap:
+    image: osixia/openldap
+    command: ["--copy-service"]
+    volumes:
+      - ./xdcs-server/dev/ldap.ldif:/container/service/slapd/assets/config/bootstrap/ldif/custom/ldap.ldif
+
+  xdcs-ldap-admin:
+    image: osixia/phpldapadmin
+    environment:
+      PHPLDAPADMIN_LDAP_HOSTS: "xdcs-ldap"
+      PHPLDAPADMIN_HTTPS: "false"
+    ports:
+      - "36080:80"
+    depends_on:
+      - xdcs-ldap
 
 volumes:
   postgres-data:
