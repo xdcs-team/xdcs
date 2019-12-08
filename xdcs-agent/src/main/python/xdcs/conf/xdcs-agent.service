@@ -1,0 +1,13 @@
+[Unit]
+Description=XDCS Agent Service
+After=network.target
+StartLimitIntervalSec=0
+
+[Service]
+Type=exec
+ExecStart=xdcs-agent
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
