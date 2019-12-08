@@ -69,7 +69,7 @@ export class TaskDefinitionComponent implements OnInit {
       taskDefinitionId: this.taskDefinitionId,
       body: config,
     }).pipe(first()).subscribe(_ => {
-      this.globalAlerts.addAlert(new Alert('success', 'Task definition saved'));
+      this.globalAlerts.addAlert(new Alert('success', 'Task definition saved', 'short'));
     });
   }
 
