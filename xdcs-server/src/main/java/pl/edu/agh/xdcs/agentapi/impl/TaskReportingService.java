@@ -48,6 +48,13 @@ public class TaskReportingService extends TaskReportingGrpc.TaskReportingImplBas
         responseObserver.onCompleted();
     }
 
+    @Override
+    public void reportFailure(TaskId request, StreamObserver<OkResponse> responseObserver) {
+        taskService.reportFailure(request.getTaskId());
+        responseObserver.onNext(OkResponse.newBuilder().build());
+        responseObserver.onCompleted();
+    }
+
     private void saveLogLines(String taskId, List<Logs.LogLine> linesList) {
         Task task = taskService.getTaskById(taskId)
                 .orElseThrow(() -> new RuntimeException("Runtime task not found: " + taskId));

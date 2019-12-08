@@ -78,6 +78,12 @@ public class TaskService {
 
     public void reportCompletion(String taskId) {
         runtimeTaskDao.removeById(taskId);
+        historicalTaskDao.setFinished(taskId);
+    }
+
+    public void reportFailure(String taskId) {
+        runtimeTaskDao.removeById(taskId);
+        historicalTaskDao.setErrored(taskId);
     }
 
     public void saveLog(Task task, Instant time, LogLineEntity.LogType type, byte[] contents) {
