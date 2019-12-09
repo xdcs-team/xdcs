@@ -8,10 +8,10 @@ import pl.edu.agh.xdcs.config.Configured;
 import pl.edu.agh.xdcs.config.PasswordFileFormat;
 import pl.edu.agh.xdcs.config.SecurityPasswordPolicy;
 import pl.edu.agh.xdcs.config.util.ReferencedFileLoader;
-import pl.edu.agh.xdcs.grpc.ssh.authenticators.AnyPasswordAuthenticator;
-import pl.edu.agh.xdcs.grpc.ssh.authenticators.BarePasswordAuthenticator;
-import pl.edu.agh.xdcs.grpc.ssh.authenticators.ShadowFilePasswordAuthenticator;
-import pl.edu.agh.xdcs.grpc.ssh.configurators.GrpcSshConfigurator;
+import pl.edu.agh.xdcs.ssh.authenticators.AnyPasswordAuthenticator;
+import pl.edu.agh.xdcs.ssh.authenticators.BarePasswordAuthenticator;
+import pl.edu.agh.xdcs.ssh.authenticators.ShadowFilePasswordAuthenticator;
+import pl.edu.agh.xdcs.ssh.configurators.GrpcSshConfigurator;
 import pl.edu.agh.xdcs.util.ObjectMatcher;
 
 import javax.inject.Inject;

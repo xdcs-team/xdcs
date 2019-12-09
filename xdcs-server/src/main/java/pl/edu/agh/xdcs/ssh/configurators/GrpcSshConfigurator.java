@@ -1,4 +1,4 @@
-package pl.edu.agh.xdcs.grpc.ssh.configurators;
+package pl.edu.agh.xdcs.ssh.configurators;
 
 import org.apache.sshd.server.SshServer;
 

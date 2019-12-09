@@ -1,4 +1,4 @@
-package pl.edu.agh.xdcs.grpc.ssh;
+package pl.edu.agh.xdcs.ssh;
 
 import org.apache.sshd.common.forward.PortForwardingEventListener;
 import org.apache.sshd.common.session.Session;
@@ -11,7 +11,7 @@ import org.apache.sshd.server.session.SessionFactory;
 import org.slf4j.Logger;
 import pl.edu.agh.xdcs.grpc.events.AgentConnectedEvent;
 import pl.edu.agh.xdcs.grpc.events.AgentDisconnectedEvent;
-import pl.edu.agh.xdcs.grpc.ssh.configurators.GrpcSshConfigurator;
+import pl.edu.agh.xdcs.ssh.configurators.GrpcSshConfigurator;
 import pl.edu.agh.xdcs.util.Eager;
 
 import javax.annotation.PostConstruct;

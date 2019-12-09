@@ -1,4 +1,4 @@
-package pl.edu.agh.xdcs.grpc.ssh;
+package pl.edu.agh.xdcs.ssh;
 
 import org.apache.sshd.common.session.Session;
 import org.apache.sshd.common.util.net.SshdSocketAddress;

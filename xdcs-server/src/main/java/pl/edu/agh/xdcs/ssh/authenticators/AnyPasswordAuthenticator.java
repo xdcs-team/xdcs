@@ -1,4 +1,4 @@
-package pl.edu.agh.xdcs.grpc.ssh.authenticators;
+package pl.edu.agh.xdcs.ssh.authenticators;
 
 import org.apache.sshd.server.auth.AsyncAuthException;
 import org.apache.sshd.server.auth.password.PasswordAuthenticator;

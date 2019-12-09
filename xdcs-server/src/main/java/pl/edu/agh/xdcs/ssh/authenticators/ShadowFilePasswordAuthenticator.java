@@ -1,4 +1,4 @@
-package pl.edu.agh.xdcs.grpc.ssh.authenticators;
+package pl.edu.agh.xdcs.ssh.authenticators;
 
 import pl.edu.agh.xdcs.util.ShadowFile;
 
