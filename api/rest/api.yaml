@@ -729,6 +729,10 @@ components:
             - cuda
             - docker
             - script
+        artifacts:
+          type: array
+          items:
+            type: string
 
         # Docker
         dockerfile:

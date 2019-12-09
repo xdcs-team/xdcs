@@ -75,6 +75,10 @@ public class Deployment implements ObjectBase {
         @JsonProperty("kernelparams")
         @JsonInclude(JsonInclude.Include.NON_EMPTY)
         private List<KernelParameter> kernelParams;
+
+        @JsonProperty("artifacts")
+        @JsonInclude(JsonInclude.Include.NON_EMPTY)
+        private List<String> artifacts;
     }
 
 }

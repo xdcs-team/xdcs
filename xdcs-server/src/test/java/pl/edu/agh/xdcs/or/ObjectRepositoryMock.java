@@ -50,6 +50,16 @@ public class ObjectRepositoryMock implements ObjectRepository {
     }
 
     @Override
+    public String store(InputStream object) {
+        throw new AssertionError();
+    }
+
+    @Override
+    public void validate(String objectId, Class<? extends ObjectBase> type) throws ObjectRepositoryValidationException {
+        throw new AssertionError();
+    }
+
+    @Override
     public void verifyChecksums() {
         throw new AssertionError();
     }

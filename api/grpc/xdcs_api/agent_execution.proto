@@ -17,6 +17,17 @@ message TaskId {
     string taskId = 1;
 }
 
+message TaskResultReport {
+    string taskId = 1;
+    string artifactTree = 2;
+    Result result = 3;
+
+    enum Result {
+        FAILED = 0;
+        SUCCEEDED = 1;
+    }
+}
+
 message Logs {
     string taskId = 1;
     repeated LogLine lines = 2;
@@ -41,15 +52,11 @@ service TaskRunner {
 }
 
 service TaskReporting {
-    rpc ReportCompletion (TaskId) returns (OkResponse) {
-
-    }
-
     rpc UploadLogs (Logs) returns (OkResponse) {
 
     }
 
-    rpc ReportFailure (TaskId) returns (OkResponse) {
+    rpc ReportTaskResult (TaskResultReport) returns (OkResponse) {
 
     }
 }

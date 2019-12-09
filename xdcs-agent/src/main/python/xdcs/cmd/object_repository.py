@@ -1,15 +1,20 @@
+import logging
 import os
 import shutil
 import tempfile
 from os import path
+from stat import ST_MODE
 from typing import IO, Generator, List
 from zipfile import ZipFile
 
 from xdcs.app import xdcs
 from xdcs.cmd import Command
+from xdcs.object_repository import ObjectRepository
 from xdcs_api.common_pb2 import Chunk
 from xdcs_api.object_repository_pb2 import ObjectIds, DependencyResolutionRequest, ObjectKey, ObjectType
 from xdcs_api.object_repository_pb2_grpc import ObjectRepositoryStub
+
+logger = logging.getLogger(__name__)
 
 
 class FetchDeploymentCmd(Command):
@@ -108,3 +113,85 @@ class DumpObjectRepositoryTreeCmd(Command):
             elif object_type == '04':
                 os.mkdir(file_path, permissions)
                 self._dump_tree(object_id, file_path)
+
+
+class UploadObjectsCmd(Command):
+    _CHUNK_SIZE = 8 * 1024
+
+    _object_ids: List[str]
+    _or: ObjectRepository
+
+    def __init__(self, object_ids: List[str]):
+        self._object_ids = object_ids
+        self._or = xdcs().object_repository()
+
+    def execute(self):
+        logger.debug("Uploading objects: " + str(self._object_ids))
+        stub = ObjectRepositoryStub(xdcs().channel())
+
+        tmp_dir = tempfile.mkdtemp()
+        try:
+            objects_path = tmp_dir + '/objects'
+            os.makedirs(objects_path)
+
+            for obj_id in self._object_ids:
+                self._or.cp(obj_id, os.path.join(objects_path, obj_id))
+
+            zip_path = shutil.make_archive(tmp_dir + '/zip', 'zip', objects_path)
+
+            stub.UploadObjects(self.__read_chunks(zip_path))
+            logger.debug("Objects uploaded")
+        finally:
+            shutil.rmtree(tmp_dir)
+
+    def __read_chunks(self, file_path: str):
+        with open(file_path, 'rb') as f:
+            while True:
+                r = f.read(self._CHUNK_SIZE)
+                if r is None or len(r) == 0:
+                    return
+                yield Chunk(content=r)
+
+
+class MaterializeTreeToObjectRepositoryCmd(Command):
+    _in_path: str
+    _or: ObjectRepository
+
+    def __init__(self, in_path: str):
+        self._in_path = in_path
+        self._or = xdcs().object_repository()
+
+    def execute(self):
+        all_objects = []
+        root_id = self._materialize_tree(self._in_path, all_objects)
+        return root_id, all_objects
+
+    def _materialize_tree(self, fpath, all_objects: list) -> str:
+        (_, dirnames, files) = next(os.walk(fpath))
+        entries = []
+
+        for file in files:
+            entry = {
+                'id': self._or.import_object(os.path.join(fpath, file)),
+                'name': file,
+                'mode': self._read_mode(os.path.join(fpath, file))
+            }
+            entries.append(entry)
+            all_objects.append(entry['id'])
+
+        for dirname in dirnames:
+            entry = {
+                'id': self._materialize_tree(os.path.join(fpath, dirname), all_objects),
+                'name': dirname,
+                'mode': self._read_mode(os.path.join(fpath, dirname))
+            }
+            entries.append(entry)
+
+        entries.sort(key=lambda e: e['name'])
+        ret_id = self._or.import_json(entries)
+        all_objects.append(ret_id)
+        return ret_id
+
+    @staticmethod
+    def _read_mode(fpath: str) -> str:
+        return '%06o' % os.stat(fpath)[ST_MODE]

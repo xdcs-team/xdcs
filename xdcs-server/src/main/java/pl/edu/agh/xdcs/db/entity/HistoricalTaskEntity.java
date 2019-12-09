@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -37,6 +38,10 @@ public class HistoricalTaskEntity extends BaseEntity implements Task {
     @Column(name = "RESULT_")
     @Enumerated(EnumType.STRING)
     private Result result;
+
+    @JoinColumn(name = "ARTIFACT_TREE_")
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    private ObjectRefEntity artifactTree;
 
     @Override
     public Type getType() {

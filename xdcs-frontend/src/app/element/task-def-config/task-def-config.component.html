@@ -138,9 +138,25 @@
     </div>
   </div>
 
+  <div class="mb-3" *ngIf="['docker', 'script'].includes(taskDefinition.config.type)">
+    <label for="conf-script-path">Artifacts paths</label>
+    <app-orderable-input-list [data]="taskDefinition.config.artifacts"
+                              emptyElement=""
+                              [orderable]="false">
+      <ng-template #content let-item="element" let-index="index">
+        <input type="text"
+               class="form-control"
+               placeholder="Path"
+               [(ngModel)]="taskDefinition.config.artifacts[index]"
+               [name]="'artifactPath' + index"/>
+      </ng-template>
+    </app-orderable-input-list>
+  </div>
+
   <button
     class="btn btn-primary float-right mt-3"
     [disabled]="form.invalid"
-    (click)="saveConfiguration()">Save</button>
+    (click)="saveConfiguration()">Save
+  </button>
   <div class="clearfix"></div>
 </form>

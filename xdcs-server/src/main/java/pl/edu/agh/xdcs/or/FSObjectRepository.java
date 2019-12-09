@@ -1,5 +1,6 @@
 package pl.edu.agh.xdcs.or;
 
+import org.apache.commons.io.IOUtils;
 import pl.edu.agh.xdcs.util.ConcurrentUtils;
 
 import java.io.IOException;
@@ -79,13 +80,17 @@ class FSObjectRepository implements ObjectRepository {
 
     @Override
     public <T extends ObjectBase> T cat(String objectId, Class<T> type) {
+        return cat0(objectId, type, false);
+    }
+
+    private <T extends ObjectBase> T cat0(String objectId, Class<T> type, boolean forceClose) {
         ObjectRepositoryTypeHandler<T> handler = getHandler(type);
         InputStream is = cat(objectId);
         try {
             try {
                 return handler.read(is);
             } finally {
-                if (handler.closeAfterRead()) {
+                if (handler.closeAfterRead() || forceClose) {
                     is.close();
                 }
             }
@@ -111,18 +116,51 @@ class FSObjectRepository implements ObjectRepository {
                 handler.write(object, os);
             }
 
-            String objectId;
-            try (InputStream is = Files.newInputStream(temporaryPath)) {
-                objectId = DigestUtils.digest(is);
-            }
-
-            Path targetPath = resolver.resolveFullNoCheck(objectId);
-            Files.createDirectories(targetPath.getParent());
-            Files.move(temporaryPath, targetPath, StandardCopyOption.ATOMIC_MOVE);
-            return objectId;
+            return store(temporaryPath);
         } catch (IOException e) {
             throw new ObjectRepositoryIOException(e);
         }
+    }
+
+    @Override
+    public String store(InputStream object) {
+        try {
+            String now = LocalDateTime.now().toString();
+            Path temporaryPath = Files.createTempFile(getTempDir(), now + "_", "");
+
+            try (OutputStream os = Files.newOutputStream(temporaryPath)) {
+                IOUtils.copy(object, os);
+            }
+
+            return store(temporaryPath);
+        } catch (IOException e) {
+            throw new ObjectRepositoryIOException(e);
+        }
+    }
+
+    @Override
+    public void validate(String objectId, Class<? extends ObjectBase> type) throws ObjectRepositoryValidationException {
+        try {
+            cat0(objectId, type, true);
+        } catch (Exception e) {
+            throw new ObjectRepositoryValidationException(objectId, type, e);
+        }
+
+        dependenciesFor(objectId, type).forEach(key -> {
+            validate(key.getObjectId(), key.getType());
+        });
+    }
+
+    private String store(Path temporaryPath) throws IOException {
+        String objectId;
+        try (InputStream is = Files.newInputStream(temporaryPath)) {
+            objectId = DigestUtils.digest(is);
+        }
+
+        Path targetPath = resolver.resolveFullNoCheck(objectId);
+        Files.createDirectories(targetPath.getParent());
+        Files.move(temporaryPath, targetPath, StandardCopyOption.ATOMIC_MOVE);
+        return objectId;
     }
 
     @SuppressWarnings("unchecked")
