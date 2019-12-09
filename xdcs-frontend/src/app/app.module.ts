@@ -58,6 +58,7 @@ import { OrderableInputListComponent } from './element/orderable-input-list/orde
 import { UploadFileComponent } from './element/upload-file/upload-file.component';
 import { ngfModule } from 'angular-file';
 import { AutoFocusDirective } from './directives/auto-focus.directive';
+import { FooterComponent } from './element/footer/footer.component';
 import { LogPreviewComponent } from './element/log-preview/log-preview.component';
 import { AnsiToHtmlComponent } from './element/ansi-to-html/ansi-to-html.component';
 import { NodeStatusIconComponent } from './element/note-status-icon/node-status-icon.component';
@@ -89,6 +90,7 @@ import { TaskStatusIconComponent } from './element/task-status-icon/task-status-
     TaskCreationComponent,
     NoDataComponent,
     TaskDefConfigComponent,
+    FooterComponent,
     FullscreenListComponent,
     TaskDefinitionPreviewComponent,
     ModalComponent,

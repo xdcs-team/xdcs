@@ -61,10 +61,6 @@ a, a:hover, a:visited, a:link, a:active, a:focus {
   }
 }
 
-app-root {
-  min-height: 100vh;
-}
-
 .btn-icon {
   fa-icon {
     margin: 0 !important;
@@ -90,6 +86,16 @@ blink {
   }
   100% {
     opacity: 1.0;
+  }
+}
+
+app-root > router-outlet + * {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+
+  & > .container, & > .container-fluid {
+    flex: 1;
   }
 }
 
