@@ -1,5 +1,5 @@
 <app-navbar [fullscreenMode]="true"></app-navbar>
-<app-fullscreen-list [data]="tasks">
+<app-fullscreen-list (selectedChange)="onSelectionChange($event)" [(selected)]="selected" [data]="tasks">
   <ng-template #header let-item="header">
     <div>
       <button type="button"

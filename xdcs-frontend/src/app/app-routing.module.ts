@@ -20,9 +20,11 @@ export const routes: Routes = [
       { path: 'task-definitions', redirectTo: 'task-definitions/' },
       { path: 'task-definitions/:definitionId', component: TaskDefinitionsComponent },
       { path: 'task-definition-edit/:definitionId', component: TaskDefinitionComponent },
-      { path: 'nodes', component: NodesComponent },
+      { path: 'nodes', redirectTo: 'nodes/' },
+      { path: 'nodes/:nodeId', component: NodesComponent },
       { path: 'new-task/:deploymentId', component: TaskCreationComponent },
-      { path: 'tasks', component: TasksComponent },
+      { path: 'tasks', redirectTo: 'tasks/' },
+      { path: 'tasks/:taskId', component: TasksComponent },
     ],
   },
 ];
