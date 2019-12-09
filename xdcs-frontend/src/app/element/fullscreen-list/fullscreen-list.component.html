@@ -2,9 +2,8 @@
   <as-split unit="percent"
             appSizeFill [fillHeight]="true">
     <as-split-area size="30" class="left-window">
-      <div class="header-container shadow-sm">
-        <ng-template *ngIf="headerTemplateRef"
-                     [ngTemplateOutlet]="headerTemplateRef"
+      <div *ngIf="headerTemplateRef" class="header-container shadow-sm">
+        <ng-template [ngTemplateOutlet]="headerTemplateRef"
                      [ngTemplateOutletContext]="createTemplateContext()"></ng-template>
       </div>
       <div class="elements-container"
