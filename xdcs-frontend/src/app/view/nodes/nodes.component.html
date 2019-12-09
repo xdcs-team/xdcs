@@ -1,5 +1,5 @@
 <app-navbar [fullscreenMode]="true"></app-navbar>
-<app-fullscreen-list [data]="cards">
+<app-fullscreen-list (selectedChange)="onSelectionChange($event)" [(selected)]="selected" [data]="cards">
   <ng-template #element let-item="element">
     <app-node-basic-info [data]="item"></app-node-basic-info>
   </ng-template>
