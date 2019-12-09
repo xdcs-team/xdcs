@@ -8,8 +8,8 @@ import pl.edu.agh.xdcs.config.AgentSecurityConfiguration;
 import pl.edu.agh.xdcs.config.Configured;
 import pl.edu.agh.xdcs.config.SecurityPublicKeyPolicy;
 import pl.edu.agh.xdcs.config.util.ReferencedFileLoader;
-import pl.edu.agh.xdcs.grpc.ssh.authenticators.AnyPublicKeyAuthenticator;
-import pl.edu.agh.xdcs.grpc.ssh.configurators.GrpcSshConfigurator;
+import pl.edu.agh.xdcs.ssh.authenticators.AnyPublicKeyAuthenticator;
+import pl.edu.agh.xdcs.ssh.configurators.GrpcSshConfigurator;
 import pl.edu.agh.xdcs.util.ObjectMatcher;
 
 import javax.inject.Inject;

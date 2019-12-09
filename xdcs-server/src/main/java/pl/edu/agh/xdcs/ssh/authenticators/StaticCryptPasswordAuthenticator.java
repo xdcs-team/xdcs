@@ -1,4 +1,4 @@
-package pl.edu.agh.xdcs.grpc.ssh.authenticators;
+package pl.edu.agh.xdcs.ssh.authenticators;
 
 import org.apache.commons.codec.digest.Crypt;
 import org.apache.sshd.server.auth.AsyncAuthException;
