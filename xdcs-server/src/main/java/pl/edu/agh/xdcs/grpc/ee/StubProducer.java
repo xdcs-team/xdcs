@@ -1,5 +1,6 @@
 package pl.edu.agh.xdcs.grpc.ee;
 
+import pl.edu.agh.xdcs.api.AgentInfoGrpc;
 import pl.edu.agh.xdcs.api.HeartbeatGrpc;
 import pl.edu.agh.xdcs.api.TaskRunnerGrpc;
 import pl.edu.agh.xdcs.grpc.scope.GrpcSessionScoped;
@@ -38,5 +39,10 @@ public class StubProducer {
     @Produces
     public TaskRunnerGrpc.TaskRunnerBlockingStub getTaskRunnerBlockingStub() {
         return TaskRunnerGrpc.newBlockingStub(session.getChannel());
+    }
+
+    @Produces
+    public AgentInfoGrpc.AgentInfoBlockingStub getAgentInfoBlockingStub() {
+        return AgentInfoGrpc.newBlockingStub(session.getChannel());
     }
 }

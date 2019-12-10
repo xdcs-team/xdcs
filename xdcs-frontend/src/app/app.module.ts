@@ -67,6 +67,8 @@ import { TasksComponent } from './view/tasks/tasks.component';
 import { TaskResultPreviewComponent } from './element/task-result-preview/task-result-preview.component';
 import { TabsModule } from 'ngx-bootstrap/tabs';
 import { TaskStatusIconComponent } from './element/task-status-icon/task-status-icon.component';
+import { NodeDetailsComponent } from './element/node-details/node-details.component';
+import { NodeDetailsPreviewComponent } from './element/node-details-preview/node-details-preview.component';
 
 @NgModule({
   declarations: [
@@ -116,6 +118,8 @@ import { TaskStatusIconComponent } from './element/task-status-icon/task-status-
     TasksComponent,
     TaskResultPreviewComponent,
     NodeBasicInfoComponent,
+    NodeDetailsComponent,
+    NodeDetailsPreviewComponent,
   ],
   entryComponents: [
     NewTaskDefinitionComponent,
