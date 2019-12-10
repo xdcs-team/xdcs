@@ -22,12 +22,12 @@ class DockerException(Exception):
 
 class DockerCli:
     _docker_exec: str
-    _opts: [str] = []
     _nvidia_all_devices: bool = False
     _nvidia_device_ids: [str] = []
 
     def __init__(self) -> None:
         self._docker_exec = xdcs().config('system.docker', 'docker')
+        self._opts: [str] = []
 
     def opt(self, opt: Union[str, List[str]]) -> DockerCli:
         if isinstance(opt, str):
