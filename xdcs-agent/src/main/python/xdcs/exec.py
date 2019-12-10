@@ -1,7 +1,10 @@
+import logging
 import subprocess
 
 from xdcs.decorators import asynchronous
 from xdcs.log_handling import LogHandler
+
+logger = logging.getLogger(__name__)
 
 
 class ExecFailedException(Exception):
@@ -9,6 +12,8 @@ class ExecFailedException(Exception):
 
 
 def exec_cmd(args: [str], log_handler: LogHandler = None):
+    command = ', '.join(args)
+    logger.info("Executing: " + command)
     proc = subprocess.Popen(args,
                             stdout=subprocess.PIPE,
                             stderr=subprocess.PIPE)

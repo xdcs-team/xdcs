@@ -79,7 +79,9 @@ class RunDockerTaskCmd(_RunDeploymentBasedTaskCmd):
         image_id = DockerCli().build(self._workspace_path, dockerfile)
         self._log_handler.internal_log('Docker built, image ID: ' + image_id)
 
-        DockerCli() \
+        should_allocate_pseudo_tty = deployment['config']['allocatepseudotty']
+        docker_cli = DockerCli().allocate_pseudo_tty() if should_allocate_pseudo_tty else DockerCli()
+        docker_cli \
             .remove_container_after_finish() \
             .nvidia_all_devices() \
             .container_name('xdcs_' + self._task_id) \

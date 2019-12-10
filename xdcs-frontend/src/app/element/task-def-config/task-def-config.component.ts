@@ -41,7 +41,7 @@ export class TaskDefConfigComponent implements OnInit {
     if (!this.taskDefinition.config.kernelparams) {
       this.taskDefinition.config.kernelparams = [];
     }
-
+    this.taskDefinition.config.allocatePseudoTty = false;
   }
 
   saveConfiguration() {

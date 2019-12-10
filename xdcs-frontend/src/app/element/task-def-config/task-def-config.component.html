@@ -100,19 +100,28 @@
     </app-orderable-input-list>
   </ng-container>
 
-  <div class="mb-3" *ngIf="['docker'].includes(taskDefinition.config.type)">
-    <label for="conf-dockerfile">Dockerfile</label>
-    <input type="text"
-           class="form-control"
-           id="conf-dockerfile"
-           placeholder="Dockerfile"
-           #dockerfile="ngModel"
-           [(ngModel)]="taskDefinition.config.dockerfile"
-           name="dockerfile"/>
-    <small class="form-text text-muted" [hidden]="dockerfile.model">
-      The default Dockerfile will be used
-    </small>
-  </div>
+  <ng-container *ngIf="['docker'].includes(taskDefinition.config.type)">
+    <div class="mb-3">
+      <label for="conf-dockerfile">Dockerfile</label>
+      <input type="text"
+             class="form-control"
+             id="conf-dockerfile"
+             placeholder="Dockerfile"
+             #dockerfile="ngModel"
+             [(ngModel)]="taskDefinition.config.dockerfile"
+             name="dockerfile"/>
+      <small class="form-text text-muted" [hidden]="dockerfile.model">
+        The default Dockerfile will be used
+      </small>
+    </div>
+
+    <div class="mb-3">
+      <label>
+        <input type="checkbox" name="allocatePseudoTty"  [(ngModel)]="taskDefinition.config.allocatePseudoTty">
+        Allocate pseudo tty
+      </label>
+    </div>
+  </ng-container>
 
   <div class="mb-3" *ngIf="['script'].includes(taskDefinition.config.type)">
     <label for="conf-script-path">Script path</label>
