@@ -35,12 +35,14 @@ def check_version():
 def initialize(project):
     project.build_depends_on('flake8')
     project.build_depends_on('mockito')
-    project.build_depends_on('numpy')
-    project.build_depends_on('protobuf')
-    project.build_depends_on('grpcio')
     project.build_depends_on('grpcio-tools')
-    project.build_depends_on('toml')
 
+    project.depends_on('paramiko')
+    project.depends_on('protobuf')
+    # TODO: Get rid of this dependency if possible
+    project.depends_on('numpy')
+    project.depends_on('toml')
+    project.depends_on('grpcio')
     project.depends_on('py-cpuinfo')
     project.depends_on('pyopencl')
     project.depends_on('distro')
@@ -78,11 +80,11 @@ def compile_grpc(logger):
     os.makedirs(gen_python, exist_ok=True)
     proto_include = pkg_resources.resource_filename('grpc_tools', '_proto')
     params = [sys.argv[0],
-                '-I=src/main/proto',
-                '--python_out={}'.format(gen_python),
-                '--grpc_python_out={}'.format(gen_python),
-                *find_proto_files('./src/main/proto/xdcs_api/'),
-                '-I{}'.format(proto_include)]
+              '-I=src/main/proto',
+              '--python_out={}'.format(gen_python),
+              '--grpc_python_out={}'.format(gen_python),
+              *find_proto_files('./src/main/proto/xdcs_api/'),
+              '-I{}'.format(proto_include)]
     logger.debug("Executing protoc with parameters {}".format(params))
     exit_code = protoc.main(params)
 
@@ -90,14 +92,19 @@ def compile_grpc(logger):
         raise Exception('protoc failed ' + str(exit_code))
     else:
         logger.info("protoc succeeded")
+        for subdir, _, _ in os.walk(gen_python):
+            path = subdir + '/__init__.py'
+            with open(path, "w+"):
+                pass
+            logger.debug(path + ' generated')
 
 
 def find_proto_files(path):
     result = []
-    for root, dirs, files in os.walk(path):
+    for subdir, _, files in os.walk(path):
         for file in files:
             if fnmatch.fnmatch(file, '*.proto'):
-                result.append(os.path.join(root, file))
+                result.append(os.path.join(subdir, file))
     return result
 
 

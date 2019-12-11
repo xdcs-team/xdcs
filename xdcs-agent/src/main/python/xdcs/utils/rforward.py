@@ -31,10 +31,11 @@ class _ReverseForwardContext:
 
         client = paramiko.SSHClient()
         client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+        private_key = paramiko.RSAKey.from_private_key_file(server_auth_key) if server_auth_key else None
         client.connect(
             self.server_addr, self.server_port,
             username=server_auth_name,
-            pkey=paramiko.RSAKey.from_private_key_file(server_auth_key),
+            pkey=private_key,
             password=server_auth_password,
             look_for_keys=False,
         )

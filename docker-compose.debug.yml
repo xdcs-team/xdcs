@@ -1,5 +1,12 @@
 version: "3.7"
 services:
+  xdcs-agent:
+    build:
+      context: .
+      dockerfile: Dockerfile.agent
+    depends_on:
+      - xdcs-server
+
   xdcs-frontend:
     build:
       context: ./xdcs-frontend
