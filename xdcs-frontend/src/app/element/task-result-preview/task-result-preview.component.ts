@@ -18,6 +18,7 @@ export class TaskResultPreviewComponent implements OnInit, OnChanges {
   logsWebSocket: WebSocketSubject<LogDto>;
   @Input()
   task: TaskDto;
+  tagWidth = 0;
 
 
   constructor(private loggingService: LogHandlingService) {
@@ -29,6 +30,7 @@ export class TaskResultPreviewComponent implements OnInit, OnChanges {
     }).pipe(first()).subscribe(logs => {
       this.currentLineNumber = 0;
       this.logLines = logs.items.map(item => {
+        this.updateTagWidth(item);
         return this.mapToLogLine(item);
       });
 
@@ -38,9 +40,16 @@ export class TaskResultPreviewComponent implements OnInit, OnChanges {
 
       this.logsWebSocket = new WebSocketSubject(logs.websocketUrl);
       this.logsWebSocket.subscribe(log => {
+        this.updateTagWidth(log);
         this.logLines.push(this.mapToLogLine(log));
       });
     });
+  }
+
+  private updateTagWidth(log: LogDto) {
+    if (log.nodeId.length > this.tagWidth) {
+      this.tagWidth = log.nodeId.length;
+    }
   }
 
   private mapToLogLine(item: LogDto): LogLine {
@@ -48,6 +57,7 @@ export class TaskResultPreviewComponent implements OnInit, OnChanges {
       lineNumber: ++this.currentLineNumber,
       time: new Date(item.time),
       contents: atob(item.contents),
+      tag: item.nodeId,
     } as LogLine;
   }
 

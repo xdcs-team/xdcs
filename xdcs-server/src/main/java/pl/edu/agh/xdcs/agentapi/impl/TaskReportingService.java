@@ -9,6 +9,9 @@ import pl.edu.agh.xdcs.agents.Agent;
 import pl.edu.agh.xdcs.api.Logs;
 import pl.edu.agh.xdcs.api.OkResponse;
 import pl.edu.agh.xdcs.api.TaskResultReport;
+import pl.edu.agh.xdcs.db.DatabaseInconsistencyException;
+import pl.edu.agh.xdcs.db.dao.AgentDao;
+import pl.edu.agh.xdcs.db.entity.AgentEntity;
 import pl.edu.agh.xdcs.db.entity.Task;
 import pl.edu.agh.xdcs.mapper.UnsatisfiedMappingException;
 import pl.edu.agh.xdcs.services.TaskService;
@@ -35,6 +38,10 @@ public class TaskReportingService {
     @Inject
     private LogTypeMapper logTypeMapper;
 
+    @Inject
+    private AgentDao agentDao;
+
+
     public void uploadLogs(Logs request, StreamObserver<OkResponse> responseObserver) {
         saveLogLines(request.getTaskId(), request.getLinesList());
         responseObserver.onNext(OkResponse.newBuilder().build());
@@ -45,6 +52,9 @@ public class TaskReportingService {
         Task task = taskService.getTaskById(taskId)
                 .orElseThrow(() -> new RuntimeException("Runtime task not found: " + taskId));
 
+        AgentEntity currentAgentEntity = agentDao.findByName(currentAgent.getName())
+                .orElseThrow(() -> new DatabaseInconsistencyException("Agent: " + currentAgent.getName() + " not found."));
+
         linesList.forEach(line -> {
             logger.debug(currentAgent.getName() + " logged for task " + taskId +
                     ": " + line.getContents().toStringUtf8());
@@ -53,7 +63,8 @@ public class TaskReportingService {
                     task,
                     Instant.ofEpochSecond(ts.getSeconds(), ts.getNanos()),
                     logTypeMapper.toModelEntity(line.getType()),
-                    line.getContents().toByteArray());
+                    line.getContents().toByteArray(),
+                    currentAgentEntity);
         });
     }
 

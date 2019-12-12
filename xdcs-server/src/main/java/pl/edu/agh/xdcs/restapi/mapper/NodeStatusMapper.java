@@ -1,6 +1,6 @@
 package pl.edu.agh.xdcs.restapi.mapper;
 
-import pl.edu.agh.xdcs.agents.Agent;
+import pl.edu.agh.xdcs.db.entity.AgentEntity;
 import pl.edu.agh.xdcs.mapper.UnsatisfiedMappingException;
 import pl.edu.agh.xdcs.restapi.model.NodeDto;
 
@@ -8,7 +8,7 @@ import pl.edu.agh.xdcs.restapi.model.NodeDto;
  * @author Kamil Jarosz
  */
 public class NodeStatusMapper {
-    public NodeDto.StatusEnum toRest(Agent.Status status) {
+    public NodeDto.StatusEnum toRest(AgentEntity.Status status) {
         switch (status) {
             case READY:
                 return NodeDto.StatusEnum.READY;
