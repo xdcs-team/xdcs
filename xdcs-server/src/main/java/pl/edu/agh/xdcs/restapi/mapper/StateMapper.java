@@ -5,11 +5,17 @@ import pl.edu.agh.xdcs.db.DatabaseInconsistencyException;
 import pl.edu.agh.xdcs.db.entity.Task;
 import pl.edu.agh.xdcs.mapper.EnumMapper;
 import pl.edu.agh.xdcs.restapi.model.TaskDto;
+import org.slf4j.Logger;
+
+import javax.inject.Inject;
 
 /**
  * @author Krystian Życiński
  */
 public class StateMapper {
+    @Inject
+    private Logger logger;
+
     private EnumMapper<Task.Type, TaskDto.StateEnum> typeMapper = EnumMapper.forMapping(
             ImmutableMap.<Task.Type, TaskDto.StateEnum>builder()
                     .put(Task.Type.RUNTIME, TaskDto.StateEnum.IN_PROGRESS)
@@ -27,7 +33,8 @@ public class StateMapper {
         if (task.getType() != Task.Type.HISTORICAL)
             return typeMapper.toApiEntity(task.getType());
 
-        return resultMapper.toApiEntity(task.getResult().orElseThrow(()
-                -> new DatabaseInconsistencyException("Historical task without result")));
+        logger.error("Historical task without result name: " + task.getName() + ", id: " + task.getId());
+        return task.getResult().map(resultMapper::toApiEntity)
+                .orElse(TaskDto.StateEnum.ERRORED);
     }
 }
