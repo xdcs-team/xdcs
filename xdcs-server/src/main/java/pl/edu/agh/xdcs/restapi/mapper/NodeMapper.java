@@ -2,6 +2,7 @@ package pl.edu.agh.xdcs.restapi.mapper;
 
 import pl.edu.agh.xdcs.db.dao.ResourceDao;
 import pl.edu.agh.xdcs.db.entity.AgentEntity;
+import pl.edu.agh.xdcs.db.entity.AgentEntity;
 import pl.edu.agh.xdcs.restapi.model.NodeDto;
 import pl.edu.agh.xdcs.restapi.model.NodesDto;
 

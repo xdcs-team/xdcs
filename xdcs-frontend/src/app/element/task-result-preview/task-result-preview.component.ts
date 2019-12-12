@@ -1,10 +1,11 @@
 import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
-import { ArtifactDto, LogDto, TaskDto } from '../../../api/models';
+import { ArtifactDto, LogDto, NodeDto, NodesDto, TaskDto } from '../../../api/models';
 import { first } from 'rxjs/operators';
 import { WebSocketSubject } from 'rxjs/internal-compatibility';
 import { LogLine } from '../log-preview/log-preview.component';
 import { LogHandlingService } from '../../../api/services/log-handling.service';
 import { TasksService } from '../../../api/services/tasks.service';
+import { NodesService } from '../../../api/services/nodes.service';
 
 @Component({
   selector: 'app-task-result-preview',
@@ -20,14 +21,24 @@ export class TaskResultPreviewComponent implements OnInit, OnChanges {
   @Input()
   task: TaskDto;
   tagWidth = 0;
+  nodes: Array<NodeDto> = null;
+  selectedNodes: Array<NodeDto> = null;
 
   constructor(private loggingService: LogHandlingService,
+              private nodesService: NodesService,
               private tasksService: TasksService) {
   }
 
   ngOnInit() {
+    this.initNodes();
+    this.changeLogs();
+  }
+
+  private changeLogs() {
     this.loggingService.getTaskLogs({
       taskId: this.task.id,
+      agents: this.getNodeNames(),
+      queryAgents: true,
     }).pipe(first()).subscribe(logs => {
       this.currentLineNumber = 0;
       this.logLines = logs.items.map(item => {
@@ -41,14 +52,25 @@ export class TaskResultPreviewComponent implements OnInit, OnChanges {
 
       this.logsWebSocket = new WebSocketSubject(logs.websocketUrl);
       this.logsWebSocket.subscribe(log => {
-        this.updateTagWidth(log);
-        this.logLines.push(this.mapToLogLine(log));
+        if (this.selectedNodes.some(e => e.id === log.nodeId)) {
+          this.updateTagWidth(log);
+          this.logLines.push(this.mapToLogLine(log));
+        }
       });
     });
 
     this.tasksService.getTaskArtifacts({
       taskId: this.task.id,
     }).pipe(first()).subscribe(artifacts => this.artifacts = artifacts);
+  }
+
+  private initNodes() {
+    this.nodesService.getNodes({})
+      .pipe(first())
+      .subscribe((nodes: NodesDto) => {
+        this.nodes = nodes.items;
+        this.selectedNodes = nodes.items;
+      });
   }
 
   private updateTagWidth(log: LogDto) {
@@ -66,7 +88,18 @@ export class TaskResultPreviewComponent implements OnInit, OnChanges {
     } as LogLine;
   }
 
+  private getNodeNames(): Array<string> {
+    if (this.selectedNodes) {
+      return this.selectedNodes.map(o => o.id);
+    }
+  }
+
+  public changeAgents(agents: Array<NodeDto>): void {
+    this.selectedNodes = agents;
+    this.changeLogs();
+  }
+
   ngOnChanges(changes: SimpleChanges) {
-    this.ngOnInit();
+    this.initNodes();
   }
 }
