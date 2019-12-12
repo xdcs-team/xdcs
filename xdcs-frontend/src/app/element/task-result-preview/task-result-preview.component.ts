@@ -1,9 +1,11 @@
 import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
-import { LogDto, TaskDto } from '../../../api/models';
+import { LogDto, NodesDto, TaskDto } from '../../../api/models';
 import { first } from 'rxjs/operators';
 import { WebSocketSubject } from 'rxjs/internal-compatibility';
 import { LogLine } from '../log-preview/log-preview.component';
 import { LogHandlingService } from '../../../api/services/log-handling.service';
+import { NodesService } from '../../../api/services/nodes.service';
+import { NodeDto } from '../../../api/models/node-dto';
 
 @Component({
   selector: 'app-task-result-preview',
@@ -48,6 +50,7 @@ export class TaskResultPreviewComponent implements OnInit, OnChanges {
       lineNumber: ++this.currentLineNumber,
       time: new Date(item.time),
       contents: atob(item.contents),
+      agentTag: item.nodeId,
     } as LogLine;
   }
 

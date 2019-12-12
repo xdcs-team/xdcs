@@ -1,6 +1,9 @@
 <pre *ngIf="convert" class="log-output">
   <ng-container *ngFor="let line of lines">
     <div class="log-line">
+      <div class="line-agent">
+        {{ line.agentTag }} + ': '
+      </div>
       <div class="line-number" tooltip="{{ line.time | date:timePopupFormat }}">
         {{ line.lineNumber }}
       </div>

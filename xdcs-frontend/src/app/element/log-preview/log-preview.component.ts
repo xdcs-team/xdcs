@@ -1,6 +1,7 @@
 import { Component, Input } from '@angular/core';
 import * as Convert from 'ansi-to-html';
 import { HttpClient } from '@angular/common/http';
+import { NodeDto } from '../../../api/models/node-dto';
 
 @Component({
   selector: 'app-log-preview',
@@ -35,4 +36,5 @@ export interface LogLine {
   lineNumber: number;
   time: Date;
   contents: string;
+  agentTag: String;
 }
