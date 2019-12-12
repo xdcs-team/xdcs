@@ -1,5 +1,6 @@
 import logging
 import subprocess
+import threading
 
 from xdcs.decorators import asynchronous
 from xdcs.log_handling import LogHandler
@@ -19,22 +20,28 @@ def exec_cmd(args: [str], log_handler: LogHandler = None):
                             stderr=subprocess.PIPE)
 
     if log_handler is not None:
-        _consume_stdout(log_handler, proc)
-        _consume_stderr(log_handler, proc)
+        barrier = threading.Barrier(3)
+        _consume_stdout(log_handler, proc, barrier)
+        _consume_stderr(log_handler, proc, barrier)
+    else:
+        barrier = threading.Barrier(1)
 
     proc.wait()
+    barrier.wait()
 
     if proc.returncode != 0:
         raise ExecFailedException(str(proc.stderr.read().decode("utf-8")))
 
 
 @asynchronous
-def _consume_stdout(log_handler: LogHandler, proc: subprocess.Popen):
+def _consume_stdout(log_handler: LogHandler, proc: subprocess.Popen, barrier: threading.Barrier):
     for line in proc.stdout:
         log_handler.out_bytes(line.strip(b'\n'))
+    barrier.wait()
 
 
 @asynchronous
-def _consume_stderr(log_handler: LogHandler, proc: subprocess.Popen):
+def _consume_stderr(log_handler: LogHandler, proc: subprocess.Popen, barrier: threading.Barrier):
     for line in proc.stderr:
         log_handler.err_bytes(line.strip(b'\n'))
+    barrier.wait()
