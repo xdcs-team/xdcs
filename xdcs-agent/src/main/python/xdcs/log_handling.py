@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from enum import Enum
 from logging import Logger
 from queue import Queue
 from typing import Optional
@@ -12,11 +13,20 @@ from xdcs_api.agent_execution_pb2 import Logs
 from xdcs_api.agent_execution_pb2_grpc import TaskReportingStub
 
 
+class LogLevel(Enum):
+    INFO = 1,
+    DEBUG = 2,
+    ERROR = 3,
+
+
 class LogHandler:
     def out_bytes(self, message: bytes) -> None:
         pass
 
     def err_bytes(self, message: bytes) -> None:
+        pass
+
+    def internal_log(self, message: str, log_level: LogLevel) -> None:
         pass
 
     def combine(self, other: LogHandler) -> LogHandler:
@@ -39,6 +49,10 @@ class CombinedLogHandler(LogHandler):
         self._first.err_bytes(message)
         self._second.err_bytes(message)
 
+    def internal_log(self, message: str, log_level: LogLevel = LogLevel.INFO) -> None:
+        self._first.internal_log(message, log_level)
+        self._second.internal_log(message, log_level)
+
 
 class PassThroughLogHandler(LogHandler):
     _logger: Logger
@@ -51,6 +65,16 @@ class PassThroughLogHandler(LogHandler):
 
     def err_bytes(self, message: bytes) -> None:
         self._logger.info("[stderr] " + message.decode('utf-8').rstrip('\n'))
+
+    def internal_log(self, message: str, log_level: LogLevel = LogLevel.INFO) -> None:
+        if log_level == LogLevel.INFO:
+            self._logger.info("[internal] " + log_level.name + ": " + message)
+        elif log_level == LogLevel.ERROR:
+            self._logger.error("[internal] " + log_level.name + ": " + message)
+        elif log_level == LogLevel.DEBUG:
+            self._logger.debug("[internal] " + log_level.name + ": " + message)
+        else:
+            self._logger.critical("[internal] " + log_level.name + ": " + message)
 
 
 class UploadingLogHandler(LogHandler):
@@ -74,6 +98,13 @@ class UploadingLogHandler(LogHandler):
         line.timestamp.GetCurrentTime()
         line.contents = message
         line.type = Logs.LogType.STDERR
+        self._log_queue.put(line)
+
+    def internal_log(self, message: str, log_level: LogLevel = LogLevel.INFO) -> None:
+        line = Logs.LogLine()
+        line.timestamp.GetCurrentTime()
+        line.contents = bytes("[" + log_level.name + "] " + message, 'utf-8')
+        line.type = Logs.LogType.INTERNAL
         self._log_queue.put(line)
 
     def __enter__(self):

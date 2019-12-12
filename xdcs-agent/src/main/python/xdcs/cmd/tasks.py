@@ -10,7 +10,7 @@ from xdcs.cmd.object_repository import FetchDeploymentCmd, DumpObjectRepositoryT
 from xdcs.cmd.task_reporting import ReportTaskCompletionCmd, ReportTaskFailureCmd
 from xdcs.docker import DockerCli
 from xdcs.exec import exec_cmd
-from xdcs.log_handling import UploadingLogHandler, PassThroughLogHandler
+from xdcs.log_handling import UploadingLogHandler, PassThroughLogHandler, LogHandler, LogLevel
 
 logger = logging.getLogger(__name__)
 
@@ -28,7 +28,13 @@ class RunTaskCmd(Command):
         self._task_id = task_id
 
     def execute(self):
-        logger.info('Running a deployment: ' + self._deployment_id)
+        with UploadingLogHandler(self._task_id) as log_handler:
+            log_handler = log_handler.combine(PassThroughLogHandler(logger))
+            log_handler.internal_log("Running a deployment: " + self._deployment_id)
+
+            self._execute(log_handler)
+
+    def _execute(self, log_handler):
         with tempfile.TemporaryDirectory() as workspace_path:
             xdcs().execute(FetchDeploymentCmd(self._deployment_id))
             deployment: dict = xdcs().object_repository().cat_json(self._deployment_id)
@@ -36,26 +42,29 @@ class RunTaskCmd(Command):
             xdcs().execute(DumpObjectRepositoryTreeCmd(root_id, workspace_path))
             config_type = deployment['config']['type']
 
-            constructor_args = [workspace_path, deployment, self._deployment_id, self._task_id]
+            constructor_args = [workspace_path, deployment, self._deployment_id, self._task_id, log_handler]
             if config_type == 'docker':
-                xdcs().execute(HandleExceptionCmd(RunDockerTaskCmd(*constructor_args), self._task_id))
+                xdcs().execute(HandleExceptionCmd(RunDockerTaskCmd(*constructor_args), self._task_id, log_handler))
             elif config_type == 'script':
-                xdcs().execute(HandleExceptionCmd(RunScriptTaskCmd(*constructor_args), self._task_id))
+                xdcs().execute(HandleExceptionCmd(RunScriptTaskCmd(*constructor_args), self._task_id, log_handler))
             else:
                 raise Exception('Unsupported task type ' + config_type)
-        logger.info('Deployment finished: ' + self._deployment_id)
+            log_handler.internal_log("Deployment finished: " + self._deployment_id)
 
 
 class _RunDeploymentBasedTaskCmd(Command):
     _task_id: str
     _deployment_id: str
     _deployment: dict
+    _log_handler: LogHandler
 
-    def __init__(self, workspace_path: str, deployment: dict, deployment_id: str, task_id: str) -> None:
+    def __init__(self, workspace_path: str, deployment: dict, deployment_id: str, task_id: str,
+                 log_handler: LogHandler) -> None:
         self._workspace_path = workspace_path
         self._deployment_id = deployment_id
         self._deployment = deployment
         self._task_id = task_id
+        self._log_handler = log_handler
 
 
 class RunDockerTaskCmd(_RunDeploymentBasedTaskCmd):
@@ -68,18 +77,16 @@ class RunDockerTaskCmd(_RunDeploymentBasedTaskCmd):
 
         dockerfile = path.join(self._workspace_path, dockerfile)
         image_id = DockerCli().build(self._workspace_path, dockerfile)
-        logger.info('Docker built, image ID: ' + image_id)
+        self._log_handler.internal_log('Docker built, image ID: ' + image_id)
 
-        with UploadingLogHandler(self._task_id) as log_handler:
-            log_handler = log_handler.combine(PassThroughLogHandler(logger))
-            DockerCli() \
-                .remove_container_after_finish() \
-                .nvidia_all_devices() \
-                .container_name('xdcs_' + self._task_id) \
-                .allocate_pseudo_tty() \
-                .run(image_id, log_handler)
+        DockerCli() \
+            .remove_container_after_finish() \
+            .nvidia_all_devices() \
+            .container_name('xdcs_' + self._task_id) \
+            .allocate_pseudo_tty() \
+            .run(image_id, self._log_handler)
 
-        xdcs().execute(ReportTaskCompletionCmd(self._task_id))
+        xdcs().execute(ReportTaskCompletionCmd(self._task_id, self._log_handler))
 
 
 class RunScriptTaskCmd(_RunDeploymentBasedTaskCmd):
@@ -90,30 +97,30 @@ class RunScriptTaskCmd(_RunDeploymentBasedTaskCmd):
         if script_path is None:
             raise TaskExecutionException('Script path is empty')
 
-        with UploadingLogHandler(self._task_id) as log_handler:
-            log_handler = log_handler.combine(PassThroughLogHandler(logger))
+        # TODO: this is currently needed only because we cannot set
+        #   file permissions in GUI yet
+        st = os.stat(script_path)
+        os.chmod(script_path, st.st_mode | stat.S_IEXEC)
 
-            # TODO: this is currently needed only because we cannot set
-            #   file permissions in GUI yet
-            st = os.stat(script_path)
-            os.chmod(script_path, st.st_mode | stat.S_IEXEC)
+        exec_cmd([script_path], self._log_handler)
 
-            exec_cmd([script_path], log_handler)
-
-        xdcs().execute(ReportTaskCompletionCmd(self._task_id))
+        xdcs().execute(ReportTaskCompletionCmd(self._task_id, self._log_handler))
 
 
 class HandleExceptionCmd(Command):
     _delegate: Command
+    _task_id: str
+    _log_handler: LogHandler
 
-    def __init__(self, delegate: Command, task_id) -> None:
+    def __init__(self, delegate: Command, task_id: str, log_handler: LogHandler) -> None:
         self._delegate = delegate
         self._task_id = task_id
+        self._log_handler = log_handler
 
     def execute(self):
         try:
             self._delegate.execute()
         except Exception as e:
-            logger.error("Error while executing task: " + str(e))
-            xdcs().execute(ReportTaskFailureCmd(self._task_id))
+            self._log_handler.internal_log("Error while executing task: " + str(e), LogLevel.ERROR)
+            xdcs().execute(ReportTaskFailureCmd(self._task_id, self._log_handler))
             raise e
