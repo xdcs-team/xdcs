@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { faCheck, faCircleNotch, faRedo, faTimes, faBox } from '@fortawesome/free-solid-svg-icons';
-import { faClock as farClock, faStopCircle as farStopCircle } from '@fortawesome/free-regular-svg-icons';
+import { faBox, faRedo } from '@fortawesome/free-solid-svg-icons';
+import { faClock as farClock } from '@fortawesome/free-regular-svg-icons';
 import { TaskDto } from '../../../api/models/task-dto';
 
 @Component({
@@ -10,13 +10,9 @@ import { TaskDto } from '../../../api/models/task-dto';
 })
 export class TaskSummaryItemComponent implements OnInit {
   isCollapsed = true;
-  faCircleNotch = faCircleNotch;
-  faCheck = faCheck;
-  faTimes = faTimes;
   faRedo = faRedo;
   faBox = faBox;
   farClock = farClock;
-  farStopCircle = farStopCircle;
 
   TaskState = TaskState;
 
