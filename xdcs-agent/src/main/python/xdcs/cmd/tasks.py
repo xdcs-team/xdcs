@@ -56,6 +56,7 @@ class _RunDeploymentBasedTaskCmd(Command):
     _task_id: str
     _deployment_id: str
     _deployment: dict
+    _workspace_path: str
     _log_handler: LogHandler
 
     def __init__(self, workspace_path: str, deployment: dict, deployment_id: str, task_id: str,
@@ -79,11 +80,15 @@ class RunDockerTaskCmd(_RunDeploymentBasedTaskCmd):
         image_id = DockerCli().build(self._workspace_path, dockerfile)
         self._log_handler.internal_log('Docker built, image ID: ' + image_id)
 
-        DockerCli() \
+        should_allocate_pseudo_tty = deployment['config']['allocate-tty']
+
+        docker_cli = DockerCli()
+        if should_allocate_pseudo_tty:
+            docker_cli.allocate_pseudo_tty()
+        docker_cli \
             .remove_container_after_finish() \
             .nvidia_all_devices() \
             .container_name('xdcs_' + self._task_id) \
-            .allocate_pseudo_tty() \
             .run(image_id, self._log_handler)
 
         xdcs().execute(ReportTaskCompletionCmd(self._task_id, self._log_handler))

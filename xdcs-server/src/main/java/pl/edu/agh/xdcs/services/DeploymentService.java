@@ -68,6 +68,7 @@ public class DeploymentService {
         return Deployment.Config.builder()
                 .type(mapConfigType(definition.getType()))
                 .dockerfile(definition.getDockerfile())
+                .allocatePseudoTty(definition.getAllocatePseudoTty())
                 .kernelFile(definition.getKernelFile())
                 .kernelName(definition.getKernelName())
                 .scriptFile(definition.getScriptPath())

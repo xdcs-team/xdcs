@@ -594,6 +594,8 @@ components:
         # Docker
         dockerfile:
           type: string
+        allocatePseudoTty:
+          type: boolean
 
         # Script
         scriptfile:

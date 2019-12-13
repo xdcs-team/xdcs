@@ -45,6 +45,9 @@ public class TaskDefinitionEntity extends BaseEntity {
     @Column(name = "DOCKERFILE_", length = 511)
     private String dockerfile;
 
+    @Column(name = "ALLOCATE_TTY_")
+    private Boolean allocatePseudoTty;
+
     public KernelParameters getKernelParams() {
         return KERN_PARAMS_CONVERTER.convertToEntityAttribute(kernelParams);
     }

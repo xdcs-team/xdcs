@@ -56,6 +56,10 @@ public class Deployment implements ObjectBase {
         @JsonInclude(JsonInclude.Include.NON_EMPTY)
         private String dockerfile;
 
+        @JsonProperty("allocate-tty")
+        @JsonInclude(JsonInclude.Include.NON_EMPTY)
+        private Boolean allocatePseudoTty;
+
         @JsonProperty("kernelfile")
         @JsonInclude(JsonInclude.Include.NON_EMPTY)
         private String kernelFile;

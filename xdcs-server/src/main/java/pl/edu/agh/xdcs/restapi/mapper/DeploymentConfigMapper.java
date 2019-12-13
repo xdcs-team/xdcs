@@ -40,6 +40,7 @@ public class DeploymentConfigMapper {
         DeploymentConfigDto dto = new DeploymentConfigDto();
         dto.setType(typeMapper.toApiEntity(model.getType()));
         dto.setDockerfile(model.getDockerfile());
+        dto.setAllocatePseudoTty(model.getAllocatePseudoTty());
         dto.setKernelfile(model.getKernelFile());
         dto.setKernelname(model.getKernelName());
         dto.setKernelparams(kernelParamsMapper.toRestEntities(model.getKernelParams()));
@@ -50,6 +51,7 @@ public class DeploymentConfigMapper {
         DeploymentConfigDto deploymentConfigDto = new DeploymentConfigDto();
         deploymentConfigDto.setType(deploymentTypeMapper.toApiEntity(model.getType()));
         deploymentConfigDto.setDockerfile(model.getDockerfile());
+        deploymentConfigDto.setAllocatePseudoTty(model.getAllocatePseudoTty());
         deploymentConfigDto.setScriptfile(model.getScriptFile());
         deploymentConfigDto.setKernelfile(model.getKernelFile());
         deploymentConfigDto.setKernelname(model.getKernelName());
@@ -66,6 +68,10 @@ public class DeploymentConfigMapper {
 
         if (rest.getDockerfile() != null) {
             model.setDockerfile(rest.getDockerfile());
+        }
+
+        if (rest.getAllocatePseudoTty() != null) {
+            model.setAllocatePseudoTty(rest.getAllocatePseudoTty());
         }
 
         if (rest.getScriptfile() != null) {
