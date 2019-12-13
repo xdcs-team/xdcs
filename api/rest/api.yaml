@@ -41,6 +41,25 @@ paths:
               schema:
                 $ref: '#/components/schemas/NodeDto'
 
+  /nodes/{nodeId}/details:
+    get:
+      tags:
+        - Nodes
+      operationId: getNodeDetails
+      parameters:
+        - in: path
+          name: nodeId
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NodeDetailsDto'
+
   /task-definitions:
     get:
       tags:
@@ -485,6 +504,113 @@ components:
             - unavailable
             - ready
             - busy
+
+    NodeDetailsDto:
+      type: object
+      properties:
+        nodeId:
+          type: string
+        processorInfo:
+          $ref: '#/components/schemas/ProcessorInfoDto'
+        systemInfo:
+          $ref: '#/components/schemas/SystemInfoDto'
+        gpuInfo:
+          $ref: '#/components/schemas/GPUInfoDto'
+        softwareInfo:
+          $ref: '#/components/schemas/SoftwareInfoDto'
+
+    ProcessorInfoDto:
+      type: object
+      properties:
+        cpuCount:
+          type: integer
+        cpuBits:
+          type: integer
+        cpuBrand:
+          type: string
+        cpuClock:
+          type: string
+        cpuCache:
+          type: string
+        additionalProperties:
+          type: array
+          items:
+            $ref: '#/components/schemas/AdditionalPropertyDto'
+
+    SystemInfoDto:
+      type: object
+      properties:
+        pythonVersion:
+          type: string
+        systemName:
+          type: string
+        platform:
+          type: string
+        operatingSystemVersion:
+          type: string
+        distName:
+          type: string
+        distDescr:
+          type: string
+        distVersion:
+          type: string
+        additionalProperties:
+          type: array
+          items:
+            $ref: '#/components/schemas/AdditionalPropertyDto'
+
+    SoftwareInfoDto:
+      type: object
+      properties:
+        dockerVersion:
+          type: string
+        programs:
+          type: array
+          items:
+            type: string
+
+    GPUInfoDto:
+      type: object
+      properties:
+        isAvailable:
+          type: boolean
+        cudaVersion:
+          type: string
+        devices:
+          type: array
+          items:
+            $ref: '#/components/schemas/CUDADeviceDto'
+
+    CUDADeviceDto:
+      type: object
+      properties:
+        name:
+          type: string
+        totalMemory:
+          type: integer
+          format: int64
+        freeMemory:
+          type: integer
+          format: int64
+        clockRate:
+          type: integer
+          format: int64
+        integrated:
+          type: boolean
+        computeCapability:
+          type: integer
+        additionalProperties:
+          type: array
+          items:
+            $ref: '#/components/schemas/AdditionalPropertyDto'
+
+    AdditionalPropertyDto:
+      type: object
+      properties:
+        name:
+          type: string
+        value:
+          type: string
 
     TaskDefinitionDto:
       type: object

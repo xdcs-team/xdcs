@@ -1,0 +1,11 @@
+<ng-container *ngIf="node.status === 'offline' || node.status === 'unavailable'; else online">
+  <app-no-data [message]="'Agent is offline'"></app-no-data>
+</ng-container>
+<ng-template #online>
+  <ng-container *ngIf="!nodeDetails; else loaded">
+    <app-loading></app-loading>
+  </ng-container>
+  <ng-template #loaded>
+   <app-node-details-preview [nodeDetails]="nodeDetails" [node]="node"></app-node-details-preview>
+  </ng-template>
+</ng-template>

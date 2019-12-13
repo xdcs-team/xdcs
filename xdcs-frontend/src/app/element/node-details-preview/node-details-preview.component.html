@@ -1,0 +1,117 @@
+<tabset>
+  <tab heading="Processor Info">
+    <table class="table table-borderless info-table">
+      <tbody>
+      <tr>
+        <th scope="row">CPU name</th>
+        <td>{{nodeDetails.processorInfo.cpuBrand}}</td>
+      </tr>
+      <tr>
+        <th scope="row">Clock rate</th>
+        <td>{{nodeDetails.processorInfo.cpuClock}}</td>
+      </tr>
+      <tr>
+        <th scope="row">Logical processors</th>
+        <td>{{nodeDetails.processorInfo.cpuCount}}</td>
+      </tr>
+      <tr>
+        <th scope="row">Cache</th>
+        <td>{{nodeDetails.processorInfo.cpuCache}}</td>
+      </tr>
+      <tr>
+        <th scope="row">CPU bits</th>
+        <td>{{nodeDetails.processorInfo.cpuBits}}</td>
+      </tr>
+      </tbody>
+    </table>
+  </tab>
+  <tab heading="System Info">
+    <table class="table table-borderless info-table">
+      <tbody>
+      <tr>
+        <th scope="row">System name</th>
+        <td>{{nodeDetails.systemInfo.systemName}}</td>
+      </tr>
+      <tr>
+        <th scope="row">Platform</th>
+        <td>{{nodeDetails.systemInfo.platform}}</td>
+      </tr>
+      <tr>
+        <th scope="row">Python version</th>
+        <td>{{nodeDetails.systemInfo.pythonVersion}}</td>
+      </tr>
+      <tr>
+        <th scope="row">Operating system version</th>
+        <td>{{nodeDetails.systemInfo.operatingSystemVersion}}</td>
+      </tr>
+      <ng-container *ngIf="nodeDetails.systemInfo.systemName.includes('Linux')">
+        <tr>
+          <th scope="row">Distribution name</th>
+          <td>{{nodeDetails.systemInfo.distName}}</td>
+        </tr>
+        <tr>
+          <th scope="row">Distribution version</th>
+          <td>{{nodeDetails.systemInfo.distVersion}}</td>
+        </tr>
+        <tr>
+          <th scope="row">Distribution description</th>
+          <td>{{nodeDetails.systemInfo.distDescr}}</td>
+        </tr>
+      </ng-container>
+      </tbody>
+    </table>
+  </tab>
+  <tab heading="GPU Info">
+    <table *ngIf="nodeDetails.gpuInfo.isAvailable; else noGpuData" class="table table-borderless info-table">
+      <tbody>
+      <tr>
+        <th scope="row">CUDA Version</th>
+        <td>{{nodeDetails.gpuInfo.cudaVersion}}</td>
+      </tr>
+      <td colspan="2">
+        <tabset>
+          <tab *ngFor="let device of nodeDetails.gpuInfo.devices" heading="{{device.name}}">
+            <table class="table table-borderless info-table">
+              <tbody>
+              <tr>
+                <th scope="row">GPU Name</th>
+                <td>{{device.name}}</td>
+              </tr>
+              <tr>
+                <th scope="row">Memory</th>
+                <td>{{device.freeMemory}} / {{device.totalMemory}}</td>
+              </tr>
+              <tr>
+                <th scope="row">Compute Capability</th>
+                <td>{{device.computeCapability}}</td>
+              </tr>
+              <tr>
+                <th scope="row">Clock rate</th>
+                <td>{{device.clockRate}}</td>
+              </tr>
+              <tr>
+                <th scope="row">Is integrated</th>
+                <td>{{device.integrated}}</td>
+              </tr>
+              </tbody>
+            </table>
+          </tab>
+        </tabset>
+      </td>
+      </tbody>
+    </table>
+    <ng-template #noGpuData>
+      <app-no-data [message]="'No GPU available on agent'"></app-no-data>
+    </ng-template>
+  </tab>
+  <tab heading="Software info">
+    <table class="table table-borderless info-table">
+      <tbody>
+      <tr>
+        <th scope="row">Docker Version</th>
+        <td>{{nodeDetails.softwareInfo.dockerVersion}}</td>
+      </tr>
+      </tbody>
+    </table>
+  </tab>
+</tabset>

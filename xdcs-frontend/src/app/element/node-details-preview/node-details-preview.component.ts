@@ -1,20 +1,21 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { NodeDto } from '../../../api/models/node-dto';
+import { NodeDetailsDto } from '../../../api/models/node-details-dto';
 import { NodesService } from '../../../api/services/nodes.service';
 import { first } from 'rxjs/operators';
-import { NodeDetailsDto } from '../../../api/models/node-details-dto';
 
 @Component({
-  selector: 'app-node-preview',
-  templateUrl: './node-preview.component.html',
-  styleUrls: ['./node-preview.component.less'],
+  selector: 'app-node-details-preview',
+  templateUrl: './node-details-preview.component.html',
+  styleUrls: ['./node-details-preview.component.less'],
 })
+export class NodeDetailsPreviewComponent implements OnInit {
 
-export class NodePreviewComponent {
   @Input()
   node: NodeDto;
 
-  nodeDetails: NodeDetailsDto = null;
+  @Input()
+  nodeDetails: NodeDetailsDto;
 
   constructor(private nodesService: NodesService) {
   }

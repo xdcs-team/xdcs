@@ -1,16 +1,20 @@
 import importlib
 import os
 import platform
+import sys
 
 import cpuinfo
 import distro
 import pyopencl
-import sys
+import pycuda.autoinit
 
 from xdcs import docker
+from xdcs.app import xdcs
 from xdcs_api.agent_info_pb2 import ProcessorInfo, SystemInfo, GPUInfo, OpenCLPlatform, OpenCLDevice, SoftwareInfo, \
     CUDAInfo, CUDADevice
 from xdcs_api.agent_info_pb2_grpc import AgentInfoServicer
+
+pycuda.autoinit
 
 
 class AgentInfo(AgentInfoServicer):
@@ -67,8 +71,8 @@ class AgentInfo(AgentInfoServicer):
 
     def GetSoftwareInfo(self, request, context) -> SoftwareInfo:
         software_info = SoftwareInfo()
-
-        software_info.programs.extend(self._get_programs_from_path())
+        if xdcs().config('app.send_path_executables'):
+            software_info.programs.extend(self._get_programs_from_path())
         software_info.dockerVersion = docker.info.version()
 
         return software_info
@@ -158,33 +162,36 @@ class AgentInfo(AgentInfoServicer):
         from pycuda.driver import Device
 
         dev = Device(device_id)
+        ctx = dev.make_context()
 
-        mapped.name = dev.name()
-        mapped.pci_bus_id = dev.pci_bus_id()
-        mapped.pci_device_id = dev.pci_device_id
-        mapped.pci_domain_id = dev.pci_domain_id
-        mapped.compute_capability_major = dev.compute_capability_major
-        mapped.compute_capability_minor = dev.compute_capability_minor
-
-        (free_mem, total_mem) = pycuda.driver.mem_get_info()
-        mapped.free_memory = free_mem
-        mapped.total_memory = total_mem
-        mapped.max_threads_per_block = dev.max_threads_per_block
-        mapped.max_block_dim_x = dev.max_block_dim_x
-        mapped.max_block_dim_y = dev.max_block_dim_y
-        mapped.max_block_dim_z = dev.max_block_dim_z
-        mapped.max_grid_dim_x = dev.max_grid_dim_x
-        mapped.max_grid_dim_y = dev.max_grid_dim_y
-        mapped.max_grid_dim_z = dev.max_grid_dim_z
-        mapped.clock_rate = dev.clock_rate
-        mapped.multiprocessor_count = dev.multiprocessor_count
-        mapped.shared_memory_per_block = dev.shared_memory_per_block
-        mapped.total_constant_memory = dev.total_constant_memory
-        mapped.integrated = dev.integrated
-        mapped.concurrent_kernels = dev.concurrent_kernels
-        mapped.uses_tcc = dev.tcc_driver
-        mapped.mem_clock_rate = dev.memory_clock_rate
-        mapped.mem_bus_width = dev.global_memory_bus_width
-        mapped.l2_cache_size = dev.l2_cache_size
-        mapped.max_threads_per_multiprocessor = dev.max_threads_per_multiprocessor
-        mapped.async_engine_count = dev.async_engine_count
+        try:
+            mapped.name = dev.name()
+            mapped.pci_bus_id = dev.pci_bus_id()
+            mapped.pci_device_id = dev.pci_device_id
+            mapped.pci_domain_id = dev.pci_domain_id
+            mapped.compute_capability_major = dev.compute_capability_major
+            mapped.compute_capability_minor = dev.compute_capability_minor
+            (free_mem, total_mem) = pycuda.driver.mem_get_info()
+            mapped.free_memory = free_mem
+            mapped.total_memory = total_mem
+            mapped.max_threads_per_block = dev.max_threads_per_block
+            mapped.max_block_dim_x = dev.max_block_dim_x
+            mapped.max_block_dim_y = dev.max_block_dim_y
+            mapped.max_block_dim_z = dev.max_block_dim_z
+            mapped.max_grid_dim_x = dev.max_grid_dim_x
+            mapped.max_grid_dim_y = dev.max_grid_dim_y
+            mapped.max_grid_dim_z = dev.max_grid_dim_z
+            mapped.clock_rate = dev.clock_rate
+            mapped.multiprocessor_count = dev.multiprocessor_count
+            mapped.shared_memory_per_block = dev.shared_memory_per_block
+            mapped.total_constant_memory = dev.total_constant_memory
+            mapped.integrated = dev.integrated
+            mapped.concurrent_kernels = dev.concurrent_kernels
+            mapped.uses_tcc = dev.tcc_driver
+            mapped.mem_clock_rate = dev.memory_clock_rate
+            mapped.mem_bus_width = dev.global_memory_bus_width
+            mapped.l2_cache_size = dev.l2_cache_size
+            mapped.max_threads_per_multiprocessor = dev.max_threads_per_multiprocessor
+            mapped.async_engine_count = dev.async_engine_count
+        finally:
+            ctx.pop()
