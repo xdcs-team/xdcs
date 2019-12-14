@@ -6,6 +6,7 @@ import pl.edu.agh.xdcs.db.entity.Task;
 import pl.edu.agh.xdcs.mapper.EnumMapper;
 import pl.edu.agh.xdcs.restapi.model.TaskDto;
 import org.slf4j.Logger;
+import pl.edu.agh.xdcs.restapi.model.TaskState;
 
 import javax.inject.Inject;
 
@@ -16,25 +17,25 @@ public class StateMapper {
     @Inject
     private Logger logger;
 
-    private EnumMapper<Task.Type, TaskDto.StateEnum> typeMapper = EnumMapper.forMapping(
-            ImmutableMap.<Task.Type, TaskDto.StateEnum>builder()
-                    .put(Task.Type.RUNTIME, TaskDto.StateEnum.IN_PROGRESS)
-                    .put(Task.Type.QUEUED, TaskDto.StateEnum.QUEUED)
+    private EnumMapper<Task.Type, TaskState> typeMapper = EnumMapper.forMapping(
+            ImmutableMap.<Task.Type, TaskState>builder()
+                    .put(Task.Type.RUNTIME, TaskState.IN_PROGRESS)
+                    .put(Task.Type.QUEUED, TaskState.QUEUED)
                     .build());
 
-    private EnumMapper<Task.Result, TaskDto.StateEnum> resultMapper = EnumMapper.forMapping(
-            ImmutableMap.<Task.Result, TaskDto.StateEnum>builder()
-                    .put(Task.Result.FINISHED, TaskDto.StateEnum.FINISHED)
-                    .put(Task.Result.ERRORED, TaskDto.StateEnum.ERRORED)
-                    .put(Task.Result.CANCELED, TaskDto.StateEnum.CANCELED)
+    private EnumMapper<Task.Result, TaskState> resultMapper = EnumMapper.forMapping(
+            ImmutableMap.<Task.Result, TaskState>builder()
+                    .put(Task.Result.FINISHED, TaskState.FINISHED)
+                    .put(Task.Result.ERRORED, TaskState.ERRORED)
+                    .put(Task.Result.CANCELED, TaskState.CANCELED)
                     .build());
 
-    public TaskDto.StateEnum map(Task task) {
+    public TaskState map(Task task) {
         if (task.getType() != Task.Type.HISTORICAL)
             return typeMapper.toApiEntity(task.getType());
 
         logger.error("Historical task without result name: " + task.getName() + ", id: " + task.getId());
         return task.getResult().map(resultMapper::toApiEntity)
-                .orElse(TaskDto.StateEnum.ERRORED);
+                .orElse(TaskState.ERRORED);
     }
 }

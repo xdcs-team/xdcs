@@ -64,8 +64,12 @@ public class TaskService {
         return taskDao.findById(taskId);
     }
 
-    public List<Task> getAllTasks() {
-        return taskDao.list(0, Integer.MAX_VALUE);
+    public long countTasks() {
+        return taskDao.count();
+    }
+
+    public List<Task> queryTasks(int from, int maxResults) {
+        return taskDao.list(from, maxResults);
     }
 
     public List<ResourcePatternEntity> getResourcePatterns(String taskId) {

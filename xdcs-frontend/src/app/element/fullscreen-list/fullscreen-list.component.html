@@ -18,6 +18,15 @@
              href="javascript:void(0)"
              (click)="select(element)"></a>
         </div>
+        <ng-container *ngIf="fetching">
+          <em class="d-block w-100 text-center p-2">Loading...</em>
+        </ng-container>
+        <ng-container *ngIf="!fetchedAll && !fetching">
+          <button class="btn btn-link mb-3 d-block w-100"
+                  (click)="loadMore()">
+            Load more...
+          </button>
+        </ng-container>
       </div>
     </as-split-area>
     <as-split-area size="70" class="right-window">

@@ -14,6 +14,7 @@ import pl.edu.agh.xdcs.restapi.model.LogsDto;
 import pl.edu.agh.xdcs.restapi.model.TaskConditionsDto;
 import pl.edu.agh.xdcs.restapi.model.TaskCreationDto;
 import pl.edu.agh.xdcs.restapi.model.TaskDto;
+import pl.edu.agh.xdcs.restapi.model.TaskState;
 import pl.edu.agh.xdcs.restapi.model.TasksDto;
 import pl.edu.agh.xdcs.restapi.util.RestUtils;
 import pl.edu.agh.xdcs.services.TaskService;
@@ -29,6 +30,7 @@ import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
+import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -100,13 +102,16 @@ public class TasksApiImpl implements TasksApi {
     }
 
     @Override
-    public Response getTasks() {
-        List<Task> tasks = taskService.getAllTasks();
+    public Response getTasks(BigDecimal fromParam, BigDecimal maxResultsParam) {
+        int from = fromParam == null ? 0 : fromParam.intValue();
+        int maxResults = maxResultsParam == null ? Integer.MAX_VALUE : maxResultsParam.intValue();
+
+        List<Task> tasks = taskService.queryTasks(from, maxResults);
         List<TaskDto> items = taskMapper.toRestEntities(tasks);
         return Response.ok(new TasksDto()
                 .items(items)
-                .from(0)
-                .total(items.size())).build();
+                .from(from)
+                .total(Math.toIntExact(taskService.countTasks()))).build();
     }
 
     @Override

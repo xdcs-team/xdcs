@@ -1,5 +1,9 @@
 import { Component, ContentChild, EventEmitter, Input, Output, TemplateRef } from '@angular/core';
 
+export interface FetchCallback {
+  fetched(): void;
+}
+
 @Component({
   selector: 'app-fullscreen-list',
   templateUrl: './fullscreen-list.component.html',
@@ -7,6 +11,8 @@ import { Component, ContentChild, EventEmitter, Input, Output, TemplateRef } fro
   host: { class: 'flex-fill d-flex' },
 })
 export class FullscreenListComponent {
+  fetching = false;
+
   @ContentChild('header', { static: false })
   headerTemplateRef: TemplateRef<undefined>;
 
@@ -18,6 +24,12 @@ export class FullscreenListComponent {
 
   @Input()
   data: Array<any>;
+
+  @Input()
+  fetchedAll = true;
+
+  @Output()
+  fetchNextPage = new EventEmitter<FetchCallback>();
 
   @Input()
   selected: any = undefined;
@@ -39,5 +51,14 @@ export class FullscreenListComponent {
   select(selected: any) {
     this.selected = selected;
     this.selectedChange.emit(selected);
+  }
+
+  loadMore() {
+    this.fetchNextPage.emit({
+      fetched: () => {
+        this.fetching = false;
+      },
+    });
+    this.fetching = true;
   }
 }
