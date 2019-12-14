@@ -6,6 +6,7 @@ import { NewTaskComponent } from 'src/app/modal/new-task/new-task.component';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { first } from 'rxjs/operators';
 import { forkJoin } from 'rxjs';
+import { FetchCallback } from '../../element/fullscreen-list/fullscreen-list.component';
 
 const taskIdParam = 'taskId';
 
@@ -16,10 +17,15 @@ const taskIdParam = 'taskId';
 })
 @NavbarItem('Tasks')
 export class TasksComponent implements OnInit {
+  private static PAGE_SIZE = 25;
 
-  tasks: Array<TaskDto> = null;
   NewTaskComponent = NewTaskComponent;
+  tasks: Array<TaskDto> = null;
   selected: TaskDto;
+
+  nextPage = 0;
+  fetching = false;
+  fetchedAll = false;
 
   constructor(private tasksService: TasksService,
               private route: ActivatedRoute,
@@ -27,10 +33,7 @@ export class TasksComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.fetchTaskResults();
-    this.route.params.subscribe(params => {
-      this.refreshSelection(params);
-    });
+    this.fetchNextPage();
   }
 
   onSelectionChange(selected: TaskDto) {
@@ -39,14 +42,41 @@ export class TasksComponent implements OnInit {
     });
   }
 
-  private fetchTaskResults(): void {
+  fetchNextPage(callback: FetchCallback = null) {
+    if (this.fetching || this.fetchedAll) {
+      return;
+    }
+
+    this.fetching = true;
+    const from = this.nextPage * TasksComponent.PAGE_SIZE;
+    const maxResults = TasksComponent.PAGE_SIZE;
+
     const parameters = this.route.params.pipe(first());
-    const tasksDto = this.tasksService.getTasks({}).pipe(first());
+    const tasksDto = this.tasksService.getTasks({
+      from,
+      maxResults,
+    }).pipe(first());
 
     forkJoin([parameters, tasksDto])
       .subscribe(([params, tasks]) => {
-        this.tasks = tasks.items;
-        this.refreshSelection(params);
+        this.fetching = false;
+
+        if (tasks.items.length === 0) {
+          this.fetchedAll = true;
+        } else {
+          if (!this.tasks) {
+            this.tasks = tasks.items;
+          } else {
+            this.tasks.push(...tasks.items);
+          }
+
+          this.refreshSelection(params);
+          this.nextPage++;
+        }
+
+        if (callback) {
+          callback.fetched();
+        }
       });
   }
 

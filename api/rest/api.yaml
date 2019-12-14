@@ -382,6 +382,19 @@ paths:
       tags:
         - Tasks
       operationId: getTasks
+      parameters:
+#        - name: state
+#          in: query
+#          schema:
+#            $ref: '#/components/schemas/TaskState'
+        - name: from
+          in: query
+          schema:
+            type: number
+        - name: max_results
+          in: query
+          schema:
+            type: number
       responses:
         200:
           description: OK
@@ -792,15 +805,18 @@ components:
           type: string
           format: 'date-time'
         state:
-          type: string
-          enum:
-            - queued
-            - in_progress
-            - finished
-            - canceled
-            - errored
+          $ref: '#/components/schemas/TaskState'
         links:
           $ref: '#/components/schemas/LinksDto'
+
+    TaskState:
+      type: string
+      enum:
+        - queued
+        - in_progress
+        - finished
+        - canceled
+        - errored
 
     TaskCreationDto:
       type: object

@@ -58,12 +58,18 @@ public class TaskDao extends DaoBase {
                 .createQuery("select h, r, q " +
                         "from HisTask h " +
                         "left join RuntimeTask r on h.id = r.id " +
-                        "left join TaskQueue q on h.id = q.id")
+                        "left join TaskQueue q on h.id = q.id " +
+                        "order by h.timeCreated")
                 .setFirstResult(firstResult)
                 .setMaxResults(maxResults)
                 .getResultStream();
         return resultStream.map(this::mapResultsToTask)
                 .map(Optional::get)
                 .collect(Collectors.toList());
+    }
+
+    public long count() {
+        return (long) entityManager.createQuery("select count(*) from HisTask")
+                .getSingleResult();
     }
 }
