@@ -49,7 +49,7 @@
         <ng-container *ngFor="let deployment of deploymentDescriptors.items">
           <tr>
             <th scope="row">
-              {{ deployment.id | slice:0:8 }}
+              {{ deployment.id | sliceOrId }}
               <app-copy-icon [content]="deployment.id"></app-copy-icon>
             </th>
             <td>
