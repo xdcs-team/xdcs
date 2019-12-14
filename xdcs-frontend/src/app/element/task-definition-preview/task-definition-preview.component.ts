@@ -39,7 +39,7 @@ export class TaskDefinitionPreviewComponent implements OnInit, OnChanges {
   }
 
   showDeployModal() {
-    const modal = this.modalService.show(DeployDefinitionComponent, true, {
+    this.modalService.show(DeployDefinitionComponent, true, {
       taskDefinitionId: this.definition.id,
     });
   }

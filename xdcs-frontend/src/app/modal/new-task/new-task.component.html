@@ -8,10 +8,11 @@
   </ng-container>
 
   <ng-container *ngIf="definitions && definitions.length > 0">
-    <label>Select definition</label>
+    <label for="definition-select">Select definition</label>
     <select class="form-control custom-select"
             [(ngModel)]="definitionId"
             (change)="onDefinitionChange()"
+            id="definition-select"
             required>
       <option *ngFor="let element of definitions"
               [ngValue]="element.id">{{ element.name }}</option>
@@ -24,12 +25,13 @@
 
   <ng-container *ngIf="deployments && deployments.length > 0">
     <hr/>
-    <label>Select deployment</label>
+    <label for="deployment-select">Select deployment</label>
     <select class="form-control custom-select"
             [(ngModel)]="deploymentId"
+            id="deployment-select"
             required>
       <option *ngFor="let element of deployments"
-              [ngValue]="element.id">{{ element.id }}</option>
+              [ngValue]="element.id">{{ element.description }} ({{ element.id | sliceOrId }})</option>
     </select>
   </ng-container>
 
