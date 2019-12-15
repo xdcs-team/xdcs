@@ -36,9 +36,12 @@
 
 <ng-template #artifactsTemplate>
   <app-loading *ngIf="!artifacts"></app-loading>
-  <ul *ngIf="!!artifacts" class="list-group artifact-list">
-    <li class="list-group-item" *ngFor="let artifact of artifacts">
-      <a href="{{ artifact.href }}">{{ artifact.path }}</a>
-    </li>
-  </ul>
+  <ng-container *ngIf="!!artifacts">
+    <ul *ngIf="artifacts.length > 0" class="list-group artifact-list">
+      <li class="list-group-item" *ngFor="let artifact of artifacts">
+        <a href="{{ artifact.href }}">{{ artifact.path }}</a>
+      </li>
+    </ul>
+    <app-no-data *ngIf="artifacts.length === 0" size="2em" message="No artifacts"></app-no-data>
+  </ng-container>
 </ng-template>
