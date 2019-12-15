@@ -1,5 +1,6 @@
 package pl.edu.agh.xdcs.agentapi.impl;
 
+import com.google.common.base.Strings;
 import com.google.protobuf.Timestamp;
 import io.grpc.stub.StreamObserver;
 import org.slf4j.Logger;
@@ -7,21 +8,21 @@ import pl.edu.agh.xdcs.agentapi.mapper.LogTypeMapper;
 import pl.edu.agh.xdcs.agents.Agent;
 import pl.edu.agh.xdcs.api.Logs;
 import pl.edu.agh.xdcs.api.OkResponse;
-import pl.edu.agh.xdcs.api.TaskId;
-import pl.edu.agh.xdcs.api.TaskReportingGrpc;
+import pl.edu.agh.xdcs.api.TaskResultReport;
 import pl.edu.agh.xdcs.db.entity.Task;
-import pl.edu.agh.xdcs.grpc.Service;
+import pl.edu.agh.xdcs.mapper.UnsatisfiedMappingException;
 import pl.edu.agh.xdcs.services.TaskService;
 
 import javax.inject.Inject;
+import javax.transaction.Transactional;
 import java.time.Instant;
 import java.util.List;
 
 /**
  * @author Kamil Jarosz
  */
-@Service
-public class TaskReportingService extends TaskReportingGrpc.TaskReportingImplBase {
+@Transactional
+public class TaskReportingService {
     @Inject
     private Logger logger;
 
@@ -34,23 +35,8 @@ public class TaskReportingService extends TaskReportingGrpc.TaskReportingImplBas
     @Inject
     private LogTypeMapper logTypeMapper;
 
-    @Override
-    public void reportCompletion(TaskId request, StreamObserver<OkResponse> responseObserver) {
-        taskService.reportCompletion(request.getTaskId());
-        responseObserver.onNext(OkResponse.newBuilder().build());
-        responseObserver.onCompleted();
-    }
-
-    @Override
     public void uploadLogs(Logs request, StreamObserver<OkResponse> responseObserver) {
         saveLogLines(request.getTaskId(), request.getLinesList());
-        responseObserver.onNext(OkResponse.newBuilder().build());
-        responseObserver.onCompleted();
-    }
-
-    @Override
-    public void reportFailure(TaskId request, StreamObserver<OkResponse> responseObserver) {
-        taskService.reportFailure(request.getTaskId());
         responseObserver.onNext(OkResponse.newBuilder().build());
         responseObserver.onCompleted();
     }
@@ -69,5 +55,30 @@ public class TaskReportingService extends TaskReportingGrpc.TaskReportingImplBas
                     logTypeMapper.toModelEntity(line.getType()),
                     line.getContents().toByteArray());
         });
+    }
+
+    public void reportTaskResult(TaskResultReport request, StreamObserver<OkResponse> responseObserver) {
+        Task task = taskService.getTaskById(request.getTaskId())
+                .orElseThrow(() -> new RuntimeException("Task not found: " + request.getTaskId()));
+        switch (request.getResult()) {
+            case FAILED:
+                taskService.reportFailure(task);
+                break;
+
+            case SUCCEEDED:
+                taskService.reportCompletion(task);
+                break;
+
+            default:
+            case UNRECOGNIZED:
+                throw new UnsatisfiedMappingException("Unknown response value");
+        }
+
+        if (!Strings.isNullOrEmpty(request.getArtifactTree())) {
+            taskService.setArtifactTree(task, request.getArtifactTree());
+        }
+
+        responseObserver.onNext(OkResponse.newBuilder().build());
+        responseObserver.onCompleted();
     }
 }

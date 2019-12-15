@@ -19,6 +19,10 @@ public abstract class EntityDaoBase<T extends BaseEntity> extends DaoBase {
         entityManager.persist(object);
     }
 
+    public void merge(T object) {
+        entityManager.merge(object);
+    }
+
     public void bulkPersist(Collection<T> objects) {
         objects.forEach(this::persist);
     }

@@ -26,7 +26,7 @@ class LogHandler:
     def err_bytes(self, message: bytes) -> None:
         pass
 
-    def internal_log(self, message: str, log_level: LogLevel) -> None:
+    def internal_log(self, message: str, log_level: LogLevel = LogLevel.INFO) -> None:
         pass
 
     def combine(self, other: LogHandler) -> LogHandler:

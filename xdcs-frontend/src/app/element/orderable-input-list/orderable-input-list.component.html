@@ -1,6 +1,6 @@
-<ng-container *ngFor="let param of data; let i = index">
+<ng-container *ngFor="let param of data; let i = index; trackBy: indexTracker">
   <div class="input-group mb-1">
-    <div class="input-group-prepend">
+    <div *ngIf="orderable" class="input-group-prepend">
       <a (click)="moveElementUp(param)"
          class="input-group-text"
          href="javascript:void(0)">

@@ -39,4 +39,8 @@ service ObjectRepository {
     rpc ResolveDependencies (DependencyResolutionRequest) returns (ObjectIds) {
 
     }
+
+    rpc UploadObjects (stream Chunk) returns (OkResponse) {
+
+    }
 }

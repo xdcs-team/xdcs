@@ -3,9 +3,9 @@ package pl.edu.agh.xdcs.restapi.mapper;
 import com.google.common.collect.ImmutableMap;
 import pl.edu.agh.xdcs.db.entity.TaskDefinitionEntity;
 import pl.edu.agh.xdcs.db.entity.TaskType;
+import pl.edu.agh.xdcs.mapper.EnumMapper;
 import pl.edu.agh.xdcs.or.types.Deployment;
 import pl.edu.agh.xdcs.or.types.Deployment.ConfigType;
-import pl.edu.agh.xdcs.mapper.EnumMapper;
 import pl.edu.agh.xdcs.restapi.model.DeploymentConfigDto;
 import pl.edu.agh.xdcs.restapi.model.DeploymentConfigDto.TypeEnum;
 
@@ -44,6 +44,7 @@ public class DeploymentConfigMapper {
         dto.setKernelfile(model.getKernelFile());
         dto.setKernelname(model.getKernelName());
         dto.setKernelparams(kernelParamsMapper.toRestEntities(model.getKernelParams()));
+        dto.setArtifacts(model.getArtifacts());
         return dto;
     }
 
@@ -58,6 +59,7 @@ public class DeploymentConfigMapper {
         deploymentConfigDto.setKernelparams(Optional.ofNullable(model.getKernelParams())
                 .map(kernelParamsMapper::toRestEntity)
                 .orElse(null));
+        deploymentConfigDto.setArtifacts(model.getArtifacts());
         return deploymentConfigDto;
     }
 
@@ -88,6 +90,10 @@ public class DeploymentConfigMapper {
 
         if (rest.getKernelparams() != null) {
             model.setKernelParams(kernelParamsMapper.toModelEntity(rest.getKernelparams()));
+        }
+
+        if (rest.getArtifacts() != null) {
+            model.setArtifacts(rest.getArtifacts());
         }
     }
 }

@@ -25,19 +25,40 @@ class ObjectRepository:
             raise ObjectRepositoryException('Import failed: wrong checksum for {}'.format(path))
 
         object_path = self.__to_path(object_id, True)
-        shutil.copyfile(path, object_path)
+
+        if os.path.islink(path):
+            with open(object_path, "w") as f:
+                f.write(os.readlink(path))
+        else:
+            shutil.copyfile(path, object_path)
+
+        return object_id
+
+    def import_json(self, obj: object) -> str:
+        json_str = json.dumps(obj)
+        sha1 = hashlib.sha1()
+        sha1.update(json_str.encode('utf-8'))
+        object_id = sha1.hexdigest()
+
+        object_path = self.__to_path(object_id, True)
+
+        with open(object_path, "w") as f:
+            f.write(json_str)
 
         return object_id
 
     def __hash(self, path: str) -> str:
         sha1 = hashlib.sha1()
 
-        with open(path, 'rb') as f:
-            while True:
-                data = f.read(4 * 1024)
-                if not data:
-                    break
-                sha1.update(data)
+        if os.path.islink(path):
+            sha1.update(os.readlink(path))
+        else:
+            with open(path, 'rb') as f:
+                while True:
+                    data = f.read(4 * 1024)
+                    if not data:
+                        break
+                    sha1.update(data)
 
         return sha1.hexdigest()
 
@@ -58,6 +79,10 @@ class ObjectRepository:
 
     def cat_json(self, object_id: str) -> dict:
         return json.loads(self.cat_bytes(object_id))
+
+    def cp(self, object_id: str, out_path: str) -> None:
+        object_path = self.__to_path(object_id, True)
+        shutil.copyfile(object_path, out_path)
 
 
 def from_path(path: str) -> ObjectRepository:

@@ -5,6 +5,7 @@ import pl.edu.agh.xdcs.api.Chunk;
 import pl.edu.agh.xdcs.api.DependencyResolutionRequest;
 import pl.edu.agh.xdcs.api.ObjectIds;
 import pl.edu.agh.xdcs.api.ObjectRepositoryGrpc;
+import pl.edu.agh.xdcs.api.OkResponse;
 import pl.edu.agh.xdcs.grpc.Service;
 import pl.edu.agh.xdcs.or.ObjectRepository;
 
@@ -34,5 +35,10 @@ public class ObjectRepositoryService extends ObjectRepositoryGrpc.ObjectReposito
     @Override
     public void resolveDependencies(DependencyResolutionRequest request, StreamObserver<ObjectIds> responseObserver) {
         objectDependencyResolver.resolveDependencies(request, responseObserver);
+    }
+
+    @Override
+    public StreamObserver<Chunk> uploadObjects(StreamObserver<OkResponse> responseObserver) {
+        return new UploadObjectsStreamObserver(threadFactory, objectRepository, responseObserver);
     }
 }

@@ -18,13 +18,18 @@ export class OrderableInputListComponent {
   @Input()
   emptyElement: any;
 
+  @Input()
+  orderable = true;
+
   faChevronUp = faChevronUp;
   faChevronDown = faChevronDown;
   faTrash = faTrash;
   faPlus = faPlus;
 
   addElement() {
-    const param = Object.assign({}, this.emptyElement);
+    const param = typeof this.emptyElement === 'object' ?
+      Object.assign({}, this.emptyElement) :
+      this.emptyElement;
     this.data.push(param);
   }
 
@@ -59,4 +64,7 @@ export class OrderableInputListComponent {
     [this.data[a], this.data[b]] = [this.data[b], this.data[a]];
   }
 
+  indexTracker(index: number, value: any) {
+    return index;
+  }
 }

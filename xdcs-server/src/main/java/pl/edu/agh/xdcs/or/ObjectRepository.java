@@ -28,6 +28,11 @@ public interface ObjectRepository {
 
     String store(ObjectBase object);
 
+    String store(InputStream object);
+
+    void validate(String objectId, Class<? extends ObjectBase> type)
+            throws ObjectRepositoryValidationException;
+
     /**
      * @throws InterruptedException          when verification has been interrupted
      * @throws ChecksumVerificationException when verification failed

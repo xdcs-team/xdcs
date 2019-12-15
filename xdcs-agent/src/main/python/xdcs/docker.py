@@ -1,8 +1,10 @@
 from __future__ import annotations
 
 import logging
+import os
 import re
 import subprocess
+import tempfile
 from typing import Union, List
 
 from packaging import version
@@ -70,18 +72,33 @@ class DockerCli:
                               stderr=subprocess.PIPE,
                               text=True)
 
-    def run(self, image: str, log_handler: LogHandler = None) -> None:
-        opts = [*self._opts, *self.__build_gpu_opts()]
-        try:
-            exec_cmd([self._docker_exec, 'run', *opts, image], log_handler)
-        except ExecFailedException as e:
-            raise DockerException('Docker run failed', e)
+    def run(self, image: str, log_handler: LogHandler = None) -> str:
+        with tempfile.TemporaryDirectory() as tmpdir:
+            cid_file = os.path.join(tmpdir, 'cid')
+            opts = [*self._opts, *self.__build_gpu_opts(), '--cidfile', cid_file]
+            try:
+                exec_cmd([self._docker_exec, 'run', *opts, image], log_handler)
+
+                with open(cid_file, 'r') as cidf:
+                    return cidf.read()
+            except ExecFailedException as e:
+                raise DockerException('Docker run failed', e)
 
     def build(self, directory, dockerfile) -> str:
         proc = self.__run_docker(['build', '-q', '-f', dockerfile, directory])
         if proc.returncode != 0:
             raise DockerException('Docker build failed: ' + str(proc.stderr))
         return proc.stdout.strip()
+
+    def rm(self, image: str) -> None:
+        proc = self.__run_docker(['rm', image])
+        if proc.returncode != 0:
+            raise DockerException('Docker image removal failed: ' + str(proc.stderr))
+
+    def cp(self, cid: str, src_path: str, dst_path: str) -> None:
+        proc = self.__run_docker(['cp', cid + ':' + src_path, dst_path])
+        if proc.returncode != 0:
+            raise DockerException('Docker cp failed: ' + str(proc.stderr))
 
     def version(self) -> str:
         proc = self.__run_docker(['--version'])
@@ -146,6 +163,7 @@ class _DockerInfo:
 
         try:
             DockerCli() \
+                .remove_container_after_finish() \
                 .opt(['--gpus', 'all']) \
                 .run('hello-world')
             return True
@@ -158,6 +176,7 @@ class _DockerInfo:
     def is_nvidia_runtime_available(self) -> bool:
         try:
             DockerCli() \
+                .remove_container_after_finish() \
                 .opt('--runtime=nvidia') \
                 .run('hello-world')
             return True

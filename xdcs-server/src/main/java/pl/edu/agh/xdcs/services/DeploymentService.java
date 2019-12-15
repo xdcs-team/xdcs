@@ -75,6 +75,7 @@ public class DeploymentService {
                 .kernelParams(Optional.ofNullable(definition.getKernelParams())
                         .map(KernelParameters::getParameters)
                         .orElse(null))
+                .artifacts(definition.getArtifacts())
                 .build();
     }
 

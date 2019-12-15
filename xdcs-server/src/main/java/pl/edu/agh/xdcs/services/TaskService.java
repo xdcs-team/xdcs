@@ -11,11 +11,14 @@ import pl.edu.agh.xdcs.db.dao.TaskDao;
 import pl.edu.agh.xdcs.db.entity.DeploymentDescriptorEntity;
 import pl.edu.agh.xdcs.db.entity.HistoricalTaskEntity;
 import pl.edu.agh.xdcs.db.entity.LogLineEntity;
+import pl.edu.agh.xdcs.db.entity.ObjectRefEntity;
 import pl.edu.agh.xdcs.db.entity.QueuedTaskEntity;
 import pl.edu.agh.xdcs.db.entity.ResourcePatternEntity;
 import pl.edu.agh.xdcs.db.entity.ResourceType;
 import pl.edu.agh.xdcs.db.entity.Task;
 import pl.edu.agh.xdcs.events.AgentLoggedEvent;
+import pl.edu.agh.xdcs.or.ObjectRepository;
+import pl.edu.agh.xdcs.or.types.Tree;
 import pl.edu.agh.xdcs.util.WildcardPattern;
 
 import javax.enterprise.event.Event;
@@ -58,6 +61,9 @@ public class TaskService {
     private LogLineDao logLineDao;
 
     @Inject
+    private ObjectRepository objectRepository;
+
+    @Inject
     private Event<AgentLoggedEvent> agentLoggedEvent;
 
     public Optional<Task> getTaskById(String taskId) {
@@ -80,14 +86,17 @@ public class TaskService {
         return new TaskCreationWizard();
     }
 
-    public void reportCompletion(String taskId) {
-        runtimeTaskDao.removeById(taskId);
-        historicalTaskDao.setFinished(taskId);
+    public void reportCompletion(Task task) {
+        finishTask(task, Task.Result.FINISHED);
     }
 
-    public void reportFailure(String taskId) {
-        runtimeTaskDao.removeById(taskId);
-        historicalTaskDao.setErrored(taskId);
+    public void reportFailure(Task task) {
+        finishTask(task, Task.Result.ERRORED);
+    }
+
+    private void finishTask(Task task, Task.Result result) {
+        runtimeTaskDao.removeById(task.getId());
+        task.asHistorical().setResult(result);
     }
 
     public void saveLog(Task task, Instant time, LogLineEntity.LogType type, byte[] contents) {
@@ -104,6 +113,13 @@ public class TaskService {
 
     public List<LogLineEntity> getLogs(Task task, Instant from, Instant to) {
         return logLineDao.findByPeriod(task.getId(), from, to);
+    }
+
+    public void setArtifactTree(Task task, String artifactTree) {
+        objectRepository.validate(artifactTree, Tree.class);
+        task.asHistorical()
+                .setArtifactTree(ObjectRefEntity.of(artifactTree, Tree.class));
+        historicalTaskDao.merge(task.asHistorical());
     }
 
     public class TaskCreationWizard {

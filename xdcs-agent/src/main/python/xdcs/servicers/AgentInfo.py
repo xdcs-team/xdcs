@@ -1,20 +1,17 @@
 import importlib
 import os
 import platform
-import sys
 
 import cpuinfo
 import distro
 import pyopencl
-import pycuda.autoinit
+import sys
 
 from xdcs import docker
 from xdcs.app import xdcs
 from xdcs_api.agent_info_pb2 import ProcessorInfo, SystemInfo, GPUInfo, OpenCLPlatform, OpenCLDevice, SoftwareInfo, \
     CUDAInfo, CUDADevice
 from xdcs_api.agent_info_pb2_grpc import AgentInfoServicer
-
-pycuda.autoinit
 
 
 class AgentInfo(AgentInfoServicer):
@@ -130,6 +127,7 @@ class AgentInfo(AgentInfoServicer):
             return CUDAInfo(cuda_available=False)
 
         import pycuda
+        import pycuda.autoinit
         from pycuda.driver import Device
 
         cuda_info = CUDAInfo()

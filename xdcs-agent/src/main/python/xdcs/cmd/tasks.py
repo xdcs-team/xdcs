@@ -1,12 +1,15 @@
 import logging
 import os
+import shutil
 import stat
 import tempfile
 from os import path
+from typing import Optional
 
 from xdcs.app import xdcs
 from xdcs.cmd import Command
-from xdcs.cmd.object_repository import FetchDeploymentCmd, DumpObjectRepositoryTreeCmd
+from xdcs.cmd.object_repository import FetchDeploymentCmd, DumpObjectRepositoryTreeCmd, \
+    MaterializeTreeToObjectRepositoryCmd, UploadObjectsCmd
 from xdcs.cmd.task_reporting import ReportTaskCompletionCmd, ReportTaskFailureCmd
 from xdcs.docker import DockerCli
 from xdcs.exec import exec_cmd
@@ -80,24 +83,51 @@ class RunDockerTaskCmd(_RunDeploymentBasedTaskCmd):
         image_id = DockerCli().build(self._workspace_path, dockerfile)
         self._log_handler.internal_log('Docker built, image ID: ' + image_id)
 
-        should_allocate_pseudo_tty = deployment['config']['allocate-tty']
+        artifact_root = self._run_image(image_id)
+        xdcs().execute(ReportTaskCompletionCmd(self._task_id, self._log_handler, artifact_root))
 
-        docker_cli = DockerCli()
-        if should_allocate_pseudo_tty:
-            docker_cli.allocate_pseudo_tty()
-        docker_cli \
-            .remove_container_after_finish() \
-            .nvidia_all_devices() \
-            .container_name('xdcs_' + self._task_id) \
-            .run(image_id, self._log_handler)
+    def _run_image(self, image_id: str) -> Optional[str]:
+        should_allocate_pseudo_tty = self._deployment['config'].get('allocate-tty', True)
 
-        xdcs().execute(ReportTaskCompletionCmd(self._task_id, self._log_handler))
+        with tempfile.TemporaryDirectory() as artifacts_root:
+            cid = None
+            try:
+                docker_cli = DockerCli()
+                if should_allocate_pseudo_tty:
+                    docker_cli.allocate_pseudo_tty()
+                cid = docker_cli \
+                    .nvidia_all_devices() \
+                    .container_name('xdcs_' + self._task_id) \
+                    .allocate_pseudo_tty() \
+                    .run(image_id, self._log_handler)
+
+                artifact_root = self._handle_artifacts(cid, artifacts_root)
+                return artifact_root
+            finally:
+                if cid:
+                    DockerCli().rm(cid)
+
+    def _handle_artifacts(self, cid: str, artifacts_root) -> Optional[str]:
+        artifacts = self._deployment['config'].get('artifacts', [])
+        if len(artifacts) == 0:
+            return None
+
+        for artifact in artifacts:
+            dest = os.path.join(artifacts_root, artifact)
+            DockerCli().cp(cid, artifact, dest)
+
+        root_id, all_objects = MaterializeTreeToObjectRepositoryCmd(artifacts_root).execute()
+        UploadObjectsCmd(all_objects).execute()
+        return root_id
 
 
 class RunScriptTaskCmd(_RunDeploymentBasedTaskCmd):
     def execute(self):
         deployment = self._deployment
-        script_path = path.join(self._workspace_path, deployment['config'].get('scriptfile'))
+        script_path = path.join(self._workspace_path, self._get_script_path(deployment))
+        script_path = path.normpath(script_path)
+        if not script_path.startswith(self._workspace_path):
+            raise TaskExecutionException('Path traversal detected')
 
         if script_path is None:
             raise TaskExecutionException('Script path is empty')
@@ -109,7 +139,28 @@ class RunScriptTaskCmd(_RunDeploymentBasedTaskCmd):
 
         exec_cmd([script_path], self._log_handler)
 
-        xdcs().execute(ReportTaskCompletionCmd(self._task_id, self._log_handler))
+        artifact_root = self._gather_artifacts()
+        xdcs().execute(ReportTaskCompletionCmd(self._task_id, self._log_handler, artifact_root))
+
+    def _get_script_path(self, deployment):
+        scriptfile = deployment['config'].get('scriptfile')
+        if scriptfile.startswith('/'):
+            return scriptfile[1:]
+        return scriptfile
+
+    def _gather_artifacts(self) -> Optional[str]:
+        with tempfile.TemporaryDirectory() as artifacts_root:
+            artifacts = self._deployment['config'].get('artifacts', [])
+            if len(artifacts) == 0:
+                return None
+
+            for artifact in artifacts:
+                dest = os.path.join(artifacts_root, artifact)
+                shutil.copy(artifact, dest)
+
+            root_id, all_objects = MaterializeTreeToObjectRepositoryCmd(artifacts_root).execute()
+            UploadObjectsCmd(all_objects).execute()
+            return root_id
 
 
 class HandleExceptionCmd(Command):

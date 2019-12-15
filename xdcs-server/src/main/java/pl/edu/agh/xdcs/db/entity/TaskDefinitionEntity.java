@@ -6,10 +6,13 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.Table;
+import java.util.List;
 
 /**
  * @author Kamil Jarosz
@@ -47,6 +50,10 @@ public class TaskDefinitionEntity extends BaseEntity {
 
     @Column(name = "ALLOCATE_TTY_")
     private Boolean allocatePseudoTty;
+
+    @Column(name = "ARTIFACTS_")
+    @ElementCollection(fetch = FetchType.EAGER)
+    private List<String> artifacts;
 
     public KernelParameters getKernelParams() {
         return KERN_PARAMS_CONVERTER.convertToEntityAttribute(kernelParams);
