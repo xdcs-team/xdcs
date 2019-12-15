@@ -15,10 +15,10 @@ import java.util.stream.Stream;
  * @author Kamil Jarosz
  */
 public class TaskDao extends DaoBase {
-    private Optional<Task> mapResultsToTask(Object[] results) {
-        HistoricalTaskEntity historicalTask = (HistoricalTaskEntity) results[0];
-        RuntimeTaskEntity runtimeTask = (RuntimeTaskEntity) results[1];
-        QueuedTaskEntity queuedTask = (QueuedTaskEntity) results[2];
+    private Optional<Task> mapResultsToTask(Object[] result) {
+        HistoricalTaskEntity historicalTask = (HistoricalTaskEntity) result[0];
+        RuntimeTaskEntity runtimeTask = (RuntimeTaskEntity) result[1];
+        QueuedTaskEntity queuedTask = (QueuedTaskEntity) result[2];
 
         if (runtimeTask != null) {
             return Optional.of(runtimeTask);
@@ -59,7 +59,23 @@ public class TaskDao extends DaoBase {
                         "from HisTask h " +
                         "left join RuntimeTask r on h.id = r.id " +
                         "left join TaskQueue q on h.id = q.id " +
-                        "order by h.timeCreated")
+                        "order by h.timeCreated desc")
+                .setFirstResult(firstResult)
+                .setMaxResults(maxResults)
+                .getResultStream();
+        return resultStream.map(this::mapResultsToTask)
+                .map(Optional::get)
+                .collect(Collectors.toList());
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<Task> listActive(int firstResult, int maxResults) {
+        Stream<Object[]> resultStream = entityManager
+                .createQuery("select cast(null as char), r, q " +
+                        "from RuntimeTask r " +
+                        "full join TaskQueue q on r.id = q.id " +
+                        "left join HisTask h on r.id = h.id " +
+                        "order by h.timeCreated desc")
                 .setFirstResult(firstResult)
                 .setMaxResults(maxResults)
                 .getResultStream();

@@ -14,7 +14,6 @@ import pl.edu.agh.xdcs.restapi.model.LogsDto;
 import pl.edu.agh.xdcs.restapi.model.TaskConditionsDto;
 import pl.edu.agh.xdcs.restapi.model.TaskCreationDto;
 import pl.edu.agh.xdcs.restapi.model.TaskDto;
-import pl.edu.agh.xdcs.restapi.model.TaskState;
 import pl.edu.agh.xdcs.restapi.model.TasksDto;
 import pl.edu.agh.xdcs.restapi.util.RestUtils;
 import pl.edu.agh.xdcs.services.TaskService;
@@ -107,6 +106,20 @@ public class TasksApiImpl implements TasksApi {
         int maxResults = maxResultsParam == null ? Integer.MAX_VALUE : maxResultsParam.intValue();
 
         List<Task> tasks = taskService.queryTasks(from, maxResults);
+        return prepareResponse(from, tasks);
+    }
+
+
+    @Override
+    public Response getActiveTasks(BigDecimal fromParam, BigDecimal maxResultsParam) {
+        int from = fromParam == null ? 0 : fromParam.intValue();
+        int maxResults = maxResultsParam == null ? Integer.MAX_VALUE : maxResultsParam.intValue();
+
+        List<Task> tasks = taskService.queryActiveTasks(from, maxResults);
+        return prepareResponse(from, tasks);
+    }
+
+    private Response prepareResponse(int from, List<Task> tasks) {
         List<TaskDto> items = taskMapper.toRestEntities(tasks);
         return Response.ok(new TasksDto()
                 .items(items)

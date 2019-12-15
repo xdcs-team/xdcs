@@ -420,6 +420,28 @@ paths:
               schema:
                 type: string
 
+  /tasks/active:
+    get:
+      tags:
+        - Tasks
+      operationId: getActiveTasks
+      parameters:
+        - name: from
+          in: query
+          schema:
+            type: number
+        - name: max_results
+          in: query
+          schema:
+            type: number
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TasksDto'
+
   /tasks/{taskId}:
     get:
       tags:
