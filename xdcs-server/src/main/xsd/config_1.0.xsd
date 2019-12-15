@@ -82,6 +82,17 @@
                     <xs:element name="allow-all">
                         <xs:complexType/>
                     </xs:element>
+                    <xs:element name="ldap">
+                        <xs:complexType>
+                            <xs:all>
+                                <xs:element name="url" type="xs:anyURI"/>
+                                <xs:element name="base" type="xs:string"/>
+                                <xs:element name="identifying-attribute" type="xs:string"/>
+                                <xs:element name="bind-dn" type="xs:string"/>
+                                <xs:element name="bind-password" type="xs:string"/>
+                            </xs:all>
+                        </xs:complexType>
+                    </xs:element>
                 </xs:choice>
             </xs:extension>
         </xs:complexContent>

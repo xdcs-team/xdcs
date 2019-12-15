@@ -1,0 +1,16 @@
+dn: ou=users,dc=example,dc=org
+changetype: add
+objectclass: top
+objectclass: organizationalUnit
+ou: users
+
+dn: uid=ldapadmin,ou=users,dc=example,dc=org
+changetype: add
+objectclass: top
+objectclass: person
+objectclass: organizationalPerson
+objectclass: inetOrgPerson
+cn: admin
+sn: admin
+uid: ldapadmin
+userPassword: admin
