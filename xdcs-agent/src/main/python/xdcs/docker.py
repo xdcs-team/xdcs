@@ -9,7 +9,7 @@ from typing import Union, List
 
 from packaging import version
 
-from xdcs import gpu
+from xdcs import resources
 from xdcs.app import xdcs
 from xdcs.decorators import lazy
 from xdcs.exec import exec_cmd, ExecFailedException
@@ -63,11 +63,11 @@ class DockerCli:
         return self
 
     def nvidia_device(self, key: str) -> DockerCli:
-        device = gpu.manager.device_by_key(key)
+        device = resources.manager.resource_by_key(key)
         if not device.is_nvidia():
             raise DockerException('Non-Nvidia devices are not supported by Docker')
 
-        self._nvidia_device_ids.extend(device.nvidia_id())
+        self._nvidia_device_ids.extend(device.device_id())
         return self
 
     def __run_docker(self, args: [str]) -> subprocess.CompletedProcess:

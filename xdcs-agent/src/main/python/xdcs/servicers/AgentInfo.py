@@ -92,11 +92,15 @@ class AgentInfo(AgentInfoServicer):
         return programs
 
     def GetGPUInfo(self, request, context) -> GPUInfo:
-        platforms = pyopencl.get_platforms()
-
         gpu_info = GPUInfo()
-        for pfm in platforms:
-            self._map_platform(gpu_info.opencl_platforms.add(), pfm)
+
+        try:
+            platforms = pyopencl.get_platforms()
+            for pfm in platforms:
+                self._map_platform(gpu_info.opencl_platforms.add(), pfm)
+        except pyopencl._cl.LogicError:
+            pass
+
         gpu_info.cuda_info.CopyFrom(self._get_cuda_info())
 
         return gpu_info
@@ -126,7 +130,6 @@ class AgentInfo(AgentInfoServicer):
         if importlib.util.find_spec("pycuda") is None:
             return CUDAInfo(cuda_available=False)
 
-        import pycuda
         import pycuda.autoinit
         from pycuda.driver import Device
 
