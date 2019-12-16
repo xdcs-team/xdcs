@@ -42,6 +42,10 @@ public class LogLineEntity extends BaseEntity {
     @Column(name = "CONTENTS_", nullable = false)
     private byte[] contents;
 
+    @JoinColumn(name = "LOGGED_BY_", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    private AgentEntity loggedBy;
+
     public enum LogType {
         INTERNAL,
         STDOUT,

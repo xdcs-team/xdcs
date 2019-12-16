@@ -1,6 +1,12 @@
 <pre *ngIf="convert" class="log-output">
   <ng-container *ngFor="let line of lines">
     <div class="log-line">
+      <ng-container *ngIf="line.tag">
+        <div class="line-tag"
+             [style.min-width.ch]="tagWidth+2">
+          [{{ line.tag }}]
+        </div>
+       </ng-container>
       <div class="line-number" tooltip="{{ line.time | date:timePopupFormat }}">
         {{ line.lineNumber }}
       </div>

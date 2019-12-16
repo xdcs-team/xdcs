@@ -8,6 +8,7 @@ import pl.edu.agh.xdcs.db.dao.QueuedTaskDao;
 import pl.edu.agh.xdcs.db.dao.ResourcePatternDao;
 import pl.edu.agh.xdcs.db.dao.RuntimeTaskDao;
 import pl.edu.agh.xdcs.db.dao.TaskDao;
+import pl.edu.agh.xdcs.db.entity.AgentEntity;
 import pl.edu.agh.xdcs.db.entity.DeploymentDescriptorEntity;
 import pl.edu.agh.xdcs.db.entity.HistoricalTaskEntity;
 import pl.edu.agh.xdcs.db.entity.LogLineEntity;
@@ -99,12 +100,13 @@ public class TaskService {
         task.asHistorical().setResult(result);
     }
 
-    public void saveLog(Task task, Instant time, LogLineEntity.LogType type, byte[] contents) {
+    public void saveLog(Task task, Instant time, LogLineEntity.LogType type, byte[] contents, AgentEntity agent) {
         LogLineEntity logLine = new LogLineEntity();
         logLine.setTask(task.asHistorical());
         logLine.setType(type);
         logLine.setTime(time);
         logLine.setContents(contents);
+        logLine.setLoggedBy(agent);
         logLineDao.persist(logLine);
         agentLoggedEvent.fire(AgentLoggedEvent.builder()
                 .logLine(logLine)
@@ -113,6 +115,10 @@ public class TaskService {
 
     public List<LogLineEntity> getLogs(Task task, Instant from, Instant to) {
         return logLineDao.findByPeriod(task.getId(), from, to);
+    }
+
+    public List<LogLineEntity> getLogs(Task task, List<AgentEntity> agentEntities) {
+        return logLineDao.findByAgents(task.getId(), agentEntities);
     }
 
     public void setArtifactTree(Task task, String artifactTree) {

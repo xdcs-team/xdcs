@@ -1,5 +1,6 @@
 package pl.edu.agh.xdcs.agents;
 
+import pl.edu.agh.xdcs.db.entity.AgentEntity;
 import pl.edu.agh.xdcs.grpc.events.AgentConnectedEvent;
 import pl.edu.agh.xdcs.grpc.events.AgentDisconnectedEvent;
 import pl.edu.agh.xdcs.grpc.events.AgentRegisteredEvent;
@@ -34,18 +35,19 @@ public class AgentManager {
         Agent agent = getOrCreateAgent(event.getAgentName());
         agent.setAddress(event.getAgentAddress());
         agent.setTunnelEndpoint(event.getTunnelEndpoint());
-        agent.setStatus(Agent.Status.UNAVAILABLE);
+        agent.setStatus(AgentEntity.Status.UNAVAILABLE);
     }
 
     private void registerAgent(@Observes AgentRegisteredEvent event) {
         Agent agent = event.getAgent();
         agent.setDisplayName(event.getDisplayName());
-        agent.setStatus(Agent.Status.READY);
+        agent.setStatus(AgentEntity.Status.READY);
     }
+
 
     private void disconnectAgent(@Observes AgentDisconnectedEvent event) {
         Agent agent = getOrCreateAgent(event.getAgentName());
         agent.setAddress(event.getAgentAddress());
-        agent.setStatus(Agent.Status.OFFLINE);
+        agent.setStatus(AgentEntity.Status.OFFLINE);
     }
 }

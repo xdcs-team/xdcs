@@ -3,6 +3,7 @@ package pl.edu.agh.xdcs.agents;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import pl.edu.agh.xdcs.db.entity.AgentEntity;
 
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
@@ -20,7 +21,7 @@ public class Agent {
     @Setter
     private InetAddress address;
     @Setter
-    private Status status;
+    private AgentEntity.Status status;
     @Setter
     private InetSocketAddress tunnelEndpoint;
 
@@ -30,13 +31,6 @@ public class Agent {
     }
 
     public boolean isReady() {
-        return this.status == Status.READY;
-    }
-
-    public enum Status {
-        UNAVAILABLE,
-        READY,
-        BUSY,
-        OFFLINE,
+        return this.status == AgentEntity.Status.READY;
     }
 }

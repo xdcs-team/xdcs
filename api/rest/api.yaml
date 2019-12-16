@@ -891,6 +891,8 @@ components:
         contents:
           type: string
           format: byte
+        nodeId:
+          type: string
       required:
         - time
         - type

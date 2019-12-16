@@ -13,6 +13,8 @@ export class LogPreviewComponent {
 
   @Input()
   lines: LogLine[] = [];
+  @Input()
+  tagWidth = 0;
 
   convert: any;
 
@@ -35,4 +37,5 @@ export interface LogLine {
   lineNumber: number;
   time: Date;
   contents: string;
+  tag: string;
 }

@@ -30,6 +30,7 @@ public class LogLineMapper {
         dto.setTime(model.getTime().atOffset(userContext.getCurrentZoneOffset()));
         dto.setContents(model.getContents());
         dto.setType(typeMapper.toApiEntity(model.getType()));
+        dto.setNodeId(model.getLoggedBy().getName());
         return dto;
     }
 
