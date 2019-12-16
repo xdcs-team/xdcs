@@ -42,6 +42,10 @@ class DockerCli:
 
         return self
 
+    def with_env_variable(self, name: str, value: str):
+        self._opts.extend(['-e', name + '=' + value])
+        return self
+
     def allocate_pseudo_tty(self) -> DockerCli:
         self._opts.extend(['-t'])
         return self
@@ -77,7 +81,7 @@ class DockerCli:
             cid_file = os.path.join(tmpdir, 'cid')
             opts = [*self._opts, *self.__build_gpu_opts(), '--cidfile', cid_file]
             try:
-                exec_cmd([self._docker_exec, 'run', *opts, image], log_handler)
+                exec_cmd([self._docker_exec, 'run', *opts, image], dict(os.environ), log_handler)
 
                 with open(cid_file, 'r') as cidf:
                     return cidf.read()

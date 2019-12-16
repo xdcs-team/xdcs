@@ -20,7 +20,9 @@ import javax.ejb.Singleton;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
+import java.net.InetAddress;
 import java.time.Duration;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -118,13 +120,32 @@ public class TaskSweeper {
         queuedTaskDao.remove(task);
 
         String deploymentId = task.getDeploymentDescriptor().getDeploymentRef().getReferencedObjectId();
+
+        Collection<String> agentIps = getAgentIps(agents);
+        int agentId = 0;
         for (Agent agent : agents) {
             TaskRunnerGrpc.TaskRunnerBlockingStub taskRunner = sessionManager.getStubProducer(agent)
                     .getTaskRunnerBlockingStub();
             taskRunner.submit(TaskSubmit.newBuilder()
                     .setDeploymentId(deploymentId)
                     .setTaskId(task.getId())
+                    .setAgentVariables(
+                            TaskSubmit.AgentVariables.newBuilder()
+                                    .addAllAgentIps(agentIps)
+                                    .setAgentIpMine(agent.getAddress().getHostAddress())
+                                    .setAgentCount(agents.size())
+                                    .setAgentId(agentId)
+                                    .build()
+                    )
                     .build());
+            agentId++;
         }
+    }
+
+    private Collection<String> getAgentIps(Set<Agent> agents) {
+        return agents.stream()
+                .map(Agent::getAddress)
+                .map(InetAddress::getHostAddress)
+                .collect(Collectors.toList());
     }
 }

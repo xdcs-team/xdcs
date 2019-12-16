@@ -63,6 +63,7 @@ export class TasksComponent implements OnInit {
 
         if (tasks.items.length === 0) {
           this.fetchedAll = true;
+          this.tasks = this.tasks || [];
         } else {
           if (!this.tasks) {
             this.tasks = tasks.items;

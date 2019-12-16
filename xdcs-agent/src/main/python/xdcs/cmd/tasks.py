@@ -6,6 +6,7 @@ import tempfile
 from os import path
 from typing import Optional
 
+from xdcs_api.agent_execution_pb2 import TaskSubmit
 from xdcs.app import xdcs
 from xdcs.cmd import Command
 from xdcs.cmd.object_repository import FetchDeploymentCmd, DumpObjectRepositoryTreeCmd, \
@@ -25,10 +26,12 @@ class TaskExecutionException(Exception):
 class RunTaskCmd(Command):
     _deployment_id: str
     _task_id: str
+    _agent_variables: TaskSubmit.AgentVariables
 
-    def __init__(self, deployment_id: str, task_id: str) -> None:
+    def __init__(self, deployment_id: str, task_id: str, agent_variables: TaskSubmit.AgentVariables) -> None:
         self._deployment_id = deployment_id
         self._task_id = task_id
+        self._agent_variables = agent_variables
 
     def execute(self):
         with UploadingLogHandler(self._task_id) as log_handler:
@@ -44,8 +47,10 @@ class RunTaskCmd(Command):
             root_id = deployment['root']
             xdcs().execute(DumpObjectRepositoryTreeCmd(root_id, workspace_path))
             config_type = deployment['config']['type']
+            agent_env_variables = RunTaskCmd.prepare_agent_env_variables(self._agent_variables)
 
-            constructor_args = [workspace_path, deployment, self._deployment_id, self._task_id, log_handler]
+            constructor_args = [workspace_path, deployment, self._deployment_id, self._task_id, agent_env_variables,
+                                log_handler]
             if config_type == 'docker':
                 xdcs().execute(HandleExceptionCmd(RunDockerTaskCmd(*constructor_args), self._task_id, log_handler))
             elif config_type == 'script':
@@ -54,20 +59,39 @@ class RunTaskCmd(Command):
                 raise Exception('Unsupported task type ' + config_type)
             log_handler.internal_log("Deployment finished: " + self._deployment_id)
 
+    @staticmethod
+    def prepare_agent_env_variables(agent_variables: TaskSubmit.AgentVariables):
+        agent_env_variables: dict = {
+            'XDCS_AGENT_IPS': ','.join(agent_variables.agentIps),
+            'XDCS_AGENT_IP_MINE': agent_variables.agentIpMine,
+            'XDCS_AGENT_COUNT': str(agent_variables.agentCount),
+            'XDCS_AGENT_ID': str(agent_variables.agentId)
+        }
+        if len(agent_variables.agentIps) != agent_variables.agentCount:
+            raise Exception('Inconsistent arguments: agent_count = %d, but number of received IPs = %d'
+                            % (agent_variables.agentCount, len(agent_variables.agentIps)))
+
+        for agent_id in range(agent_variables.agentCount):
+            agent_env_variables['XDCS_AGENT_IP_%d' % agent_id] = agent_variables.agentIps[agent_id]
+
+        return agent_env_variables
+
 
 class _RunDeploymentBasedTaskCmd(Command):
     _task_id: str
     _deployment_id: str
     _deployment: dict
     _workspace_path: str
+    _agent_env_variables: dict
     _log_handler: LogHandler
 
     def __init__(self, workspace_path: str, deployment: dict, deployment_id: str, task_id: str,
-                 log_handler: LogHandler) -> None:
+                 agent_env_variables: dict, log_handler: LogHandler) -> None:
         self._workspace_path = workspace_path
         self._deployment_id = deployment_id
         self._deployment = deployment
         self._task_id = task_id
+        self._agent_env_variables = agent_env_variables
         self._log_handler = log_handler
 
 
@@ -95,10 +119,14 @@ class RunDockerTaskCmd(_RunDeploymentBasedTaskCmd):
                 docker_cli = DockerCli()
                 if should_allocate_pseudo_tty:
                     docker_cli.allocate_pseudo_tty()
+                for name, value in self._agent_env_variables.items():
+                    docker_cli.with_env_variable(name, value)
+
+                # TODO Container name ending with _XDCS_AGENT_ID is only for development purposes.
+                #   This should be removed before production release.
                 cid = docker_cli \
                     .nvidia_all_devices() \
-                    .container_name('xdcs_' + self._task_id) \
-                    .allocate_pseudo_tty() \
+                    .container_name('xdcs_' + self._task_id + '_%s' % self._agent_env_variables['XDCS_AGENT_ID']) \
                     .run(image_id, self._log_handler)
 
                 artifact_root = self._handle_artifacts(cid, artifacts_root)
@@ -137,7 +165,10 @@ class RunScriptTaskCmd(_RunDeploymentBasedTaskCmd):
         st = os.stat(script_path)
         os.chmod(script_path, st.st_mode | stat.S_IEXEC)
 
-        exec_cmd([script_path], self._log_handler)
+        env = dict(os.environ)
+        env.update(self._agent_env_variables)
+
+        exec_cmd([script_path], env, self._log_handler)
 
         artifact_root = self._gather_artifacts()
         xdcs().execute(ReportTaskCompletionCmd(self._task_id, self._log_handler, artifact_root))

@@ -1,6 +1,7 @@
 import logging
 import subprocess
 import threading
+from typing import Mapping
 
 from xdcs.decorators import asynchronous
 from xdcs.log_handling import LogHandler
@@ -12,12 +13,13 @@ class ExecFailedException(Exception):
     pass
 
 
-def exec_cmd(args: [str], log_handler: LogHandler = None):
+def exec_cmd(args: [str], env: Mapping[str, bytes], log_handler: LogHandler = None):
     command = ', '.join(args)
     logger.info("Executing: " + command)
     proc = subprocess.Popen(args,
                             stdout=subprocess.PIPE,
-                            stderr=subprocess.PIPE)
+                            stderr=subprocess.PIPE,
+                            env=env)
 
     if log_handler is not None:
         barrier = threading.Barrier(3)
