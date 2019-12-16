@@ -113,6 +113,7 @@ class UploadingLogHandler(LogHandler):
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         self._log_queue.put(None)
+        self._log_queue = None
 
     @asynchronous
     def _send_messages(self):

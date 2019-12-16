@@ -9,9 +9,10 @@ class TaskRunner(TaskRunnerServicer):
     def Submit(self, request, context):
         deployment_id = request.deploymentId
         task_id = request.taskId
-        self.__execute_async(deployment_id, task_id)
+        agent_variables = request.agentVariables
+        self.__execute_async(deployment_id, task_id, agent_variables)
         return OkResponse()
 
     @asynchronous
-    def __execute_async(self, deployment_id, task_id):
-        xdcs().execute(RunTaskCmd(deployment_id, task_id))
+    def __execute_async(self, deployment_id, task_id, agent_variables):
+        xdcs().execute(RunTaskCmd(deployment_id, task_id, agent_variables))

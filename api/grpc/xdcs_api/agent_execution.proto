@@ -11,10 +11,29 @@ import "google/protobuf/timestamp.proto";
 message TaskSubmit {
     string deploymentId = 1;
     string taskId = 2;
-}
+    AgentVariables agentVariables = 3;
 
-message TaskId {
-    string taskId = 1;
+    message AgentVariables {
+        /**
+         * Table containing IPs of all agents executing this task.
+         */
+        repeated string agentIps = 1;
+
+        /**
+         * String IP address of agent.
+         */
+        string agentIpMine = 2;
+
+        /**
+         * Id of the agent - only for execution of this task.
+         */
+        uint32 agentId = 3;
+
+        /**
+         * Number of agents executing this task.
+         */
+        uint32 agentCount = 4;
+    }
 }
 
 message TaskResultReport {

@@ -17,6 +17,9 @@ FROM python:3.7
 COPY --from=builder /var/xdcs/xdcs-agent/target/dist/xdcs-agent-*/dist/xdcs-agent-*.tar.gz \
     /var/xdcs-agent/xdcs-agent.tar.gz
 
+COPY --from=builder /var/xdcs/xdcs-agent/src/main/python/xdcs/conf/xdcs-agent.toml \
+    /etc/xdcs/xdcs-agent.toml
+
 WORKDIR /var/xdcs-agent
 RUN pip install xdcs-agent.tar.gz && rm xdcs-agent.tar.gz
 
