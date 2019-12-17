@@ -1,0 +1,68 @@
+<div class="row">
+  <div class="col-xl-6">
+    <h4 class="mb-3">Details</h4>
+    <table class="table">
+      <tbody>
+      <tr>
+        <th scope="row">ID</th>
+        <td>{{definition.id}}</td>
+      </tr>
+      <tr>
+        <th scope="row">Type</th>
+        <td>{{definition.config.type}}</td>
+      </tr>
+
+      <ng-container *ngIf="['opencl', 'cuda'].includes(definition.config.type)">
+        <tr>
+          <th scope="row">Kernelfile</th>
+          <td>{{definition.config.kernelfile}}</td>
+        </tr>
+        <tr>
+          <th scope="row">Kernelname</th>
+          <td>{{definition.config.kernelname}}</td>
+        </tr>
+      </ng-container>
+
+      <ng-container *ngIf="['docker'].includes(definition.config.type)">
+        <tr>
+          <th scope="row">Dockerfile</th>
+          <td><span [outerHTML]="definition.config.dockerfile | noValue: 'Dockerfile'"></span></td>
+        </tr>
+      </ng-container>
+
+      <ng-container *ngIf="['script'].includes(definition.config.type)">
+        <tr>
+          <th scope="row">Scriptfile</th>
+          <td><span [outerHTML]="definition.config.scriptfile | noValue"></span></td>
+        </tr>
+      </ng-container>
+      </tbody>
+    </table>
+  </div>
+  <div class="col-xl-6">
+    <ng-container class="mt-3"
+                  *ngIf="['opencl', 'cuda'].includes(definition.config.type) && definition.config.kernelparams.length > 0">
+      <h4 class="mb-3">Kernel parameters</h4>
+      <table class="table table-striped">
+        <thead>
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">Name</th>
+          <th scope="col">Direction</th>
+          <th scope="col">Type</th>
+        </tr>
+        </thead>
+        <tbody>
+        <ng-container *ngFor="let item of definition.config.kernelparams; let i = index">
+          <tr>
+            <th scope="row">{{i}}</th>
+            <td><span [outerHTML]="item.name | noValue"></span></td>
+            <td><span [outerHTML]="item.direction | noValue"></span></td>
+            <td><span [outerHTML]=" item.type | noValue"></span></td>
+          </tr>
+        </ng-container>
+        </tbody>
+      </table>
+    </ng-container>
+  </div>
+</div>

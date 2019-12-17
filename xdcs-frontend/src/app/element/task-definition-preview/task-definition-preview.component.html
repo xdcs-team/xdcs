@@ -7,67 +7,51 @@
      [routerLink]="['/', 'task-definition-edit', definition.id]">
     Edit
   </a>
-  <div class="col-lg-6">
+  <div class="col-lg-6 mb-5">
     <div class="headline">
       <h2>{{definition.name}}</h2>
     </div>
   </div>
-  <div class="row">
-    <div class="col-6">
-      <table class="table table-borderless">
-        <tbody>
-        <tr>
-          <th scope="row">ID</th>
-          <td>{{definition.id}}</td>
-        </tr>
-        <tr>
-          <th scope="row">Type</th>
-          <td>{{definition.config.type}}</td>
-        </tr>
-        </tbody>
-      </table>
-    </div>
 
-    <div class="col-6">
-      <h4 class="mb-3">Deployments</h4>
-      <table *ngIf="deploymentDescriptors && deploymentDescriptors.items.length > 0; else noDeployments"
-             class="table w-100">
-        <colgroup>
-          <col/>
-          <col/>
-          <col style="width: 60%;"/>
-        </colgroup>
-        <thead>
-        <tr>
-          <th scope="col">ID</th>
-          <th scope="col">Deployed</th>
-          <th scope="col">Description</th>
-        </tr>
-        </thead>
+  <app-task-definition-details [definition]="definition"></app-task-definition-details>
 
-        <tbody>
-        <ng-container *ngFor="let deployment of deploymentDescriptors.items">
-          <tr>
-            <th scope="row">
-              {{ deployment.id | sliceOrId }}
-              <app-copy-icon [content]="deployment.id"></app-copy-icon>
-            </th>
-            <td>
+  <h4 class="mt-3">Deployments</h4>
+  <table *ngIf="deploymentDescriptors && deploymentDescriptors.items.length > 0; else noDeployments"
+         class="table w-100">
+    <colgroup>
+      <col/>
+      <col/>
+      <col style="width: 60%;"/>
+    </colgroup>
+    <thead>
+    <tr>
+      <th scope="col">ID</th>
+      <th scope="col">Deployed</th>
+      <th scope="col">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    <ng-container *ngFor="let deployment of deploymentDescriptors.items">
+      <tr>
+        <th scope="row">
+          {{ deployment.id | sliceOrId }}
+          <app-copy-icon [content]="deployment.id"></app-copy-icon>
+        </th>
+        <td>
             <span tooltip="{{ deployment.timeDeployed | date:'medium' }}">
               {{ deployment.timeDeployed | timeAgo }}
             </span>
-            </td>
-            <td *ngIf="deployment.description; else noDescription">{{ deployment.description }}</td>
-            <ng-template #noDescription>
-              <td><i class="text-black-50">No description</i></td>
-            </ng-template>
-          </tr>
-        </ng-container>
-        </tbody>
-      </table>
-      <ng-template #noDeployments>
-        <app-no-data size="2rem" message="No deployments"></app-no-data>
-      </ng-template>
-    </div>
-  </div>
+        </td>
+        <td *ngIf="deployment.description; else noDescription">{{ deployment.description }}</td>
+        <ng-template #noDescription>
+          <td><i class="text-black-50">No description</i></td>
+        </ng-template>
+      </tr>
+    </ng-container>
+    </tbody>
+  </table>
+  <ng-template #noDeployments>
+    <app-no-data size="2rem" message="No deployments"></app-no-data>
+  </ng-template>
 </div>

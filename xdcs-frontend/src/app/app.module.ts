@@ -70,6 +70,8 @@ import { TaskStatusIconComponent } from './element/task-status-icon/task-status-
 import { SliceOrIdPipe } from './pipes/slice-or-id.pipe';
 import { NodeDetailsComponent } from './element/node-details/node-details.component';
 import { NodeDetailsPreviewComponent } from './element/node-details-preview/node-details-preview.component';
+import { TaskDefinitionDetailsComponent } from './element/task-definition-details/task-definition-details.component';
+import { NoValuePipe } from './pipes/no-value';
 
 @NgModule({
   declarations: [
@@ -122,6 +124,8 @@ import { NodeDetailsPreviewComponent } from './element/node-details-preview/node
     SliceOrIdPipe,
     NodeDetailsComponent,
     NodeDetailsPreviewComponent,
+    TaskDefinitionDetailsComponent,
+    NoValuePipe,
   ],
   entryComponents: [
     NewTaskDefinitionComponent,
