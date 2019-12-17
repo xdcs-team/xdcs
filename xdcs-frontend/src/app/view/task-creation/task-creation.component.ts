@@ -18,16 +18,17 @@ export class TaskCreationComponent {
   deployment: DeploymentDto;
   definition: TaskDefinitionDto;
   nodes: Array<NodeDto>;
+  nodeIds: string[];
+
   files: Map<string, File> = new Map([]);
 
   taskName = '';
-  resources: Array<ResourceDto> = [];
   emptyResource: ResourceDto = {
     agent: '',
     key: '',
-    quantity: 1,
-    type: 'cpu',
   };
+
+  selectedResources: ResourceDto[] = [];
 
   constructor(private taskDefinitionsService: TaskDefinitionsService,
               private route: ActivatedRoute,
@@ -62,7 +63,17 @@ export class TaskCreationComponent {
       .pipe(first())
       .subscribe((nodes: NodesDto) => {
         this.nodes = nodes.items;
+        this.nodeIds = nodes.items.map(node => node.id);
       });
+  }
+
+  resourceKeysByNodeId(nodeId: string): string[] {
+    const node = this.nodes.find(n => n.id === nodeId);
+    if (node) {
+      return node.resources.map(res => res.key);
+    } else {
+      return [];
+    }
   }
 
   loadFilesMap(): void {
@@ -80,7 +91,7 @@ export class TaskCreationComponent {
       body: {
         name: this.taskName,
         deploymentId: this.deploymentId,
-        resources: this.resources,
+        resources: this.selectedResources,
       } as TaskCreationDto,
     }).subscribe(() => {
       this.router.navigateByUrl('/');

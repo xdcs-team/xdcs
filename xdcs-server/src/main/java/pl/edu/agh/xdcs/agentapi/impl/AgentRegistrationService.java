@@ -11,6 +11,7 @@ import pl.edu.agh.xdcs.grpc.events.AgentRegisteredEvent;
 
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
+import java.util.stream.Collectors;
 
 /**
  * @author Kamil Jarosz
@@ -33,6 +34,12 @@ public class AgentRegistrationService extends AgentRegistrationGrpc.AgentRegistr
         AgentRegisteredEvent event = AgentRegisteredEvent.builder()
                 .agent(currentAgent)
                 .displayName(request.getDisplayName())
+                .resources(request.getResourcesList().stream()
+                        .map(res -> AgentRegisteredEvent.AnnouncedResource.builder()
+                                .key(res.getKey())
+                                .type(res.getType())
+                                .build())
+                        .collect(Collectors.toList()))
                 .build();
         agentRegisteredEvent.fire(event);
         agentRegisteredEvent.fireAsync(event);

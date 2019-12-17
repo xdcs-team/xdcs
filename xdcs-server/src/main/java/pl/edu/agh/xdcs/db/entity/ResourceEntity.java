@@ -31,6 +31,11 @@ public class ResourceEntity extends BaseEntity {
     @Column(name = "TYPE_", nullable = false)
     private ResourceType type;
 
-    @Column(name = "PATH_", nullable = false)
-    private String resourcePath;
+    @Column(name = "KEY_", nullable = false)
+    private String resourceKey;
+
+    @Override
+    public String toString() {
+        return '[' + owner.getName() + " / " + resourceKey + ']';
+    }
 }

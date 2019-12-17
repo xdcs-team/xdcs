@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.CopyOnWriteArraySet;
 
 /**
  * @author Kamil Jarosz
@@ -42,7 +43,7 @@ public class LogsWebSocket {
     private LogLineMapper logLineMapper;
 
     private Set<Session> getSubscribers(String taskId) {
-        return subscribersByTaskId.computeIfAbsent(taskId, i -> new HashSet<>());
+        return subscribersByTaskId.computeIfAbsent(taskId, i -> new CopyOnWriteArraySet<>());
     }
 
     @OnOpen

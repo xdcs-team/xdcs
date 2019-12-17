@@ -11,3 +11,9 @@ message Chunk {
 
 message OkResponse {
 }
+
+enum ResourceType {
+    CPU = 0;
+    OPENCL = 1;
+    CUDA = 2;
+}

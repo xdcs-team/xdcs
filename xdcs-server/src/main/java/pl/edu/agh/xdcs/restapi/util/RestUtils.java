@@ -27,6 +27,10 @@ public class RestUtils {
                 .build();
     }
 
+    public static BadRequestException throwBadRequest(String reason) {
+        throw new BadRequestException(badRequest(reason));
+    }
+
     public static Response unprocessableEntity(String reason) {
         return Response.status(422)
                 .type(MediaType.APPLICATION_JSON_TYPE)

@@ -12,14 +12,14 @@ public class WildcardPattern {
 
     private WildcardPattern(String pattern) {
         this.textPattern = pattern;
-        this.pattern = convert(pattern);
+        this.pattern = toPattern(pattern);
     }
 
     public static WildcardPattern parse(String pattern) {
         return new WildcardPattern(pattern);
     }
 
-    private static Pattern convert(String pattern) {
+    private static Pattern toPattern(String pattern) {
         StringTokenizer tokenizer = new StringTokenizer(pattern, "*?", true);
         StringBuilder finalPattern = new StringBuilder();
         while (tokenizer.hasMoreTokens()) {
@@ -35,12 +35,33 @@ public class WildcardPattern {
         return Pattern.compile(finalPattern.toString());
     }
 
+    public static WildcardPattern parseLike(String patternAgentNameLike) {
+        throw null;
+    }
+
     public boolean matches(String string) {
         return pattern.matcher(string).matches();
     }
 
     public Pattern toPattern() {
         return pattern;
+    }
+
+    public String toSqlLike() {
+        StringTokenizer tokenizer = new StringTokenizer(textPattern, "*?", true);
+        StringBuilder likePattern = new StringBuilder();
+        while (tokenizer.hasMoreTokens()) {
+            String token = tokenizer.nextToken();
+            if ("*".equals(token)) {
+                likePattern.append("%");
+            } else if ("?".equals(token)) {
+                likePattern.append("_");
+            } else {
+                likePattern.append(token.replaceAll("%", "\\%")
+                        .replaceAll("_", "\\_"));
+            }
+        }
+        return likePattern.toString();
     }
 
     @Override

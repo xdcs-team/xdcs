@@ -17,28 +17,24 @@ class Resource:
     def is_nvidia(self) -> bool:
         pass
 
-    def primary_key(self) -> str:
+    def is_cpu(self) -> bool:
         pass
 
-    def all_keys(self) -> [str]:
+    def key(self) -> str:
         pass
 
 
 class _OpenCLResource(Resource):
     _platform_id: int
     _device_id: int
-    _keys: [str]
-    _primary_key: str
+    _key: str
 
     def __init__(self,
                  platform_id: int,
                  device_id: int) -> None:
         self._platform_id = platform_id
         self._device_id = device_id
-        self._keys = [
-            '/opencl/' + str(platform_id) + '/device/' + str(device_id)
-        ]
-        self._primary_key = self._keys[0]
+        self._key = '/opencl/' + str(platform_id) + '/device/' + str(device_id)
 
     def platform_id(self) -> int:
         return self._platform_id
@@ -49,27 +45,22 @@ class _OpenCLResource(Resource):
     def is_nvidia(self) -> bool:
         return False
 
-    def primary_key(self) -> str:
-        return self._primary_key
+    def is_cpu(self) -> bool:
+        return False
 
-    def all_keys(self) -> [str]:
-        return self._keys
+    def key(self) -> str:
+        return self._key
 
 
 class _CUDAResource(Resource):
     _id: int
-    _keys: [str]
-    _primary_key: str
+    _key: str
 
     def __init__(self,
                  device_id: int,
                  bus_id: str) -> None:
         self._id = device_id
-        self._keys = [
-            '/nvidia/' + str(device_id),
-            '/nvidia/bus/' + bus_id,
-        ]
-        self._primary_key = self._keys[0]
+        self._key = '/nvidia/' + str(device_id)
 
     def device_id(self) -> int:
         return self._id
@@ -77,15 +68,29 @@ class _CUDAResource(Resource):
     def is_nvidia(self) -> bool:
         return True
 
-    def primary_key(self) -> str:
-        return self._primary_key
+    def is_cpu(self) -> bool:
+        return False
 
-    def all_keys(self) -> [str]:
-        return self._keys
+    def key(self) -> str:
+        return self._key
+
+
+class _CPUResource(Resource):
+    def device_id(self) -> int:
+        return 0
+
+    def is_nvidia(self) -> bool:
+        return False
+
+    def is_cpu(self) -> bool:
+        return True
+
+    def key(self) -> str:
+        return '/cpu'
 
 
 def _gather_resources():
-    ret = []
+    ret = [_CPUResource()]
     ret += _gather_cuda_resources()
     ret += _gather_opencl_resources()
     return ret
@@ -159,11 +164,13 @@ class _ResourceManager:
         self._resources_by_key = dict()
         resources = _gather_resources()
         for resource in resources:
-            for key in resource.all_keys():
-                self._resources_by_key[key] = resource
+            self._resources_by_key[resource.key()] = resource
 
     def resource_by_key(self, key: str) -> Optional[Resource]:
         return self._resources_by_key[key]
+
+    def all_resources(self) -> [Resource]:
+        return self._resources_by_key.values()
 
 
 manager = _ResourceManager()

@@ -1,6 +1,7 @@
 package pl.edu.agh.xdcs.agentapi.impl;
 
 import io.grpc.stub.StreamObserver;
+import pl.edu.agh.xdcs.agents.Agent;
 import pl.edu.agh.xdcs.api.Logs;
 import pl.edu.agh.xdcs.api.OkResponse;
 import pl.edu.agh.xdcs.api.TaskReportingGrpc;

@@ -4,117 +4,156 @@
 </ng-container>
 <ng-template #loaded>
   <div class="container">
-    <div>
-      <h1>{{definition.name}}</h1>
+    <div class="mb-3">
+      <h1>Start a new task</h1>
+    </div>
+
+    <div class="row">
+      <div class="col-xl-6">
+        <h2>Details</h2>
+        <ng-container [ngTemplateOutlet]="details"></ng-container>
+      </div>
+      <div class="col-xl-6">
+        <h2>Parameters</h2>
+        <ng-container [ngTemplateOutlet]="parameters"></ng-container>
+      </div>
+    </div>
+
+    <h2>Resources</h2>
+    <ng-container [ngTemplateOutlet]="resourcesList"></ng-container>
+
+    <div class="mt-3">
       <button
-        class="btn btn-outline-success float-right"
+        class="btn btn-success float-right"
         type="button"
-        (click)="submitTask()">Run
+        (click)="submitTask()">
+        Start task
       </button>
       <div class="clearfix"></div>
     </div>
-    <div class="row">
-      <div class="col-md-6">
-        <label>ID</label>
-      </div>
-      <div class="col-md-6">
-        <p>{{deploymentId}}</p>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-md-6">
-        <label>Task type:</label>
-      </div>
-      <div class="col-md-6">
-        <p>{{deployment.config.type}}</p>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-md-6">
-        <label for="task-name">Task name:</label>
-      </div>
-      <div class="col-md-6">
+  </div>
+</ng-template>
+<app-footer></app-footer>
+
+<ng-template #details>
+  <table class="table w-100">
+    <tbody>
+    <tr>
+      <th scope="row">Definition name</th>
+      <td>{{definition.name}}</td>
+    </tr>
+    <tr>
+      <th scope="row">Deployment ID</th>
+      <td>{{deploymentId}}</td>
+    </tr>
+    <tr>
+      <th scope="row">Task type</th>
+      <td>{{deployment.config.type}}</td>
+    </tr>
+    <tr>
+      <th scope="row">Task name</th>
+      <td>
         <input class="form-control"
                id="task-name"
                [(ngModel)]="taskName"
                placeholder="Name"/>
-      </div>
-    </div>
+      </td>
+    </tr>
     <ng-container *ngIf="['opencl', 'cuda'].includes(deployment.config.type)">
+      <tr>
+        <th scope="row">Kernel file</th>
+        <td>{{deployment.config.kernelfile}}</td>
+      </tr>
+      <tr>
+        <th scope="row">Kernel name</th>
+        <td>{{deployment.config.kernelname}}</td>
+      </tr>
+    </ng-container>
+    </tbody>
+  </table>
+</ng-template>
+
+<ng-template #parameters>
+  <ng-container *ngIf="['opencl', 'cuda'].includes(deployment.config.type); else noParameters"
+                [ngTemplateOutlet]="parametersKernel"></ng-container>
+  <ng-template #noParameters>
+    <app-no-data message="No parameters" size="2em"></app-no-data>
+  </ng-template>
+</ng-template>
+
+<ng-template #parametersKernel>
+  <h2>Parameters</h2>
+  <ng-container *ngFor="let param of deployment.config.kernelparams">
+    <ng-container
+      [ngTemplateOutletContext]="{param: param}"
+      [ngTemplateOutlet]="kernelParamTemplate"></ng-container>
+  </ng-container>
+  <ng-template #kernelParamTemplate let-param="param">
+    <ng-container *ngIf="param.direction != 'out'">
       <div class="row">
-        <div class="col-md-6">
-          <label>Kernel file:</label>
+        <div class="col-md-3">
+          <label>{{param.name}}</label>
         </div>
-        <div class="col-md-6">
-          <p>{{deployment.config.kernelfile}}</p>
+        <div class="col-md-2">
+          <p>{{param.type}}</p>
         </div>
-      </div>
-      <div class="row">
-        <div class="col-md-6">
-          <label>Kernel name:</label>
+        <div class="col-md-2">
+          <p>{{param.direction}}</p>
         </div>
-        <div class="col-md-6">
-          <p>{{deployment.config.kernelname}}</p>
-        </div>
-      </div>
-      <h2>Parameters:</h2>
-      <ng-container *ngFor="let param of deployment.config.kernelparams">
-        <ng-container
-          [ngTemplateOutletContext]="{param: param}"
-          [ngTemplateOutlet]="kernelParamTemplate"></ng-container>
-      </ng-container>
-      <ng-template #kernelParamTemplate let-param="param">
-        <ng-container *ngIf="param.direction != 'out'">
-          <div class="row">
-            <div class="col-md-3">
-              <label>{{param.name}}</label>
-            </div>
-            <div class="col-md-2">
-              <p>{{param.type}}</p>
-            </div>
-            <div class="col-md-2">
-              <p>{{param.direction}}</p>
-            </div>
-            <ng-container *ngIf="param.type=='simple'">
-              <div class="col-md-4">
-                <input [(ngModel)]="param.value"
-                       class="form-control mb-3"
-                       id="conf-simple-param-value"
-                       placeholder="Value"
-                       required="required"
-                       type="text"/>
-              </div>
-            </ng-container>
-            <ng-container *ngIf="param.type=='pointer'">
-              <div class="col-md-4">
-                <app-upload-file
-                  [(file)]="this.files[param.name]"
-                  label="Enter param file"
-                ></app-upload-file>
-              </div>
-            </ng-container>
+        <ng-container *ngIf="param.type=='simple'">
+          <div class="col-md-4">
+            <input [(ngModel)]="param.value"
+                   class="form-control mb-3"
+                   id="conf-simple-param-value"
+                   placeholder="Value"
+                   required="required"
+                   type="text"/>
           </div>
         </ng-container>
-      </ng-template>
-      <ng-container *ngIf="!deployment.config.kernelparams">
-        <app-no-data message="No parameters" size="1em"></app-no-data>
-      </ng-container>
+        <ng-container *ngIf="param.type=='pointer'">
+          <div class="col-md-4">
+            <app-upload-file
+              [(file)]="this.files[param.name]"
+              label="Enter param file"></app-upload-file>
+          </div>
+        </ng-container>
+      </div>
     </ng-container>
-
-    <h2>Resources</h2>
-    <app-orderable-input-list
-      [data]="resources"
-      [emptyElement]="emptyResource">
-      <ng-template #content let-resource="element">
-        <select [(ngModel)]="resource.agent"
-                class="custom-select">
-          <option [ngValue]="null" disabled selected>Device</option>
-          <option
-            *ngFor="let t of nodes "
-            [ngValue]="t.id">{{ t.name }}</option>
-        </select>
-      </ng-template>
-    </app-orderable-input-list>
-  </div>
+  </ng-template>
+  <ng-container *ngIf="!deployment.config.kernelparams">
+    <app-no-data message="No parameters" size="1em"></app-no-data>
+  </ng-container>
 </ng-template>
-<app-footer></app-footer>
+
+<ng-template #resourcesList>
+  <ng-template #nodeSelectionTemplate let-nodeId="item" let-index="index">
+    <span>{{ nodeId }} ({{ nodes[index].name }})</span>
+  </ng-template>
+
+  <ng-template #resourceSelectionTemplate let-resourceKey="item" let-index="index">
+    <span>{{ resourceKey }}</span>
+  </ng-template>
+
+  <app-orderable-input-list
+    [data]="selectedResources"
+    [emptyElement]="emptyResource">
+    <ng-template #content let-resource="element">
+      <input [(ngModel)]="resource.agent"
+             [typeahead]="nodeIds"
+             [typeaheadItemTemplate]="nodeSelectionTemplate"
+             [typeaheadIsFirstItemActive]="false"
+             [typeaheadScrollable]="true"
+             [typeaheadSelectFirstItem]="false"
+             class="form-control"
+             placeholder="Node"/>
+      <input [(ngModel)]="resource.key"
+             [typeahead]="resourceKeysByNodeId(resource.agent)"
+             [typeaheadItemTemplate]="resourceSelectionTemplate"
+             [typeaheadIsFirstItemActive]="false"
+             [typeaheadScrollable]="true"
+             [typeaheadSelectFirstItem]="false"
+             class="form-control"
+             placeholder="Resource"/>
+    </ng-template>
+  </app-orderable-input-list>
+</ng-template>

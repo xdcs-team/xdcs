@@ -52,8 +52,7 @@ public class TaskReportingService {
         Task task = taskService.getTaskById(taskId)
                 .orElseThrow(() -> new RuntimeException("Runtime task not found: " + taskId));
 
-        AgentEntity currentAgentEntity = agentDao.findByName(currentAgent.getName())
-                .orElseThrow(() -> new DatabaseInconsistencyException("Agent: " + currentAgent.getName() + " not found."));
+        AgentEntity currentAgentEntity = getCurrentAgentEntity();
 
         linesList.forEach(line -> {
             logger.debug(currentAgent.getName() + " logged for task " + taskId +
@@ -71,13 +70,14 @@ public class TaskReportingService {
     public void reportTaskResult(TaskResultReport request, StreamObserver<OkResponse> responseObserver) {
         Task task = taskService.getTaskById(request.getTaskId())
                 .orElseThrow(() -> new RuntimeException("Task not found: " + request.getTaskId()));
+        AgentEntity currentAgentEntity = getCurrentAgentEntity();
         switch (request.getResult()) {
             case FAILED:
-                taskService.reportFailure(task);
+                taskService.finishTask(task, currentAgentEntity, Task.Result.ERRORED);
                 break;
 
             case SUCCEEDED:
-                taskService.reportCompletion(task);
+                taskService.finishTask(task, currentAgentEntity, Task.Result.FINISHED);
                 break;
 
             default:
@@ -91,5 +91,10 @@ public class TaskReportingService {
 
         responseObserver.onNext(OkResponse.newBuilder().build());
         responseObserver.onCompleted();
+    }
+
+    private AgentEntity getCurrentAgentEntity() {
+        return agentDao.findByName(currentAgent.getName())
+                .orElseThrow(() -> new DatabaseInconsistencyException("Agent: " + currentAgent.getName() + " not found."));
     }
 }

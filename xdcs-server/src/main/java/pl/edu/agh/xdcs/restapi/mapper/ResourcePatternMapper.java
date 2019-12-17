@@ -2,6 +2,7 @@ package pl.edu.agh.xdcs.restapi.mapper;
 
 import pl.edu.agh.xdcs.db.entity.ResourcePatternEntity;
 import pl.edu.agh.xdcs.restapi.model.ResourceDto;
+import pl.edu.agh.xdcs.util.WildcardPattern;
 
 import javax.inject.Inject;
 
@@ -9,14 +10,9 @@ import javax.inject.Inject;
  * @author Kamil Jarosz
  */
 public class ResourcePatternMapper {
-    @Inject
-    private ResourceTypeMapper resourceTypeMapper;
-
     public ResourceDto toRestEntity(ResourcePatternEntity pattern) {
         return new ResourceDto()
-                .agent(pattern.getAgentNamePattern().toString())
-                .key(pattern.getResourceKeyPattern().toString())
-                .type(resourceTypeMapper.toApiEntity(pattern.getType()))
-                .quantity(pattern.getQuantity());
+                .agent(WildcardPattern.parseLike(pattern.getAgentNameLike()).toString())
+                .key(WildcardPattern.parseLike(pattern.getResourceKeyLike()).toString());
     }
 }

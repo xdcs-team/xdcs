@@ -5,8 +5,16 @@ option java_package = "pl.edu.agh.xdcs.api";
 
 package xdcs.agent;
 
+import "xdcs_api/common.proto";
+
 message AgentRegistrationRequest {
     string displayName = 1;
+    repeated Resource resources = 2;
+
+    message Resource {
+        string key = 1;
+        ResourceType type = 2;
+    }
 }
 
 message AgentRegistrationResponse {
