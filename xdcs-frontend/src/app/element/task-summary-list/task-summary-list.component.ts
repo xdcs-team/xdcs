@@ -18,9 +18,7 @@ export class TaskSummaryListComponent implements OnInit {
   }
 
   private loadTasks() {
-    this.tasksService.getTasks({})
-      .subscribe(tasks => {
-        this.tasks = tasks.items.filter(task => task.state === 'queued' || task.state === 'in_progress');
-      });
+    this.tasksService.getActiveTasks({})
+      .subscribe(tasks => this.tasks = tasks.items);
   }
 }
