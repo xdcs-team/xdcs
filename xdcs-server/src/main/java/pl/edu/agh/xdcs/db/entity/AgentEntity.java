@@ -3,11 +3,14 @@ package pl.edu.agh.xdcs.db.entity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import pl.edu.agh.xdcs.db.conf.InetAddressConverter;
 
 import javax.persistence.Column;
+import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.Index;
 import javax.persistence.Table;
+import java.net.InetAddress;
 
 /**
  * @author Kamil Jarosz
@@ -28,6 +31,10 @@ public class AgentEntity extends BaseEntity {
 
     @Column(name = "STATUS_")
     private Status status;
+
+    @Column(name = "IP_ADDRESS_")
+    @Convert(converter = InetAddressConverter.class)
+    private InetAddress address;
 
     public enum Status {
         UNAVAILABLE,
