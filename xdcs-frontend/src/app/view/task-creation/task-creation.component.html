@@ -68,6 +68,41 @@
         <th scope="row">Kernel name</th>
         <td>{{deployment.config.kernelname}}</td>
       </tr>
+      <tr>
+        <th scope="row">Global work shape</th>
+        <td>
+          <div class="shape-dimensions">
+            <div class="shape-dimension" *ngFor="let i of [0, 1, 2]">
+                  <input class="form-control"
+                         type="number"
+                         min="1"
+                         required="required"
+                         [(ngModel)]="globalWorkShape[i]"
+                         placeholder="Dimension size"/>
+            </div>
+          </div>
+        </td>
+      </tr>
+      <tr>
+        <th scope="row">Local work shape</th>
+        <td>
+          <label>
+            <input type="checkbox" name="customLocalWorkShape" [(ngModel)]="customLocalWorkShape">
+            Specify custom local work shape
+          </label>
+          <div class="shape-dimensions">
+            <div class="shape-dimension" *ngFor="let i of [0, 1, 2]">
+                <input class="form-control"
+                       type="number"
+                       min="1"
+                       required="required"
+                       [disabled]="!customLocalWorkShape"
+                       [(ngModel)]="localWorkShape[i]"
+                       placeholder="Dimension size"/>
+            </div>
+          </div>
+        </td>
+      </tr>
     </ng-container>
     </tbody>
   </table>
@@ -90,21 +125,40 @@
       <th>Direction</th>
       <th>Value</th>
     </tr>
-    <tr *ngFor="let param of deployment.config.kernelparams">
+    <tr *ngFor="let param of deployment.config.kernelparams; let i = index">
       <td>{{param.name}}</td>
       <td>{{param.type}}</td>
       <td>{{param.direction}}</td>
       <td>
-        <ng-container *ngIf="param.type == 'simple'">
-          <input class="form-control"
+        <ng-container
+          *ngIf="param.type == 'simple' && param.direction != 'out' && reservedParamNames.includes(param.name)">
+          <input value="Reserved"
+                 class="form-control"
+                 placeholder="Value"
+                 required="required"
+                 disabled="disabled"
+                 type="text"/>
+        </ng-container>
+        <ng-container
+          *ngIf="param.type == 'simple' && param.direction != 'out' && !reservedParamNames.includes(param.name)">
+          <input [(ngModel)]="kernelArguments[i].value"
+                 class="form-control"
                  placeholder="Value"
                  required="required"
                  type="text"/>
         </ng-container>
-        <ng-container *ngIf="param.type == 'pointer'">
+        <ng-container *ngIf="param.type == 'pointer' && param.direction != 'out'">
           <app-upload-file
-            [(file)]="this.files[param.name]"
+            [(file)]="kernelArguments[i].file"
             label="Enter param file"></app-upload-file>
+        </ng-container>
+        <ng-container *ngIf="param.direction == 'out'">
+          <input class="form-control"
+                 placeholder="Size in bytes"
+                 min="1"
+                 required="required"
+                 [(ngModel)]="kernelArguments[i].size"
+                 type="number"/>
         </ng-container>
       </td>
     </tr>

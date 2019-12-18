@@ -1,8 +1,6 @@
 package pl.edu.agh.xdcs.db.dao;
 
-import pl.edu.agh.xdcs.db.DatabaseInconsistencyException;
 import pl.edu.agh.xdcs.db.entity.HistoricalTaskEntity;
-import pl.edu.agh.xdcs.db.entity.Task.Result;
 
 /**
  * @author Kamil Jarosz

@@ -4,9 +4,23 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { first } from 'rxjs/operators';
 import { NodesDto } from '../../../api/models/nodes-dto';
 import { NodesService } from '../../../api/services/nodes.service';
-import { DeploymentDto, NodeDto, ResourceDto, TaskCreationDto, TaskDefinitionDto } from '../../../api/models';
+import {
+  DeploymentDto,
+  NodeDto,
+  ResourceDto,
+  TaskCreationDto,
+  TaskDefinitionDto,
+} from '../../../api/models';
 import { DeploymentsService } from '../../../api/services/deployments.service';
 import { TasksService } from '../../../api/services/tasks.service';
+import { BlobUtils } from '../../utils/blob-utils';
+
+interface KernelArgument {
+  file?: File;
+  value?: string;
+  size?: number;
+  encodedValue: string;
+}
 
 @Component({
   selector: 'app-task-creation',
@@ -20,7 +34,12 @@ export class TaskCreationComponent {
   nodes: Array<NodeDto>;
   nodeIds: string[];
 
-  files: Map<string, File> = new Map([]);
+  kernelArguments: KernelArgument[] = [];
+  globalWorkShape: number[] = [1, 1, 1];
+  customLocalWorkShape = false;
+  localWorkShape: number[] = [1, 1, 1];
+
+  reservedParamNames: string[] = ['XDCS_AGENT_ID', 'XDCS_AGENT_COUNT'];
 
   taskName = '';
   emptyResource: ResourceDto = {
@@ -52,7 +71,7 @@ export class TaskCreationComponent {
       deploymentId: this.deploymentId,
     }).pipe(first()).subscribe(dp => {
       this.deployment = dp;
-      this.loadFilesMap();
+      this.initializeKernelArguments();
 
       this.taskDefinitionsService.getTaskDefinition({
         taskDefinitionId: dp.taskDefinitionId,
@@ -67,6 +86,20 @@ export class TaskCreationComponent {
       });
   }
 
+  initializeKernelArguments() {
+    if (this.deployment.config.kernelparams) {
+      Array.from(this.deployment.config.kernelparams).forEach((param) => {
+        if (param.type === 'pointer' && param.direction !== 'out') {
+          this.kernelArguments.push({ file: null, encodedValue: null });
+        } else if (param.type === 'pointer' && param.direction === 'out') {
+          this.kernelArguments.push({ size: 0, encodedValue: null });
+        } else {
+          this.kernelArguments.push({ value: '', encodedValue: null });
+        }
+      });
+    }
+  }
+
   resourceKeysByNodeId(nodeId: string): string[] {
     const node = this.nodes.find(n => n.id === nodeId);
     if (node) {
@@ -76,25 +109,68 @@ export class TaskCreationComponent {
     }
   }
 
-  loadFilesMap(): void {
-    if (this.deployment.config.kernelparams) {
-      this.deployment.config.kernelparams.forEach(param => {
-        if (param.type === 'pointer' && param.direction !== 'out') {
-          this.files.set(param.name, null);
-        }
-      });
-    }
+  submitTask() {
+    this.convertArguments()
+      .then(() => this.startTask());
   }
 
-  submitTask() {
+  convertArguments() {
+    return Promise.all(
+      this.kernelArguments.map(argument => this.convertArgument(argument))
+    );
+  }
+
+  convertArgument(argument: KernelArgument) {
+    if (argument.file !== undefined) {
+      return BlobUtils.toBinaryString(argument.file)
+        .then(convertedFile => {
+          argument.encodedValue = btoa(convertedFile);
+        });
+    } else if (argument.size !== undefined) {
+      argument.encodedValue = btoa(unescape(encodeURIComponent(argument.size.toString())));
+    } else if (argument.value !== undefined) {
+      argument.encodedValue = btoa(unescape(encodeURIComponent(argument.value)));
+    }
+    return Promise.resolve();
+  }
+
+  startTask() {
     this.tasksService.startTask({
       body: {
         name: this.taskName,
         deploymentId: this.deploymentId,
         resources: this.selectedResources,
+        kernelArguments: this.prepareKernelArguments(),
+        globalWorkShape: this.prepareGlobalWorkShape(),
+        localWorkShape: this.prepareLocalWorkShape(),
       } as TaskCreationDto,
     }).subscribe(() => {
       this.router.navigateByUrl('/');
     });
+  }
+
+  prepareKernelArguments(): string[] {
+    if (this.isOpenclOrCuda()) {
+      return this.kernelArguments.map(arg => arg.encodedValue);
+    }
+    return null;
+  }
+
+  prepareGlobalWorkShape(): number[] {
+    if (this.isOpenclOrCuda()) {
+      return this.globalWorkShape;
+    }
+    return null;
+  }
+
+  prepareLocalWorkShape(): number[] {
+    if (this.isOpenclOrCuda() && this.customLocalWorkShape) {
+      return this.localWorkShape;
+    }
+    return null;
+  }
+
+  isOpenclOrCuda(): boolean {
+    return ['opencl', 'cuda'].includes(this.deployment.config.type);
   }
 }

@@ -1,6 +1,7 @@
 package pl.edu.agh.xdcs.services.sweeper;
 
 import org.slf4j.Logger;
+import pl.edu.agh.xdcs.api.KernelConfig;
 import pl.edu.agh.xdcs.api.TaskRunnerGrpc;
 import pl.edu.agh.xdcs.api.TaskSubmit;
 import pl.edu.agh.xdcs.db.dao.QueuedTaskDao;
@@ -8,6 +9,8 @@ import pl.edu.agh.xdcs.db.dao.ResourceDao;
 import pl.edu.agh.xdcs.db.dao.ResourceDao.BoundResource;
 import pl.edu.agh.xdcs.db.dao.RuntimeTaskDao;
 import pl.edu.agh.xdcs.db.entity.AgentEntity;
+import pl.edu.agh.xdcs.db.entity.HistoricalTaskEntity;
+import pl.edu.agh.xdcs.db.entity.ObjectRefEntity;
 import pl.edu.agh.xdcs.db.entity.QueuedTaskEntity;
 import pl.edu.agh.xdcs.db.entity.RuntimeTaskEntity;
 import pl.edu.agh.xdcs.grpc.session.GrpcSessionManager;
@@ -23,6 +26,7 @@ import java.time.Duration;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 /**
@@ -101,12 +105,17 @@ public class TaskSweeper {
 
         String deploymentId = task.getDeploymentDescriptor().getDeploymentRef().getReferencedObjectId();
 
+        KernelConfig kernelConfig = null;
+        if (task.isKernelExecutionTask()) {
+            kernelConfig = prepareKernelConfig(task.getHistoricalTask());
+        }
+
         Collection<String> agentIps = getAgentIps(agents);
         int agentId = 0;
         for (AgentEntity agent : agents) {
             TaskRunnerGrpc.TaskRunnerBlockingStub taskRunner = sessionManager.getStubProducer(agent)
                     .getTaskRunnerBlockingStub();
-            taskRunner.submit(TaskSubmit.newBuilder()
+            TaskSubmit.Builder taskSubmit = TaskSubmit.newBuilder()
                     .setDeploymentId(deploymentId)
                     .setTaskId(task.getId())
                     .setAgentVariables(
@@ -116,10 +125,27 @@ public class TaskSweeper {
                                     .setAgentCount(agents.size())
                                     .setAgentId(agentId)
                                     .build()
-                    )
-                    .build());
+                    );
+            if (task.isKernelExecutionTask()) {
+                taskSubmit.setKernelConfig(kernelConfig);
+            }
+            taskRunner.submit(taskSubmit.build());
             agentId++;
         }
+    }
+
+    private KernelConfig prepareKernelConfig(HistoricalTaskEntity task) {
+        KernelConfig.Builder kernelConfig = KernelConfig.newBuilder()
+                .addAllGlobalWorkShape(task.getGlobalWorkShape().asList())
+                .addAllKernelArguments(
+                        new TreeMap<>(task.getKernelArguments())
+                                .values().stream()
+                                .map(ObjectRefEntity::getReferencedObjectId)
+                                .collect(Collectors.toList()));
+        if (task.getLocalWorkShape() != null) {
+            kernelConfig.addAllLocalWorkShape(task.getLocalWorkShape().asList());
+        }
+        return kernelConfig.build();
     }
 
     private Collection<String> getAgentIps(Set<AgentEntity> agents) {

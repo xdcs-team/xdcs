@@ -9,6 +9,16 @@ export class BlobUtils {
     });
   }
 
+  static toBinaryString(blob: Blob): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        resolve(reader.result as string);
+      };
+      reader.readAsBinaryString(blob);
+    });
+  }
+
   static downloadAsFile(blob: Blob, filename: string): void {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');

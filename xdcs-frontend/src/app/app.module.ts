@@ -77,6 +77,7 @@ import { NoValuePipe } from './pipes/no-value';
 import { FileAttributesSettingsComponent } from './modal/file-attributes-settings/file-attributes-settings.component';
 import { ImportFileComponent } from './modal/import-file/import-file.component';
 import { RenameFileComponent } from './modal/rename-file/rename-file.component';
+import { OrIdComponent } from './element/or-id/or-id.component';
 
 @NgModule({
   declarations: [
@@ -135,6 +136,7 @@ import { RenameFileComponent } from './modal/rename-file/rename-file.component';
     NoValuePipe,
     ImportFileComponent,
     RenameFileComponent,
+    OrIdComponent,
   ],
   entryComponents: [
     NewTaskDefinitionComponent,

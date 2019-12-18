@@ -18,8 +18,10 @@ import pl.edu.agh.xdcs.db.entity.ObjectRefEntity;
 import pl.edu.agh.xdcs.db.entity.QueuedTaskEntity;
 import pl.edu.agh.xdcs.db.entity.ResourcePatternEntity;
 import pl.edu.agh.xdcs.db.entity.Task;
+import pl.edu.agh.xdcs.db.entity.WorkShape;
 import pl.edu.agh.xdcs.events.AgentLoggedEvent;
 import pl.edu.agh.xdcs.or.ObjectRepository;
+import pl.edu.agh.xdcs.or.types.Blob;
 import pl.edu.agh.xdcs.or.types.Tree;
 import pl.edu.agh.xdcs.util.WildcardPattern;
 
@@ -27,8 +29,10 @@ import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 import java.time.Instant;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
@@ -140,6 +144,9 @@ public class TaskService {
         private String deploymentDescriptorId;
         private String name;
         private Set<ResourcePatternEntity> resourcePatterns = new HashSet<>();
+        private Map<Integer, ObjectRefEntity> kernelArguments;
+        private WorkShape globalWorkShape;
+        private WorkShape localWorkShape;
 
         public TaskCreationWizard name(String name) {
             this.name = Objects.requireNonNull(name);
@@ -162,6 +169,25 @@ public class TaskService {
             return this;
         }
 
+        public TaskCreationWizard addKernelArguments(List<byte[]> kernelArguments) {
+            this.kernelArguments = new HashMap<>();
+            for (int i = 0; i < kernelArguments.size(); i++) {
+                String objectId = objectRepository.store(Blob.fromBytes(kernelArguments.get(i)));
+                this.kernelArguments.put(i, ObjectRefEntity.of(objectId, Blob.class));
+            }
+            return this;
+        }
+
+        public TaskCreationWizard globalWorkShape(List<Integer> globalWorkShape) {
+            this.globalWorkShape = WorkShape.fromList(globalWorkShape);
+            return this;
+        }
+
+        public TaskCreationWizard localWorkShape(List<Integer> localWorkShape) {
+            this.localWorkShape = WorkShape.fromList(localWorkShape);
+            return this;
+        }
+
         public QueuedTaskEntity enqueue() {
             DeploymentDescriptorEntity descriptor = deploymentDescriptorDao.find(deploymentDescriptorId)
                     .orElseThrow(() -> new TaskCreationException("Unknown descriptor: " + deploymentDescriptorId));
@@ -169,6 +195,9 @@ public class TaskService {
             HistoricalTaskEntity historicalTask = new HistoricalTaskEntity();
             historicalTask.setName(name);
             historicalTask.setDeploymentDescriptor(descriptor);
+            historicalTask.setKernelArguments(kernelArguments);
+            historicalTask.setGlobalWorkShape(globalWorkShape);
+            historicalTask.setLocalWorkShape(localWorkShape);
             QueuedTaskEntity queuedTask = new QueuedTaskEntity(historicalTask.getId());
             queuedTask.setHistoricalTask(historicalTask);
             historicalTaskDao.persist(historicalTask);

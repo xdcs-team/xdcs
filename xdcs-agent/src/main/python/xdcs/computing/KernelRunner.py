@@ -1,8 +1,7 @@
 import abc
-from xdcs.parameters import KernelParameters
 
 
 class KernelRunner(abc.ABC):
     @staticmethod
-    def run(program, func_name, threads, program_parameters: KernelParameters, ctx):
+    def run(kernel_program, kernel_name, ctx, global_work_shape, local_work_shape, kernel_arguments):
         pass

@@ -16,18 +16,19 @@ class TaskRunner(TaskRunnerServicer):
         deployment_id = request.deploymentId
         task_id = request.taskId
         agent_variables = request.agentVariables
-        self.__execute_async(deployment_id, task_id, agent_variables)
+        kernel_config = request.kernelConfig
+        self.__execute_async(deployment_id, task_id, agent_variables, kernel_config)
         return OkResponse()
 
     @asynchronous
-    def __execute_async(self, deployment_id, task_id, agent_variables):
+    def __execute_async(self, deployment_id, task_id, agent_variables, kernel_config):
         try:
             with UploadingLogHandler(task_id) as log_handler:
                 log_handler = log_handler.combine(PassThroughLogHandler(logger))
                 log_handler.internal_log('Starting task execution: {}'.format(task_id))
                 log_handler.internal_log('Running with deployment: {}'.format(deployment_id))
                 try:
-                    xdcs().execute(RunTaskCmd(deployment_id, task_id, agent_variables, log_handler))
+                    xdcs().execute(RunTaskCmd(deployment_id, task_id, agent_variables, kernel_config, log_handler))
                 except Exception as e:
                     if log_handler:
                         log_handler.internal_log("Error while executing task: " + str(e), LogLevel.ERROR)

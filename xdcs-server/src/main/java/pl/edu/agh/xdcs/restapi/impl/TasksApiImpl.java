@@ -222,6 +222,18 @@ public class TasksApiImpl implements TasksApi {
             taskCreationWizard.addResourcePattern(agentPattern, keyPattern);
         });
 
+        if (taskCreation.getKernelArguments() != null) {
+            taskCreationWizard.addKernelArguments(taskCreation.getKernelArguments());
+        }
+
+        if (taskCreation.getGlobalWorkShape() != null) {
+            taskCreationWizard.globalWorkShape(taskCreation.getGlobalWorkShape());
+        }
+
+        if (taskCreation.getLocalWorkShape() != null) {
+            taskCreationWizard.localWorkShape(taskCreation.getLocalWorkShape());
+        }
+
         QueuedTaskEntity task = taskCreationWizard.enqueue();
         return RestUtils.created(resolver.of(TasksApi::getTask, task.getId()));
     }

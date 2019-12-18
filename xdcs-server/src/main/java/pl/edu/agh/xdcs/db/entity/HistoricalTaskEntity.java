@@ -6,14 +6,18 @@ import lombok.Setter;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.MapKeyColumn;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import java.time.Instant;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -38,6 +42,18 @@ public class HistoricalTaskEntity extends BaseEntity implements Task {
     @Column(name = "RESULT_")
     @Enumerated(EnumType.STRING)
     private Result result;
+
+    @MapKeyColumn(name="POSITION_")
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    private Map<Integer, ObjectRefEntity> kernelArguments;
+
+    @Column(name = "GLOBAL_WORK_SHAPE_")
+    @Convert(converter = WorkShape.Converter.class)
+    private WorkShape globalWorkShape;
+
+    @Column(name = "LOCAL_WORK_SHAPE_")
+    @Convert(converter = WorkShape.Converter.class)
+    private WorkShape localWorkShape;
 
     @Override
     public Type getType() {

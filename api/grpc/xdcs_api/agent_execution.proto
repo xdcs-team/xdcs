@@ -12,6 +12,7 @@ message TaskSubmit {
     string deploymentId = 1;
     string taskId = 2;
     AgentVariables agentVariables = 3;
+    KernelConfig kernelConfig = 4;
 
     message AgentVariables {
         /**
@@ -34,6 +35,23 @@ message TaskSubmit {
          */
         uint32 agentCount = 4;
     }
+}
+
+message KernelConfig {
+    /**
+     * List containing object references of kernelArgument values
+     */
+    repeated string kernelArguments = 1;
+
+    /**
+     * List containing global work shape in format: '[dim1,dim2,dim3]'
+     */
+    repeated uint32 globalWorkShape = 2;
+
+    /**
+     * List containing local work group shape in format: '[dim1,dim2,dim3]'
+     */
+    repeated uint32 localWorkShape = 3;
 }
 
 message TaskResultReport {

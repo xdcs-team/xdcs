@@ -1,6 +1,7 @@
 package pl.edu.agh.xdcs.db.entity;
 
 import java.time.Instant;
+import java.util.EnumSet;
 import java.util.Optional;
 
 /**
@@ -24,6 +25,12 @@ public interface Task {
     Optional<QueuedTaskEntity> asQueued();
 
     Instant getTimeCreated();
+
+    default boolean isKernelExecutionTask() {
+        return EnumSet.of(TaskType.CUDA, TaskType.OPENCL).contains(
+                this.getDeploymentDescriptor().getDefinition().getType()
+        );
+    }
 
     enum Type {
         HISTORICAL,

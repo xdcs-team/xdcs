@@ -35,8 +35,7 @@
     <ng-container *ngFor="let deployment of deploymentDescriptors.items">
       <tr>
         <th scope="row">
-          {{ deployment.id | sliceOrId }}
-          <app-copy-icon [content]="deployment.id"></app-copy-icon>
+          <app-or-id [id]="deployment.id"></app-or-id>
         </th>
         <td>
             <span tooltip="{{ deployment.timeDeployed | date:'medium' }}">
