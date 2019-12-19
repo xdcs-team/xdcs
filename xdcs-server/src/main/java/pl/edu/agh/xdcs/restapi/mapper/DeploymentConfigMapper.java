@@ -40,6 +40,7 @@ public class DeploymentConfigMapper {
         DeploymentConfigDto dto = new DeploymentConfigDto();
         dto.setType(typeMapper.toApiEntity(model.getType()));
         dto.setDockerfile(model.getDockerfile());
+        dto.setScriptfile(model.getScriptPath());
         dto.setAllocatePseudoTty(model.getAllocatePseudoTty());
         dto.setKernelfile(model.getKernelFile());
         dto.setKernelname(model.getKernelName());
