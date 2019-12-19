@@ -9,7 +9,6 @@ import pl.edu.agh.xdcs.restapi.mapper.DeploymentMapper;
 import pl.edu.agh.xdcs.restapi.mapper.FileDescriptionMapper;
 import pl.edu.agh.xdcs.restapi.mapper.FileTypeMapper;
 import pl.edu.agh.xdcs.restapi.mapper.TaskDefinitionMapper;
-import pl.edu.agh.xdcs.restapi.model.DeploymentConfigDto;
 import pl.edu.agh.xdcs.restapi.model.DeploymentDescriptorsDto;
 import pl.edu.agh.xdcs.restapi.model.FileDto;
 import pl.edu.agh.xdcs.restapi.model.TaskDefinitionDto;
@@ -165,12 +164,16 @@ public class TaskDefinitionsApiImpl implements TaskDefinitionsApi {
     }
 
     @Override
-    public Response setTaskDefinitionConfiguration(String taskDefinitionId, DeploymentConfigDto config) {
-        RestUtils.checkNotNull(config, "No body");
+    public Response updateTaskDefinition(String taskDefinitionId, TaskDefinitionDto taskDefinitionDto) {
+        RestUtils.checkNotNull(taskDefinitionDto, "No body");
         RestUtils.checkNotNull(taskDefinitionId, "No task definition");
+        if (!taskDefinitionId.equals(taskDefinitionDto.getId())) {
+            return RestUtils.badRequest("Expected task definition with id: " + taskDefinitionId +
+                    ", got: " + taskDefinitionDto.getId());
+        }
 
         TaskDefinitionEntity definition = findTaskDefinition(taskDefinitionId);
-        deploymentConfigMapper.updateModelEntity(config, definition);
+        deploymentConfigMapper.updateModelEntity(taskDefinitionDto, definition);
         return Response.noContent().build();
     }
 

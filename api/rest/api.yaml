@@ -123,6 +123,24 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/TaskDefinitionDto'
+    put:
+      tags:
+        - Task Definitions
+      operationId: updateTaskDefinition
+      parameters:
+        - in: path
+          name: taskDefinitionId
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TaskDefinitionDto'
+      responses:
+        204:
+          description: OK
 
   /task-definitions/{taskDefinitionId}/workspace:
     get:
@@ -276,24 +294,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/DeploymentConfigDto'
-    put:
-      tags:
-        - Task Definitions
-      operationId: setTaskDefinitionConfiguration
-      parameters:
-        - in: path
-          name: taskDefinitionId
-          required: true
-          schema:
-            type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/DeploymentConfigDto'
-      responses:
-        204:
-          description: OK
 
   /deployments:
     post:
