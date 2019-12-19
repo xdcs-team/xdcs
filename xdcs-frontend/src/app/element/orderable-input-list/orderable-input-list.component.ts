@@ -34,8 +34,10 @@ export class OrderableInputListComponent {
   }
 
   removeElement(param) {
-    const items = this.data;
-    this.data = items.filter(item => item !== param);
+    const index = this.data.indexOf(param);
+    if (index > -1) {
+      this.data.splice(index, 1);
+    }
   }
 
   moveElementUp(param) {

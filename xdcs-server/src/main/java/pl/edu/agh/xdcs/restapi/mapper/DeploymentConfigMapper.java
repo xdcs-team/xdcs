@@ -8,6 +8,7 @@ import pl.edu.agh.xdcs.or.types.Deployment;
 import pl.edu.agh.xdcs.or.types.Deployment.ConfigType;
 import pl.edu.agh.xdcs.restapi.model.DeploymentConfigDto;
 import pl.edu.agh.xdcs.restapi.model.DeploymentConfigDto.TypeEnum;
+import pl.edu.agh.xdcs.restapi.model.TaskDefinitionDto;
 
 import javax.inject.Inject;
 import java.util.Optional;
@@ -64,37 +65,46 @@ public class DeploymentConfigMapper {
         return deploymentConfigDto;
     }
 
-    public void updateModelEntity(DeploymentConfigDto rest, TaskDefinitionEntity model) {
-        if (rest.getType() != null) {
-            model.setType(typeMapper.toModelEntity(rest.getType()));
+    public void updateModelEntity(TaskDefinitionDto rest, TaskDefinitionEntity model) {
+        model.setName(rest.getName());
+        updateConfig(rest.getConfig(), model);
+    }
+
+    private void updateConfig(DeploymentConfigDto config, TaskDefinitionEntity model) {
+        if (config == null) {
+            return;
         }
 
-        if (rest.getDockerfile() != null) {
-            model.setDockerfile(rest.getDockerfile());
+        if (config.getType() != null) {
+            model.setType(typeMapper.toModelEntity(config.getType()));
         }
 
-        if (rest.getAllocatePseudoTty() != null) {
-            model.setAllocatePseudoTty(rest.getAllocatePseudoTty());
+        if (config.getDockerfile() != null) {
+            model.setDockerfile(config.getDockerfile());
         }
 
-        if (rest.getScriptfile() != null) {
-            model.setScriptPath(rest.getScriptfile());
+        if (config.getAllocatePseudoTty() != null) {
+            model.setAllocatePseudoTty(config.getAllocatePseudoTty());
         }
 
-        if (rest.getKernelfile() != null) {
-            model.setKernelFile(rest.getKernelfile());
+        if (config.getScriptfile() != null) {
+            model.setScriptPath(config.getScriptfile());
         }
 
-        if (rest.getKernelname() != null) {
-            model.setKernelName(rest.getKernelname());
+        if (config.getKernelfile() != null) {
+            model.setKernelFile(config.getKernelfile());
         }
 
-        if (rest.getKernelparams() != null) {
-            model.setKernelParams(kernelParamsMapper.toModelEntity(rest.getKernelparams()));
+        if (config.getKernelname() != null) {
+            model.setKernelName(config.getKernelname());
         }
 
-        if (rest.getArtifacts() != null) {
-            model.setArtifacts(rest.getArtifacts());
+        if (config.getKernelparams() != null) {
+            model.setKernelParams(kernelParamsMapper.toModelEntity(config.getKernelparams()));
+        }
+
+        if (config.getArtifacts() != null) {
+            model.setArtifacts(config.getArtifacts());
         }
     }
 }
