@@ -1,6 +1,7 @@
 package pl.edu.agh.xdcs.restapi.impl;
 
 import pl.edu.agh.xdcs.db.entity.LogLineEntity;
+import pl.edu.agh.xdcs.db.entity.ObjectRefEntity;
 import pl.edu.agh.xdcs.db.entity.QueuedTaskEntity;
 import pl.edu.agh.xdcs.db.entity.ResourcePatternEntity;
 import pl.edu.agh.xdcs.db.entity.Task;
@@ -35,6 +36,7 @@ import javax.ws.rs.core.UriInfo;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -96,7 +98,12 @@ public class TasksApiImpl implements TasksApi {
     public Response getTaskArtifacts(String taskId) {
         Task task = taskService.getTaskById(taskId)
                 .orElseThrow(() -> new NotFoundException("Task not found"));
-        String artifactTree = task.asHistorical().getArtifactTree().getReferencedObjectId();
+        ObjectRefEntity artifactTreeRef = task.asHistorical().getArtifactTree();
+        if (artifactTreeRef == null) {
+            return Response.ok(Collections.emptyList()).build();
+        }
+
+        String artifactTree = artifactTreeRef.getReferencedObjectId();
         List<ArtifactDto> artifacts = new ArrayList<>();
         objectRepositoryUtils.walkTree(artifactTree, (path, entry) -> {
             artifacts.add(new ArtifactDto()

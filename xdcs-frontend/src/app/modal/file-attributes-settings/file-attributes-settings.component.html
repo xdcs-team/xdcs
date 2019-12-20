@@ -1,0 +1,30 @@
+<app-modal #modal title="File attributes settings">
+  <ng-container *ngIf="!fileInfo;else availableFileInfo">
+    <app-loading></app-loading>
+  </ng-container>
+  <ng-template #availableFileInfo>
+    <label for="permissions" class="text">Access rights: </label>
+      <input type="text"
+             spellcheck="false"
+             id="permissions"
+             class="form-control mb-2 text-monospace"
+             required="required"
+             appAutoFocus
+             [pattern]="validPattern"
+             [class.ng-valid]="isValid()"
+             [(ngModel)]="fileInfo.permissions"
+             (keyup.enter)="doSubmit()"/>
+    <div class="mt-3">
+      <button
+        class="btn float-right btn-success"
+        [disabled]="!isValid()"
+        (click)="doSubmit()">Submit
+      </button>
+      <button
+        class="btn float-right btn-outline-secondary mr-2"
+        (click)="doCancel()">Cancel
+      </button>
+      <div class="clearfix"></div>
+    </div>
+  </ng-template>
+</app-modal>

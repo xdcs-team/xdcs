@@ -1,7 +1,6 @@
 import logging
 import os
 import shutil
-import stat
 import tempfile
 from os import path
 from typing import Optional
@@ -159,11 +158,6 @@ class RunScriptTaskCmd(_RunDeploymentBasedTaskCmd):
 
         if script_path is None:
             raise TaskExecutionException('Script path is empty')
-
-        # TODO: this is currently needed only because we cannot set
-        #   file permissions in GUI yet
-        st = os.stat(script_path)
-        os.chmod(script_path, st.st_mode | stat.S_IEXEC)
 
         env = dict(os.environ)
         env.update(self._agent_env_variables)

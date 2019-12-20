@@ -16,6 +16,7 @@ import { PathUtils } from '../../utils/path-utils';
 import { BlobUtils } from '../../utils/blob-utils';
 import { faAngleLeft } from '@fortawesome/free-solid-svg-icons';
 import { ImportFileComponent } from '../../modal/import-file/import-file.component';
+import { FileAttributesSettingsComponent } from '../../modal/file-attributes-settings/file-attributes-settings.component';
 
 @Component({
   selector: 'app-task-definition',
@@ -42,6 +43,8 @@ export class TaskDefinitionComponent implements OnInit {
   readonly openHandler = path => this.openFile(path);
   readonly createFileHandler = path => this.createFile(path);
   readonly createDirectoryHandler = path => this.createDirectory(path);
+  readonly editAttributesHandler = path => this.editAttributes(path);
+
   readonly importFileHandler = path => this.startImportingFile(path);
 
   constructor(private taskDefinitionsService: TaskDefinitionsService,
@@ -195,6 +198,13 @@ export class TaskDefinitionComponent implements OnInit {
       body: new Blob([this.editedFile.text]),
     }).toPromise().then(() => {
       this.editedFile.modified = false;
+    });
+  }
+
+  private editAttributes(path: any) {
+    return this.modalService.show(FileAttributesSettingsComponent, true, {
+      taskDefinitionId: this.taskDefinitionId,
+      path,
     });
   }
 }

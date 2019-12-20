@@ -18,6 +18,8 @@ import { Alert, GlobalAlertsService } from '../../services/global-alerts.service
 import { ClipboardService } from 'ngx-clipboard';
 import { ModalService } from '../../services/modal.service';
 import { PathUtils } from '../../utils/path-utils';
+import { NewTaskDefinitionComponent } from '../../modal/new-task-definition/new-task-definition.component';
+import { FileAttributesSettingsComponent } from '../../modal/file-attributes-settings/file-attributes-settings.component';
 
 @Component({
   selector: 'app-file-tree',
@@ -39,6 +41,9 @@ export class FileTreeComponent implements OnInit {
 
   @ViewChild(TreeComponent, { static: false })
   private treeComponent: TreeComponent;
+
+  @Input()
+  editAttributesHandler: (path: string) => Promise<void>;
 
   @Input()
   loadHandler: (path: string) => Promise<TreeDirectory>;
@@ -245,7 +250,8 @@ export class FileTreeComponent implements OnInit {
   }
 
   openAttributes(node: TreeNode) {
-
+    const path = this.nodeToPath(node);
+    this.editAttributesHandler(path);
   }
 
   refreshDirectory(path: string): void {

@@ -72,6 +72,7 @@ import { NodeDetailsComponent } from './element/node-details/node-details.compon
 import { NodeDetailsPreviewComponent } from './element/node-details-preview/node-details-preview.component';
 import { TaskDefinitionDetailsComponent } from './element/task-definition-details/task-definition-details.component';
 import { NoValuePipe } from './pipes/no-value';
+import { FileAttributesSettingsComponent } from './modal/file-attributes-settings/file-attributes-settings.component';
 import { ImportFileComponent } from './modal/import-file/import-file.component';
 
 @NgModule({
@@ -125,6 +126,7 @@ import { ImportFileComponent } from './modal/import-file/import-file.component';
     SliceOrIdPipe,
     NodeDetailsComponent,
     NodeDetailsPreviewComponent,
+    FileAttributesSettingsComponent,
     TaskDefinitionDetailsComponent,
     NoValuePipe,
     ImportFileComponent,
@@ -135,6 +137,7 @@ import { ImportFileComponent } from './modal/import-file/import-file.component';
     ConfirmationComponent,
     DeployDefinitionComponent,
     CreateFileComponent,
+    FileAttributesSettingsComponent,
     ImportFileComponent,
   ],
   imports: [
