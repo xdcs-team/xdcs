@@ -1,18 +1,16 @@
 package pl.edu.agh.xdcs.services.sweeper;
 
 import org.slf4j.Logger;
-import pl.edu.agh.xdcs.agents.Agent;
-import pl.edu.agh.xdcs.agents.AgentManager;
 import pl.edu.agh.xdcs.api.TaskRunnerGrpc;
 import pl.edu.agh.xdcs.api.TaskSubmit;
 import pl.edu.agh.xdcs.db.dao.QueuedTaskDao;
-import pl.edu.agh.xdcs.db.dao.ResourcePatternDao;
+import pl.edu.agh.xdcs.db.dao.ResourceDao;
+import pl.edu.agh.xdcs.db.dao.ResourceDao.BoundResource;
 import pl.edu.agh.xdcs.db.dao.RuntimeTaskDao;
+import pl.edu.agh.xdcs.db.entity.AgentEntity;
 import pl.edu.agh.xdcs.db.entity.QueuedTaskEntity;
-import pl.edu.agh.xdcs.db.entity.ResourcePatternEntity;
 import pl.edu.agh.xdcs.db.entity.RuntimeTaskEntity;
 import pl.edu.agh.xdcs.grpc.session.GrpcSessionManager;
-import pl.edu.agh.xdcs.util.WildcardPattern;
 
 import javax.ejb.Asynchronous;
 import javax.ejb.Schedule;
@@ -24,10 +22,8 @@ import java.net.InetAddress;
 import java.time.Duration;
 import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * @author Kamil Jarosz
@@ -47,13 +43,10 @@ public class TaskSweeper {
     private RuntimeTaskDao runtimeTaskDao;
 
     @Inject
-    private AgentManager agentManager;
-
-    @Inject
     private GrpcSessionManager sessionManager;
 
     @Inject
-    private ResourcePatternDao resourcePatternDao;
+    private ResourceDao resourceDao;
 
     @Asynchronous
     public void startSweeping() {
@@ -82,39 +75,26 @@ public class TaskSweeper {
     }
 
     private void checkTask(QueuedTaskEntity task) {
+        RuntimeTaskEntity runtimeTask = new RuntimeTaskEntity(task.getId());
         logger.trace("Checking task " + task.getId());
 
-        List<ResourcePatternEntity> resourcePatterns = resourcePatternDao.findForTask(task.getId());
-        for (ResourcePatternEntity resourcePattern : resourcePatterns) {
-            WildcardPattern agentNamePattern = resourcePattern.getAgentNamePattern();
-            Optional<Agent> matchedAgent = agentManager.getAllAgents()
-                    .stream()
-                    .filter(Agent::isReady)
-                    .filter(agent -> agentNamePattern.matches(agent.getName()))
-                    .findAny();
-            if (!matchedAgent.isPresent()) {
-                logger.debug("Task " + task.getId() + " lacks an agent with name '" + agentNamePattern + "'");
-                return;
-            }
+        List<BoundResource> resources;
+        try {
+            resources = resourceDao.lockResources(task, runtimeTask);
+        } catch (ResourceDao.ResourceLockFailedException e) {
+            logger.debug("Task " + task.getId() + " lacks free resources: " + e.getFailedResources());
+            return;
         }
 
-        Set<Agent> agents = resourcePatterns.stream()
-                .map(ResourcePatternEntity::getAgentNamePattern)
-                .flatMap(pattern -> agentManager.getAllAgents()
-                        .stream()
-                        .filter(agent -> pattern.matches(agent.getName()))
-                        .findAny()
-                        .map(Stream::of)
-                        .orElseGet(Stream::empty))
-                .collect(Collectors.toSet());
-
-        startTask(task, agents);
+        startTask(task, runtimeTask, resources);
     }
 
-    private void startTask(QueuedTaskEntity task, Set<Agent> agents) {
-        logger.info("Starting task " + task.getId() + " on agents " + agents);
+    private void startTask(QueuedTaskEntity task, RuntimeTaskEntity runtimeTask, List<BoundResource> resources) {
+        logger.info("Starting task " + task.getId() + " on resources " + resources);
+        Set<AgentEntity> agents = resources.stream()
+                .map(res -> res.getResource().getOwner())
+                .collect(Collectors.toSet());
 
-        RuntimeTaskEntity runtimeTask = new RuntimeTaskEntity(task.getId());
         runtimeTask.setHistoricalTask(task.getHistoricalTask());
         runtimeTaskDao.persist(runtimeTask);
         queuedTaskDao.remove(task);
@@ -123,7 +103,7 @@ public class TaskSweeper {
 
         Collection<String> agentIps = getAgentIps(agents);
         int agentId = 0;
-        for (Agent agent : agents) {
+        for (AgentEntity agent : agents) {
             TaskRunnerGrpc.TaskRunnerBlockingStub taskRunner = sessionManager.getStubProducer(agent)
                     .getTaskRunnerBlockingStub();
             taskRunner.submit(TaskSubmit.newBuilder()
@@ -142,9 +122,9 @@ public class TaskSweeper {
         }
     }
 
-    private Collection<String> getAgentIps(Set<Agent> agents) {
+    private Collection<String> getAgentIps(Set<AgentEntity> agents) {
         return agents.stream()
-                .map(Agent::getAddress)
+                .map(AgentEntity::getAddress)
                 .map(InetAddress::getHostAddress)
                 .collect(Collectors.toList());
     }

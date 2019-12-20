@@ -3,7 +3,6 @@ package pl.edu.agh.xdcs.restapi.impl;
 import pl.edu.agh.xdcs.db.entity.LogLineEntity;
 import pl.edu.agh.xdcs.db.entity.QueuedTaskEntity;
 import pl.edu.agh.xdcs.db.entity.ResourcePatternEntity;
-import pl.edu.agh.xdcs.db.entity.ResourceType;
 import pl.edu.agh.xdcs.db.entity.Task;
 import pl.edu.agh.xdcs.or.ObjectRepository;
 import pl.edu.agh.xdcs.or.types.Tree;
@@ -168,6 +167,14 @@ public class TasksApiImpl implements TasksApi {
     @Override
     @SweepAfter(message = "after task started by REST")
     public Response startTask(TaskCreationDto taskCreation) {
+        if (taskCreation.getName().isEmpty()) {
+            throw RestUtils.throwBadRequest("Task name is empty");
+        }
+
+        if (taskCreation.getDeploymentId().isEmpty()) {
+            throw RestUtils.throwBadRequest("Deployment ID is empty");
+        }
+
         TaskService.TaskCreationWizard taskCreationWizard = taskService.newTask()
                 .name(taskCreation.getName())
                 .deploymentId(taskCreation.getDeploymentId());
@@ -177,10 +184,21 @@ public class TasksApiImpl implements TasksApi {
         }
 
         taskCreation.getResources().forEach(res -> {
-            ResourceType type = resourceTypeMapper.toModelEntity(res.getType());
+            if (res.getType() != null) {
+                throw RestUtils.throwBadRequest("Cannot select type");
+            }
+
+            if (res.getAgent().isEmpty()) {
+                throw RestUtils.throwBadRequest("Agent pattern is empty");
+            }
+
+            if (res.getKey().isEmpty()) {
+                throw RestUtils.throwBadRequest("Resource key pattern is empty");
+            }
+
             WildcardPattern agentPattern = WildcardPattern.parse(res.getAgent());
             WildcardPattern keyPattern = WildcardPattern.parse(res.getKey());
-            taskCreationWizard.addResourcePattern(type, agentPattern, keyPattern, res.getQuantity());
+            taskCreationWizard.addResourcePattern(agentPattern, keyPattern);
         });
 
         QueuedTaskEntity task = taskCreationWizard.enqueue();

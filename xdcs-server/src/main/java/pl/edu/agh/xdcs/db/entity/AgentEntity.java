@@ -8,6 +8,8 @@ import pl.edu.agh.xdcs.db.conf.InetAddressConverter;
 import javax.persistence.Column;
 import javax.persistence.Convert;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.Index;
 import javax.persistence.Table;
 import java.net.InetAddress;
@@ -30,6 +32,7 @@ public class AgentEntity extends BaseEntity {
     private String displayName;
 
     @Column(name = "STATUS_")
+    @Enumerated(value = EnumType.STRING)
     private Status status;
 
     @Column(name = "IP_ADDRESS_")

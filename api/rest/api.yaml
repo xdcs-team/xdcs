@@ -581,6 +581,10 @@ components:
             - unavailable
             - ready
             - busy
+        resources:
+          type: array
+          items:
+            $ref: '#/components/schemas/ResourceDto'
 
     NodeDetailsDto:
       type: object
@@ -911,13 +915,9 @@ components:
             - cpu
             - cuda
             - opencl
-        quantity:
-          type: integer
       required:
         - agent
         - key
-        - type
-        - quantity
 
     TaskConditionsDto:
       type: object

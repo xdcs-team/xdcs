@@ -1,10 +1,10 @@
 package pl.edu.agh.xdcs.services;
 
-import com.google.common.base.Preconditions;
 import pl.edu.agh.xdcs.db.dao.DeploymentDescriptorDao;
 import pl.edu.agh.xdcs.db.dao.HistoricalTaskDao;
 import pl.edu.agh.xdcs.db.dao.LogLineDao;
 import pl.edu.agh.xdcs.db.dao.QueuedTaskDao;
+import pl.edu.agh.xdcs.db.dao.ResourceDao;
 import pl.edu.agh.xdcs.db.dao.ResourcePatternDao;
 import pl.edu.agh.xdcs.db.dao.RuntimeTaskDao;
 import pl.edu.agh.xdcs.db.dao.TaskDao;
@@ -15,7 +15,6 @@ import pl.edu.agh.xdcs.db.entity.LogLineEntity;
 import pl.edu.agh.xdcs.db.entity.ObjectRefEntity;
 import pl.edu.agh.xdcs.db.entity.QueuedTaskEntity;
 import pl.edu.agh.xdcs.db.entity.ResourcePatternEntity;
-import pl.edu.agh.xdcs.db.entity.ResourceType;
 import pl.edu.agh.xdcs.db.entity.Task;
 import pl.edu.agh.xdcs.events.AgentLoggedEvent;
 import pl.edu.agh.xdcs.or.ObjectRepository;
@@ -67,6 +66,9 @@ public class TaskService {
     @Inject
     private Event<AgentLoggedEvent> agentLoggedEvent;
 
+    @Inject
+    private ResourceDao resourceDao;
+
     public Optional<Task> getTaskById(String taskId) {
         return taskDao.findById(taskId);
     }
@@ -91,17 +93,16 @@ public class TaskService {
         return new TaskCreationWizard();
     }
 
-    public void reportCompletion(Task task) {
-        finishTask(task, Task.Result.FINISHED);
-    }
+    public void finishTask(Task task, AgentEntity agentEntity, Task.Result result) {
+        resourceDao.unlockResources(task.getId(), agentEntity);
+        if (!resourceDao.hasAnyLocks(task.getId())) {
+            runtimeTaskDao.removeById(task.getId());
+        }
 
-    public void reportFailure(Task task) {
-        finishTask(task, Task.Result.ERRORED);
-    }
-
-    private void finishTask(Task task, Task.Result result) {
-        runtimeTaskDao.removeById(task.getId());
-        task.asHistorical().setResult(result);
+        Optional<Task.Result> currentResult = task.asHistorical().getResult();
+        if (result == Task.Result.ERRORED || !currentResult.isPresent()) {
+            task.asHistorical().setResult(result);
+        }
     }
 
     public void saveLog(Task task, Instant time, LogLineEntity.LogType type, byte[] contents, AgentEntity agent) {
@@ -149,17 +150,11 @@ public class TaskService {
         }
 
         public TaskCreationWizard addResourcePattern(
-                ResourceType type,
                 WildcardPattern agentPattern,
-                WildcardPattern keyPattern,
-                int quantity) {
-            Preconditions.checkArgument(quantity > 0);
-
+                WildcardPattern keyPattern) {
             ResourcePatternEntity pattern = new ResourcePatternEntity();
-            pattern.setType(type);
-            pattern.setAgentNamePattern(agentPattern);
-            pattern.setQuantity(quantity);
-            pattern.setResourceKeyPattern(keyPattern);
+            pattern.setAgentNameLike(agentPattern.toSqlLike());
+            pattern.setResourceKeyLike(keyPattern.toSqlLike());
             resourcePatterns.add(pattern);
             return this;
         }

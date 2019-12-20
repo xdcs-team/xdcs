@@ -1,6 +1,7 @@
 package pl.edu.agh.xdcs.grpc.session;
 
 import pl.edu.agh.xdcs.agents.Agent;
+import pl.edu.agh.xdcs.db.entity.AgentEntity;
 import pl.edu.agh.xdcs.grpc.context.SessionContext;
 import pl.edu.agh.xdcs.grpc.ee.StubProducer;
 import pl.edu.agh.xdcs.grpc.events.AgentConnectedEvent;
@@ -34,6 +35,11 @@ public class GrpcSessionManager {
     }
 
     public StubProducer getStubProducer(Agent agent) {
+        return new StubProducer(getSession(agent.getName())
+                .orElseThrow(() -> new RuntimeException("Agent " + agent.getName() + " doesn't have an active session")));
+    }
+
+    public StubProducer getStubProducer(AgentEntity agent) {
         return new StubProducer(getSession(agent.getName())
                 .orElseThrow(() -> new RuntimeException("Agent " + agent.getName() + " doesn't have an active session")));
     }
