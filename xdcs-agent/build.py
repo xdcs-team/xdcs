@@ -16,7 +16,7 @@ use_plugin("python.flake8")
 use_plugin("exec")
 
 name = "xdcs-agent"
-version = "0.1.0.dev"
+version = "0.1.0"
 default_task = "publish"
 long_description = "XDCS Distributed Computing Software"
 authors = [Author('Kamil Jarosz', 'kjarosz@student.agh.edu.pl'),
