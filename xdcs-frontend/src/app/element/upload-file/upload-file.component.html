@@ -1,12 +1,13 @@
-<div class="form-group">
-  <label *ngIf="label" for="file-uploader">{{ label }}</label>
+<div class="custom-file w-100">
   <input ngf
          id="file-uploader"
-         class="form-control-file"
+         class="custom-file-input"
          [multiple]="multiple ? 'multiple' : null"
          type="file"
          [accept]="accept"
          [files]="files"
          (filesChange)="filesChanged($event)"
          [maxSize]="maxSize"/>
+  <label class="custom-file-label file-label"
+         for="file-uploader">{{ filenames ? filenames : label }}</label>
 </div>

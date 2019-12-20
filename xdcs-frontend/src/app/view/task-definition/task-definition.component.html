@@ -19,7 +19,8 @@
         <div class="flex-grow-1">
           <app-file-tree-toolbar
             (createFile)="createFile('/')"
-            (createDirectory)="createDirectory('/')"></app-file-tree-toolbar>
+            (createDirectory)="createDirectory('/')"
+            (importFile)="startImportingFile('/')"></app-file-tree-toolbar>
         </div>
       </div>
       <div class="split-area-container">
@@ -28,6 +29,7 @@
           [moveHandler]="moveHandler"
           [deleteHandler]="deleteHandler"
           [openHandler]="openHandler"
+          [importFileHandler]="importFileHandler"
           [createDirectoryHandler]="createDirectoryHandler"
           [createFileHandler]="createFileHandler"></app-file-tree>
       </div>

@@ -1,0 +1,28 @@
+<app-modal #modal title="Import file">
+  <div class="input-group mb-3">
+    <div *ngIf="parent" class="input-group-prepend">
+      <span class="input-group-text">{{ parent }}</span>
+    </div>
+    <input type="text"
+           class="form-control"
+           placeholder="Name"
+           aria-label="Name"
+           appAutoFocus
+           [(ngModel)]="filename"/>
+  </div>
+
+  <div class="input-group mb-3">
+    <app-upload-file
+      [(file)]="file"
+      (fileChange)="onChange()"
+      label="Import file"></app-upload-file>
+  </div>
+
+  <input
+    type="submit"
+    class="btn btn-primary float-right"
+    [disabled]="!isValid()"
+    (click)="doSubmit()"
+    value="Import"/>
+  <div class="clearfix"></div>
+</app-modal>
