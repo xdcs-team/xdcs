@@ -1,9 +1,10 @@
 import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
-import { LogDto, TaskDto } from '../../../api/models';
+import { ArtifactDto, LogDto, TaskDto } from '../../../api/models';
 import { first } from 'rxjs/operators';
 import { WebSocketSubject } from 'rxjs/internal-compatibility';
 import { LogLine } from '../log-preview/log-preview.component';
 import { LogHandlingService } from '../../../api/services/log-handling.service';
+import { TasksService } from '../../../api/services/tasks.service';
 
 @Component({
   selector: 'app-task-result-preview',
@@ -13,15 +14,15 @@ import { LogHandlingService } from '../../../api/services/log-handling.service';
 export class TaskResultPreviewComponent implements OnInit, OnChanges {
   currentLineNumber = 0;
 
+  artifacts: ArtifactDto[] = null;
   logLines: LogLine[];
-  taskId: string;
   logsWebSocket: WebSocketSubject<LogDto>;
   @Input()
   task: TaskDto;
   tagWidth = 0;
 
-
-  constructor(private loggingService: LogHandlingService) {
+  constructor(private loggingService: LogHandlingService,
+              private tasksService: TasksService) {
   }
 
   ngOnInit() {
@@ -44,6 +45,10 @@ export class TaskResultPreviewComponent implements OnInit, OnChanges {
         this.logLines.push(this.mapToLogLine(log));
       });
     });
+
+    this.tasksService.getTaskArtifacts({
+      taskId: this.task.id,
+    }).pipe(first()).subscribe(artifacts => this.artifacts = artifacts);
   }
 
   private updateTagWidth(log: LogDto) {

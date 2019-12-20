@@ -5,11 +5,15 @@ import pl.edu.agh.xdcs.db.entity.QueuedTaskEntity;
 import pl.edu.agh.xdcs.db.entity.ResourcePatternEntity;
 import pl.edu.agh.xdcs.db.entity.ResourceType;
 import pl.edu.agh.xdcs.db.entity.Task;
+import pl.edu.agh.xdcs.or.ObjectRepository;
+import pl.edu.agh.xdcs.or.types.Tree;
+import pl.edu.agh.xdcs.or.util.ObjectRepositoryUtils;
 import pl.edu.agh.xdcs.restapi.TasksApi;
 import pl.edu.agh.xdcs.restapi.mapper.LogLineMapper;
 import pl.edu.agh.xdcs.restapi.mapper.ResourcePatternMapper;
 import pl.edu.agh.xdcs.restapi.mapper.ResourceTypeMapper;
 import pl.edu.agh.xdcs.restapi.mapper.TaskMapper;
+import pl.edu.agh.xdcs.restapi.model.ArtifactDto;
 import pl.edu.agh.xdcs.restapi.model.LogsDto;
 import pl.edu.agh.xdcs.restapi.model.TaskConditionsDto;
 import pl.edu.agh.xdcs.restapi.model.TaskCreationDto;
@@ -31,6 +35,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -60,6 +65,12 @@ public class TasksApiImpl implements TasksApi {
     @Inject
     private WsUriResolver wsUriResolver;
 
+    @Inject
+    private ObjectRepositoryUtils objectRepositoryUtils;
+
+    @Inject
+    private ObjectRepository objectRepository;
+
     @Context
     private UriInfo uriInfo;
 
@@ -68,6 +79,33 @@ public class TasksApiImpl implements TasksApi {
         Task task = taskService.getTaskById(taskId)
                 .orElseThrow(() -> new NotFoundException("Task not found"));
         return Response.ok(taskMapper.toRestEntity(task)).build();
+    }
+
+    @Override
+    public Response getTaskArtifactContent(String taskId, String path) {
+        Task task = taskService.getTaskById(taskId)
+                .orElseThrow(() -> new NotFoundException("Task not found"));
+        String artifactTree = task.asHistorical().getArtifactTree().getReferencedObjectId();
+        Tree.Entry artifactEntry = objectRepositoryUtils.getChildEntry(artifactTree, path)
+                .orElseThrow(() -> new NotFoundException("Artifact not found"));
+        return Response.ok(objectRepository.cat(artifactEntry.getObjectId()))
+                .header("Content-Disposition", "attachment; filename=\"" + artifactEntry.getName() + "\"")
+                .build();
+    }
+
+    @Override
+    public Response getTaskArtifacts(String taskId) {
+        Task task = taskService.getTaskById(taskId)
+                .orElseThrow(() -> new NotFoundException("Task not found"));
+        String artifactTree = task.asHistorical().getArtifactTree().getReferencedObjectId();
+        List<ArtifactDto> artifacts = new ArrayList<>();
+        objectRepositoryUtils.walkTree(artifactTree, (path, entry) -> {
+            artifacts.add(new ArtifactDto()
+                    .path(path)
+                    .href(resolver.of(TasksApi::getTaskArtifactContent, taskId) +
+                            "?path=" + resolver.escapeQueryParam(path)));
+        });
+        return Response.ok(artifacts).build();
     }
 
     @Override

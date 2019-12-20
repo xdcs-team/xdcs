@@ -383,10 +383,6 @@ paths:
         - Tasks
       operationId: getTasks
       parameters:
-#        - name: state
-#          in: query
-#          schema:
-#            $ref: '#/components/schemas/TaskState'
         - name: from
           in: query
           schema:
@@ -512,6 +508,52 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/LogsDto'
+
+  /tasks/{taskId}/artifacts:
+    get:
+      tags:
+        - Tasks
+      operationId: getTaskArtifacts
+      parameters:
+        - in: path
+          name: taskId
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ArtifactDto'
+
+  /tasks/{taskId}/artifacts/content:
+    get:
+      tags:
+        - Tasks
+      operationId: getTaskArtifactContent
+      parameters:
+        - in: path
+          name: taskId
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
 
 components:
   schemas:
@@ -919,3 +961,11 @@ components:
         - time
         - type
         - contents
+
+    ArtifactDto:
+      type: object
+      properties:
+        path:
+          type: string
+        href:
+          type: string

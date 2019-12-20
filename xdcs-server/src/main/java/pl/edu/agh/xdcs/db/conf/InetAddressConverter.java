@@ -16,12 +16,14 @@ public class InetAddressConverter implements AttributeConverter<InetAddress, Str
 
     @Override
     public String convertToDatabaseColumn(InetAddress inetAddress) {
+        if(inetAddress == null) return null;
         return inetAddress.getHostAddress();
 
     }
 
     @Override
     public InetAddress convertToEntityAttribute(String s) {
+        if(s == null) return null;
         try {
             return InetAddress.getByName(s);
         } catch (UnknownHostException e) {
