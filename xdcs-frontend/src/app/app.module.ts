@@ -72,6 +72,7 @@ import { NodeDetailsComponent } from './element/node-details/node-details.compon
 import { NodeDetailsPreviewComponent } from './element/node-details-preview/node-details-preview.component';
 import { TaskDefinitionDetailsComponent } from './element/task-definition-details/task-definition-details.component';
 import { NoValuePipe } from './pipes/no-value';
+import { ImportFileComponent } from './modal/import-file/import-file.component';
 
 @NgModule({
   declarations: [
@@ -126,6 +127,7 @@ import { NoValuePipe } from './pipes/no-value';
     NodeDetailsPreviewComponent,
     TaskDefinitionDetailsComponent,
     NoValuePipe,
+    ImportFileComponent,
   ],
   entryComponents: [
     NewTaskDefinitionComponent,
@@ -133,6 +135,7 @@ import { NoValuePipe } from './pipes/no-value';
     ConfirmationComponent,
     DeployDefinitionComponent,
     CreateFileComponent,
+    ImportFileComponent,
   ],
   imports: [
     BrowserModule,

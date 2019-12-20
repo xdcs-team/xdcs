@@ -10,7 +10,7 @@ import {
   faFolder,
   faFolderOpen,
   faLink,
-  faPlus,
+  faPlus, faUpload,
   faWrench,
 } from '@fortawesome/free-solid-svg-icons';
 import { faClipboard as farClipboard, faEdit as farEdit, faTrashAlt as farTrashAlt, } from '@fortawesome/free-regular-svg-icons';
@@ -35,6 +35,7 @@ export class FileTreeComponent implements OnInit {
   faPlus = faPlus;
   faFolder = faFolder;
   faFile = faFile;
+  faUpload = faUpload;
 
   @ViewChild(TreeComponent, { static: false })
   private treeComponent: TreeComponent;
@@ -56,6 +57,9 @@ export class FileTreeComponent implements OnInit {
 
   @Input()
   createDirectoryHandler: (path: string) => void;
+
+  @Input()
+  importFileHandler: (path: string) => void;
 
   @Input()
   openHandler: (path: string) => void;
@@ -233,6 +237,11 @@ export class FileTreeComponent implements OnInit {
   startCreatingDirectory(node: TreeNode) {
     const path = this.nodeToPath(node);
     this.createDirectoryHandler(path);
+  }
+
+  startImportingFile(node: TreeNode) {
+    const path = this.nodeToPath(node);
+    this.importFileHandler(path);
   }
 
   openAttributes(node: TreeNode) {

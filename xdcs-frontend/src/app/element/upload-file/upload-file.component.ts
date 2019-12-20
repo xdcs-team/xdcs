@@ -6,6 +6,8 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
   styleUrls: ['./upload-file.component.less'],
 })
 export class UploadFileComponent {
+  filenames: string[];
+
   @Input()
   label: string = null;
 
@@ -40,10 +42,13 @@ export class UploadFileComponent {
 
   }
 
-  filesChanged($event: File[]) {
-    if (!this.multiple && $event.length === 1) {
-      this.fileChange.emit($event[0]);
+  filesChanged(files: File[]) {
+    if (!this.multiple) {
+      files = [files[files.length - 1]];
+      this.fileChange.emit(files[0]);
     }
-    this.filesChange.emit($event);
+    this.filesChange.emit(files);
+
+    this.filenames = files.map(file => file.name);
   }
 }

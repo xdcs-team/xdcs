@@ -1,4 +1,4 @@
-<app-toolbar [buttons]="[buttonCreateDirectory, buttonCreateFile]">
+<app-toolbar [buttons]="[buttonImportFile, buttonCreateDirectory, buttonCreateFile]">
   <ng-template #buttonCreateFile>
     <button class="btn btn-icon text-primary"
             (click)="doCreateFile()"
@@ -11,6 +11,12 @@
             (click)="doCreateDirectory()"
             [disabled]="!canCreateFile">
       <fa-icon [icon]="faFolderPlus"></fa-icon>
+    </button>
+  </ng-template>
+  <ng-template #buttonImportFile>
+    <button class="btn btn-icon text-primary"
+            (click)="doImportFile()">
+      <fa-icon [icon]="faUpload"></fa-icon>
     </button>
   </ng-template>
 </app-toolbar>

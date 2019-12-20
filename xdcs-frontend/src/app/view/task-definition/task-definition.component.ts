@@ -7,7 +7,7 @@ import { ActivatedRoute } from '@angular/router';
 import { Alert, GlobalAlertsService } from '../../services/global-alerts.service';
 import { FileTreeComponent, TreeDirectory, TreeFileType } from '../../element/file-tree/file-tree.component';
 import { from, of } from 'rxjs';
-import { ModalService } from '../../services/modal.service';
+import { CloseCallback, ModalService } from '../../services/modal.service';
 import { Editable, EditableMode } from '../../element/code-editor/code-editor.component';
 import { FileDto } from '../../../api/models/file-dto';
 import { FileType } from '../../../api/models/file-type';
@@ -15,6 +15,7 @@ import { CreateFileComponent } from '../../modal/create-file/create-file.compone
 import { PathUtils } from '../../utils/path-utils';
 import { BlobUtils } from '../../utils/blob-utils';
 import { faAngleLeft } from '@fortawesome/free-solid-svg-icons';
+import { ImportFileComponent } from '../../modal/import-file/import-file.component';
 
 @Component({
   selector: 'app-task-definition',
@@ -41,6 +42,7 @@ export class TaskDefinitionComponent implements OnInit {
   readonly openHandler = path => this.openFile(path);
   readonly createFileHandler = path => this.createFile(path);
   readonly createDirectoryHandler = path => this.createDirectory(path);
+  readonly importFileHandler = path => this.startImportingFile(path);
 
   constructor(private taskDefinitionsService: TaskDefinitionsService,
               private route: ActivatedRoute,
@@ -137,7 +139,7 @@ export class TaskDefinitionComponent implements OnInit {
   }
 
 
-  private createFile(path: string): void {
+  createFile(path: string): void {
     return this.modalService.show(CreateFileComponent, true, {
       isDirectory: false,
       parent: PathUtils.rstrip(path) + '/',
@@ -152,7 +154,7 @@ export class TaskDefinitionComponent implements OnInit {
     });
   }
 
-  private createDirectory(path: string): void {
+  createDirectory(path: string): void {
     this.modalService.show(CreateFileComponent, true, {
       isDirectory: true,
       parent: PathUtils.rstrip(path) + '/',
@@ -163,6 +165,23 @@ export class TaskDefinitionComponent implements OnInit {
         body: {
           type: FileType.Directory,
         } as FileDto,
+      }).toPromise()
+        .then(closeCallback)
+        .then(() => this.fileTree.refreshDirectory(path));
+    });
+  }
+
+  startImportingFile(path: string) {
+    return this.modalService.show(ImportFileComponent, true, {
+      parent: PathUtils.rstrip(path) + '/',
+    }).content.submit.subscribe(([filename, file, closeCallback]: [string, Blob, CloseCallback]) => {
+      // set application/octet-stream as type, because the generated OpenAPI code
+      // takes the type from Blob and not from the endpoint definition
+      file = new File([file], name, { type: 'application/octet-stream' });
+      this.taskDefinitionsService.setTaskDefinitionWorkspaceFileContent({
+        taskDefinitionId: this.taskDefinitionId,
+        path: PathUtils.join(path, filename),
+        body: file,
       }).toPromise()
         .then(closeCallback)
         .then(() => this.fileTree.refreshDirectory(path));

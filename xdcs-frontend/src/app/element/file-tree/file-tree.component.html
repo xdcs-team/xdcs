@@ -69,6 +69,11 @@
              [fixedWidth]="true"></fa-icon>
     New
   </ng-template>
+  <ng-template contextMenuItem (execute)="startImportingFile($event.item)" [enabled]="!!importFileHandler">
+    <fa-icon [icon]="faUpload"
+             [fixedWidth]="true"></fa-icon>
+    Import here
+  </ng-template>
   <ng-template contextMenuItem divider="true"></ng-template>
   <ng-template contextMenuItem (execute)="startRenaming($event.item)" [enabled]="!!renameHandler">
     <fa-icon [icon]="farEdit"
