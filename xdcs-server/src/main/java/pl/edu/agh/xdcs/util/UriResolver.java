@@ -15,8 +15,10 @@ import javax.inject.Inject;
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
 import javax.ws.rs.core.UriBuilder;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.net.URLEncoder;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Function;
 import java.util.regex.Matcher;
@@ -26,13 +28,10 @@ import java.util.regex.Pattern;
  * @author Kamil Jarosz
  */
 public class UriResolver {
+    static final String CONTEXT_ROOT = "/xdcs";
     private static final Logger logger = LoggerFactory.getLogger(UriResolver.class);
-
     private static final Pattern CLASS_NAME_PATTERN = Pattern.compile(
             "class " + Pattern.quote(Absurd.class.getName()) + " cannot be cast to class (?<classname>[^ ]+).*");
-
-    static final String CONTEXT_ROOT = "/xdcs";
-
     @Inject
     private Instance<Application> applications;
 
@@ -158,6 +157,14 @@ public class UriResolver {
 
     public <A, B, C, D, E, F, R> String of(Functions.Function6<A, B, C, D, E, F, R> f, Object... args) {
         return this.<A>resolveFromCache(f, thiz -> f.apply(thiz, null, null, null, null, null), args);
+    }
+
+    public String escapeQueryParam(String value) {
+        try {
+            return URLEncoder.encode(value, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private static final class Absurd {

@@ -28,6 +28,17 @@
     <tab heading="Logs">
       <app-log-preview [lines]="logLines" [tagWidth]="tagWidth"></app-log-preview>
     </tab>
-    <tab heading="Results"> ¯\_(ツ)_/¯</tab>
+    <tab heading="Artifacts">
+      <ng-container [ngTemplateOutlet]="artifactsTemplate"></ng-container>
+    </tab>
   </tabset>
 </div>
+
+<ng-template #artifactsTemplate>
+  <app-loading *ngIf="!artifacts"></app-loading>
+  <ul *ngIf="!!artifacts" class="list-group artifact-list">
+    <li class="list-group-item" *ngFor="let artifact of artifacts">
+      <a href="{{ artifact.href }}">{{ artifact.path }}</a>
+    </li>
+  </ul>
+</ng-template>
