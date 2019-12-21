@@ -257,6 +257,31 @@ paths:
         204:
           description: OK
 
+  /task-definitions/{taskDefinitionId}/workspace/actions/move:
+    post:
+      tags:
+        - Task Definitions
+      operationId: moveTaskDefinitionWorkspaceFile
+      parameters:
+        - in: path
+          name: taskDefinitionId
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: from
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: to
+          required: true
+          schema:
+            type: string
+      responses:
+        204:
+          description: OK
+
   /task-definitions/{taskDefinitionId}/deployments:
     get:
       tags:

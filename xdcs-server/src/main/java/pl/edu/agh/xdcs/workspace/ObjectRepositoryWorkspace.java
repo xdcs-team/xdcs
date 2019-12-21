@@ -168,4 +168,9 @@ class ObjectRepositoryWorkspace implements Workspace {
     public void setPermissions(String path, Set<PosixFilePermission> permissions) {
         throw new UnsupportedOperationException();
     }
+
+    @Override
+    public void moveFile(String from, String to) {
+        throw new UnsupportedOperationException();
+    }
 }

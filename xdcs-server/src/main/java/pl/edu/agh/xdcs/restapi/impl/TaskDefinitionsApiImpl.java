@@ -164,6 +164,20 @@ public class TaskDefinitionsApiImpl implements TaskDefinitionsApi {
     }
 
     @Override
+    public Response moveTaskDefinitionWorkspaceFile(String taskDefinitionId, String from, String to) {
+        try {
+            TaskDefinitionEntity definition = findTaskDefinition(taskDefinitionId);
+            taskDefinitionService.getWorkspace(definition)
+                    .moveFile(from, to);
+            return Response.ok().build();
+        } catch (NoSuchFileException e) {
+            return Response.status(Response.Status.NOT_FOUND).build();
+        } catch (IOException e) {
+            return RestUtils.serverError(e);
+        }
+    }
+
+    @Override
     public Response updateTaskDefinition(String taskDefinitionId, TaskDefinitionDto taskDefinitionDto) {
         RestUtils.checkNotNull(taskDefinitionDto, "No body");
         RestUtils.checkNotNull(taskDefinitionId, "No task definition");

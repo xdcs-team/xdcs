@@ -74,6 +74,7 @@ import { TaskDefinitionDetailsComponent } from './element/task-definition-detail
 import { NoValuePipe } from './pipes/no-value';
 import { FileAttributesSettingsComponent } from './modal/file-attributes-settings/file-attributes-settings.component';
 import { ImportFileComponent } from './modal/import-file/import-file.component';
+import { RenameFileComponent } from './modal/rename-file/rename-file.component';
 
 @NgModule({
   declarations: [
@@ -130,6 +131,7 @@ import { ImportFileComponent } from './modal/import-file/import-file.component';
     TaskDefinitionDetailsComponent,
     NoValuePipe,
     ImportFileComponent,
+    RenameFileComponent,
   ],
   entryComponents: [
     NewTaskDefinitionComponent,
@@ -139,6 +141,7 @@ import { ImportFileComponent } from './modal/import-file/import-file.component';
     CreateFileComponent,
     FileAttributesSettingsComponent,
     ImportFileComponent,
+    RenameFileComponent,
   ],
   imports: [
     BrowserModule,

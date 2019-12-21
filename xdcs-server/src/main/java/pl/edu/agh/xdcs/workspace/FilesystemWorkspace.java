@@ -11,6 +11,7 @@ import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.PosixFileAttributeView;
 import java.nio.file.attribute.PosixFileAttributes;
 import java.nio.file.attribute.PosixFilePermission;
@@ -150,5 +151,12 @@ class FilesystemWorkspace implements Workspace {
     public void setPermissions(String path, Set<PosixFilePermission> permissions) throws IOException {
         Path resolved = resolveWorkspacePath(path);
         Files.setPosixFilePermissions(resolved, permissions);
+    }
+
+    @Override
+    public void moveFile(String from, String to) throws IOException {
+        Path fromResolved = resolveWorkspacePath(from);
+        Path toResolved = resolveWorkspacePath(to);
+        Files.move(fromResolved, toResolved, StandardCopyOption.ATOMIC_MOVE);
     }
 }
