@@ -3,10 +3,13 @@ package pl.edu.agh.xdcs.grpc;
 import io.grpc.BindableService;
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
+import io.grpc.netty.shaded.io.grpc.netty.NettyServerBuilder;
 import javassist.util.proxy.MethodHandler;
 import javassist.util.proxy.ProxyFactory;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.slf4j.Logger;
+import pl.edu.agh.xdcs.config.Configuration;
+import pl.edu.agh.xdcs.config.Configured;
 import pl.edu.agh.xdcs.grpc.ee.GrpcContextInterceptor;
 import pl.edu.agh.xdcs.grpc.security.GrpcSecurityGenerator;
 import pl.edu.agh.xdcs.util.ApplicationStartedEvent;
@@ -25,6 +28,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
+import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
 import java.security.KeyPair;
 import java.security.Security;
@@ -43,6 +47,10 @@ public class GrpcServer {
 
     @Inject
     private Logger logger;
+
+    @Inject
+    @Configured
+    private Configuration config;
 
     @Resource
     private ManagedExecutorService executorService;
@@ -83,7 +91,8 @@ public class GrpcServer {
     }
 
     private Server createServer() {
-        ServerBuilder<?> builder = ServerBuilder.forPort(port)
+        InetSocketAddress bindAddr = new InetSocketAddress(config.getBindHost(), port);
+        ServerBuilder<?> builder = NettyServerBuilder.forAddress(bindAddr)
                 .executor(executorService)
                 .intercept(contextInterceptor)
                 .useTransportSecurity(

@@ -30,7 +30,12 @@ class _ReverseForwardContext:
         server_auth_password = xdcs().config('server.auth.password', None)
 
         client = paramiko.SSHClient()
-        client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+
+        if xdcs().config('server.allow_unknown_hosts', False):
+            client.set_missing_host_key_policy(paramiko.WarningPolicy())
+        else:
+            client.set_missing_host_key_policy(paramiko.RejectPolicy())
+
         private_key = paramiko.RSAKey.from_private_key_file(server_auth_key) if server_auth_key else None
         client.connect(
                 self.server_addr, self.server_port,

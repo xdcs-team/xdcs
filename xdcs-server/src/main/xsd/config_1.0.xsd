@@ -7,6 +7,7 @@
 
     <xs:complexType name="Configuration">
         <xs:all>
+            <xs:element name="bind-host" type="xs:string"/>
             <xs:element name="agent-security" type="xdcs:AgentSecurityConfiguration"/>
             <xs:element name="web-security" type="xdcs:WebSecurityConfiguration"/>
         </xs:all>
@@ -22,7 +23,8 @@
                     </xs:all>
                 </xs:complexType>
             </xs:element>
-            <xs:element minOccurs="0" name="jwt-key" type="xdcs:JwtKeyConfiguration"/>
+            <xs:element minOccurs="0" name="jwt-key" type="xdcs:KeyPathConfiguration"/>
+            <xs:element minOccurs="0" name="ssh-key" type="xdcs:KeyPathConfiguration"/>
             <xs:element minOccurs="0" name="allowed-hosts" type="xdcs:AllowedHosts"/>
         </xs:all>
     </xs:complexType>
@@ -31,7 +33,7 @@
         <xs:all>
             <xs:element minOccurs="0" name="password-policy" type="xdcs:SecurityPasswordPolicy"/>
             <xs:element minOccurs="0" name="expiration-times" type="xdcs:WebExpirationTimes"/>
-            <xs:element minOccurs="0" name="jwt-key" type="xdcs:JwtKeyConfiguration"/>
+            <xs:element minOccurs="0" name="jwt-key" type="xdcs:KeyPathConfiguration"/>
         </xs:all>
     </xs:complexType>
 
@@ -104,7 +106,7 @@
         </xs:restriction>
     </xs:simpleType>
 
-    <xs:complexType name="JwtKeyConfiguration">
+    <xs:complexType name="KeyPathConfiguration">
         <xs:attribute name="path" type="xs:anyURI" use="required"/>
     </xs:complexType>
 
