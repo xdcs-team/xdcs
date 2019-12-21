@@ -23,8 +23,8 @@ class _XDCS:
     _fs_repo_path: str
     _or_path: str
 
-    def __init__(self) -> None:
-        self._config = load_config()
+    def __init__(self, config_location=None) -> None:
+        self._config = load_config(config_location)
         self._executor = ThreadPoolExecutor(max_workers=self.config('app.executors', 10))
         self._fs_repo_path = self.config('app.fs_repo_path', './data')
         self._or_path = self._fs_repo_path + '/objects'
