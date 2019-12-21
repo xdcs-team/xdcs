@@ -10,7 +10,8 @@ import {
   faFolder,
   faFolderOpen,
   faLink,
-  faPlus, faUpload,
+  faPlus,
+  faUpload,
   faWrench,
 } from '@fortawesome/free-solid-svg-icons';
 import { faClipboard as farClipboard, faEdit as farEdit, faTrashAlt as farTrashAlt, } from '@fortawesome/free-regular-svg-icons';
@@ -18,8 +19,6 @@ import { Alert, GlobalAlertsService } from '../../services/global-alerts.service
 import { ClipboardService } from 'ngx-clipboard';
 import { ModalService } from '../../services/modal.service';
 import { PathUtils } from '../../utils/path-utils';
-import { NewTaskDefinitionComponent } from '../../modal/new-task-definition/new-task-definition.component';
-import { FileAttributesSettingsComponent } from '../../modal/file-attributes-settings/file-attributes-settings.component';
 
 @Component({
   selector: 'app-file-tree',
@@ -43,7 +42,7 @@ export class FileTreeComponent implements OnInit {
   private treeComponent: TreeComponent;
 
   @Input()
-  editAttributesHandler: (path: string) => Promise<void>;
+  editAttributesHandler: (path: string) => void;
 
   @Input()
   loadHandler: (path: string) => Promise<TreeDirectory>;
@@ -55,7 +54,7 @@ export class FileTreeComponent implements OnInit {
   deleteHandler: (path: string) => Promise<void>;
 
   @Input()
-  renameHandler: (path: string, newName: string) => Promise<void>;
+  renameHandler: (path: string) => void;
 
   @Input()
   createFileHandler: (path: string) => void;
@@ -83,8 +82,12 @@ export class FileTreeComponent implements OnInit {
           // use from to get the dragged node.
           // use to.parent and to.index to get the drop location
           // TREE_ACTIONS.MOVE_NODE(tree, node, $event, { from, to });
-          this.globalAlertsService.addAlert(
-            new Alert('danger', 'Moving files is not supported yet', 5));
+          const fromPath = this.nodeToPath(from);
+          const toParentPath = this.nodeToPath(to.parent);
+          const toPath = PathUtils.join(toParentPath, PathUtils.filename(fromPath));
+          this.moveHandler(fromPath, toPath).then(() => {
+            TREE_ACTIONS.MOVE_NODE(tree, node, $event, { from, to });
+          });
         },
       },
       keys: {
@@ -94,10 +97,10 @@ export class FileTreeComponent implements OnInit {
       },
     } as IActionMapping,
     allowDrag: (node) => {
-      return true;
+      return !!this.moveHandler;
     },
     allowDrop: (node) => {
-      return true;
+      return !!this.moveHandler;
     },
     allowDragoverStyling: true,
     levelPadding: 25,
@@ -206,8 +209,8 @@ export class FileTreeComponent implements OnInit {
   }
 
   startRenaming(node: TreeNode) {
-    this.globalAlertsService.addAlert(
-      new Alert('danger', 'Renaming files is not supported yet', 5));
+    const path = this.nodeToPath(node);
+    this.renameHandler(path);
   }
 
   startDeleting(node: TreeNode) {

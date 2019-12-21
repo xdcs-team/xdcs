@@ -1,0 +1,22 @@
+<app-modal #modal title="Rename file">
+  <div class="input-group mb-3">
+    <div *ngIf="parent" class="input-group-prepend">
+      <span class="input-group-text">{{ parent }}</span>
+    </div>
+    <input type="text"
+           class="form-control"
+           placeholder="Name"
+           aria-label="Name"
+           appAutoFocus
+           [(ngModel)]="filename"
+           (keyup.enter)="doSubmit()"/>
+  </div>
+
+  <input
+    type="submit"
+    class="btn btn-primary float-right"
+    [disabled]="!isValid()"
+    (click)="doSubmit()"
+    value="Rename"/>
+  <div class="clearfix"></div>
+</app-modal>

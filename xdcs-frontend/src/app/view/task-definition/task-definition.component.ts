@@ -17,6 +17,7 @@ import { BlobUtils } from '../../utils/blob-utils';
 import { faAngleLeft } from '@fortawesome/free-solid-svg-icons';
 import { ImportFileComponent } from '../../modal/import-file/import-file.component';
 import { FileAttributesSettingsComponent } from '../../modal/file-attributes-settings/file-attributes-settings.component';
+import { RenameFileComponent } from '../../modal/rename-file/rename-file.component';
 
 @Component({
   selector: 'app-task-definition',
@@ -44,8 +45,8 @@ export class TaskDefinitionComponent implements OnInit {
   readonly createFileHandler = path => this.createFile(path);
   readonly createDirectoryHandler = path => this.createDirectory(path);
   readonly editAttributesHandler = path => this.editAttributes(path);
-
   readonly importFileHandler = path => this.startImportingFile(path);
+  readonly renameHandler = path => this.startRenamingFile(path);
 
   constructor(private taskDefinitionsService: TaskDefinitionsService,
               private route: ActivatedRoute,
@@ -101,7 +102,11 @@ export class TaskDefinitionComponent implements OnInit {
   }
 
   private moveFile(pathFrom: string, pathTo: string): Promise<void> {
-    return Promise.reject();
+    return this.taskDefinitionsService.moveTaskDefinitionWorkspaceFile({
+      taskDefinitionId: this.taskDefinitionId,
+      from: pathFrom,
+      to: pathTo,
+    }).toPromise();
   }
 
   private deleteFile(path: string): Promise<void> {
@@ -191,6 +196,22 @@ export class TaskDefinitionComponent implements OnInit {
     });
   }
 
+  startRenamingFile(originalPath: string): void {
+    const originalParent = PathUtils.rstrip(PathUtils.parent(originalPath));
+    return this.modalService.show(RenameFileComponent, true, {
+      parent: PathUtils.rstrip(originalParent) + '/',
+      filename: PathUtils.filename(originalPath),
+    }).content.submit.subscribe(([filename, closeCallback]: [string, CloseCallback]) => {
+      this.taskDefinitionsService.moveTaskDefinitionWorkspaceFile({
+        taskDefinitionId: this.taskDefinitionId,
+        from: originalPath,
+        to: PathUtils.join(originalParent, filename),
+      }).toPromise()
+        .then(closeCallback)
+        .then(() => this.fileTree.refreshDirectory(originalParent));
+    });
+  }
+
   private save(): Promise<void> {
     return this.taskDefinitionsService.setTaskDefinitionWorkspaceFileContent({
       taskDefinitionId: this.taskDefinitionId,
@@ -201,8 +222,8 @@ export class TaskDefinitionComponent implements OnInit {
     });
   }
 
-  private editAttributes(path: any) {
-    return this.modalService.show(FileAttributesSettingsComponent, true, {
+  private editAttributes(path: any): void {
+    this.modalService.show(FileAttributesSettingsComponent, true, {
       taskDefinitionId: this.taskDefinitionId,
       path,
     });

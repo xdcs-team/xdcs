@@ -34,4 +34,6 @@ public interface Workspace {
     void createFile(String path, FileDescription fileDescription) throws IOException;
 
     void setPermissions(String path, Set<PosixFilePermission> permissions) throws IOException;
+
+    void moveFile(String from, String to) throws IOException;
 }
