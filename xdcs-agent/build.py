@@ -55,7 +55,7 @@ def initialize(project):
     project.set_property('distutils_packages', [
         "xdcs"])
     project.set_property('distutils_console_scripts', [
-        "xdcs-agent = xdcs.agent_cli:main"])
+        "xdcs-agent = xdcs_agent_cli:main"])
     project.set_property('flake8_break_build', True)
     project.set_property('flake8_verbose_output', True)
     project.install_file("/etc/xdcs", "xdcs/conf/xdcs-agent.toml")
@@ -111,7 +111,8 @@ def find_proto_files(path):
 @task
 @dependents(clean)
 def clean_grpc():
-    shutil.rmtree('./target/generated-sources/protobuf')
+    if os.path.isdir('./target/generated-sources/protobuf'):
+        shutil.rmtree('./target/generated-sources/protobuf')
 
 
 if __name__ == '__main__':

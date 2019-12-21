@@ -23,7 +23,11 @@ class MissingConfigurationException(Exception):
         super().__init__(*args)
 
 
-def load_config():
+def load_config(config_location=None):
+    if config_location is not None:
+        logger.debug('Loading configuration from specified path ' + config_location)
+        return toml.load(config_location)
+
     for config_loc in _config_locations:
         logger.debug('Checking location ' + config_loc + ' for configuration')
         if os.path.isfile(config_loc):
@@ -32,4 +36,4 @@ def load_config():
             logger.debug('Config not found in ' + config_loc)
 
     raise ConfigurationNotFoundException(
-        'Configuration not found, searched locations: ' + str(_config_locations))
+            'Configuration not found, searched locations: ' + str(_config_locations))
