@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <config xmlns="urn:xdcs:config:1.0">
+    <bind-host>0.0.0.0</bind-host>
     <agent-security>
         <policies>
             <password-policy>
@@ -10,6 +11,10 @@
             </public-key-policy>
         </policies>
         <jwt-key path="./xdcs/jwt-agent.key"/>
+<!--        <ssh-key path="./xdcs/ssh.key"/>-->
+        <allowed-hosts>
+            <host>192.168.69.10</host>
+        </allowed-hosts>
     </agent-security>
     <web-security>
         <password-policy>

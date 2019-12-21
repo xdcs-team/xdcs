@@ -52,10 +52,11 @@ public class GrpcSecurityGenerator {
         try {
             X509V3CertificateGenerator gen = new X509V3CertificateGenerator();
             gen.setSerialNumber(BigInteger.ONE);
-            gen.setIssuerDN(new X500Principal("CN=XDCS"));
+            X500Principal dn = new X500Principal("CN=XDCS");
+            gen.setIssuerDN(dn);
             gen.setNotBefore(Date.from(Instant.now().minus(365, ChronoUnit.DAYS)));
             gen.setNotAfter(Date.from(Instant.now().plus(365, ChronoUnit.DAYS)));
-            gen.setSubjectDN(new X500Principal("CN=XDCS"));
+            gen.setSubjectDN(dn);
             gen.setPublicKey(keys.getPublic());
             gen.setSignatureAlgorithm("SHA512WITHRSA");
             gen.addExtension(X509Extension.subjectKeyIdentifier, false,

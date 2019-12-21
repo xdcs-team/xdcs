@@ -1,14 +1,18 @@
 package pl.edu.agh.xdcs.ssh;
 
 import org.apache.sshd.common.forward.PortForwardingEventListener;
+import org.apache.sshd.common.keyprovider.FileKeyPairProvider;
 import org.apache.sshd.common.session.Session;
 import org.apache.sshd.common.session.SessionListener;
 import org.apache.sshd.common.util.net.SshdSocketAddress;
 import org.apache.sshd.server.SshServer;
-import org.apache.sshd.server.auth.password.AcceptAllPasswordAuthenticator;
 import org.apache.sshd.server.keyprovider.SimpleGeneratorHostKeyProvider;
 import org.apache.sshd.server.session.SessionFactory;
 import org.slf4j.Logger;
+import pl.edu.agh.xdcs.config.Configuration;
+import pl.edu.agh.xdcs.config.Configured;
+import pl.edu.agh.xdcs.config.KeyPathConfiguration;
+import pl.edu.agh.xdcs.config.util.ReferencedFileLoader;
 import pl.edu.agh.xdcs.grpc.events.AgentConnectedEvent;
 import pl.edu.agh.xdcs.grpc.events.AgentDisconnectedEvent;
 import pl.edu.agh.xdcs.ssh.configurators.GrpcSshConfigurator;
@@ -25,16 +29,26 @@ import javax.inject.Inject;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
-import java.nio.file.Paths;
+import java.nio.file.Path;
+import java.util.Optional;
 
 /**
  * @author Kamil Jarosz
  */
 @Eager
 @ApplicationScoped
-public class GrpcSshServer {
+public class XdcsSshServer {
+    private final int port = Integer.parseInt(System.getProperty("xdcs.agent.port.ssh", "8082"));
+
     @Inject
     private Logger logger;
+
+    @Inject
+    @Configured
+    private Configuration config;
+
+    @Inject
+    private ReferencedFileLoader fileLoader;
 
     @Resource
     private ManagedScheduledExecutorService scheduledExecutorService;
@@ -50,18 +64,16 @@ public class GrpcSshServer {
 
     private SshServer server;
 
-    private final int port = Integer.parseInt(System.getProperty("xdcs.agent.port.ssh", "8082"));
-
     @PostConstruct
     public void init() {
-        logger.info("Initializing GRPC server on port " + port);
+        logger.info("Initializing SSH server on port " + port);
 
         server = SshServer.setUpDefaultServer();
         server.getProperties().put(SshServer.IDLE_TIMEOUT, 0);
         server.setPort(port);
+        server.setHost(config.getBindHost());
         server.setScheduledExecutorService(scheduledExecutorService);
-        server.setKeyPairProvider(new SimpleGeneratorHostKeyProvider(Paths.get("serverkey")));
-        server.setPasswordAuthenticator(AcceptAllPasswordAuthenticator.INSTANCE);
+        setUpKeys();
         configurators.forEach(configurator -> configurator.configure(server));
         server.setSessionFactory(new SessionFactory(server));
         server.setForwardingFilter(new GrpcSshForwardingFilter());
@@ -108,9 +120,21 @@ public class GrpcSshServer {
         }
     }
 
+    private void setUpKeys() {
+        Path keyPath = Optional.ofNullable(config.getAgentSecurity().getSshKey())
+                .map(KeyPathConfiguration::getPath)
+                .map(fileLoader::toPath)
+                .orElse(null);
+        if (keyPath != null) {
+            server.setKeyPairProvider(new FileKeyPairProvider(keyPath));
+        } else {
+            server.setKeyPairProvider(new SimpleGeneratorHostKeyProvider());
+        }
+    }
+
     @PreDestroy
     public void destroy() {
-        logger.info("Shutting down GRPC server");
+        logger.info("Shutting down SSH server");
         try {
             server.stop(true);
         } catch (IOException e) {

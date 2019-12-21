@@ -7,7 +7,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import pl.edu.agh.xdcs.config.AgentSecurityConfiguration;
 import pl.edu.agh.xdcs.config.Configured;
-import pl.edu.agh.xdcs.config.JwtKeyConfiguration;
+import pl.edu.agh.xdcs.config.KeyPathConfiguration;
 import pl.edu.agh.xdcs.config.WebSecurityConfiguration;
 import pl.edu.agh.xdcs.config.util.ReferencedFileLoader;
 
@@ -55,9 +55,9 @@ public class TokenIssuer {
         }
     }
 
-    private Key loadOrCreateKey(JwtKeyConfiguration config) throws IOException {
+    private Key loadOrCreateKey(KeyPathConfiguration config) throws IOException {
         Path path = Optional.ofNullable(config)
-                .map(JwtKeyConfiguration::getPath)
+                .map(KeyPathConfiguration::getPath)
                 .map(fileLoader::toPath)
                 .orElse(null);
 

@@ -1,14 +1,11 @@
 package pl.edu.agh.xdcs.db.dao;
 
-import pl.edu.agh.xdcs.agents.Agent;
 import pl.edu.agh.xdcs.db.DatabaseInconsistencyException;
 import pl.edu.agh.xdcs.db.entity.AgentEntity;
 
 import javax.persistence.NoResultException;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * @author Krystian Życiński
