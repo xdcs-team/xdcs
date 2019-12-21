@@ -33,16 +33,17 @@ class _ReverseForwardContext:
         client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
         private_key = paramiko.RSAKey.from_private_key_file(server_auth_key) if server_auth_key else None
         client.connect(
-            self.server_addr, self.server_port,
-            username=server_auth_name,
-            pkey=private_key,
-            password=server_auth_password,
-            look_for_keys=False,
+                self.server_addr, self.server_port,
+                username=server_auth_name,
+                pkey=private_key,
+                password=server_auth_password,
+                look_for_keys=False,
         )
         logger.debug("Connected to server's sshd")
 
         self.transport = client.get_transport()
-        remote_port = self.transport.request_port_forward("127.0.0.1", 0)
+
+        remote_port = self._request_port_forward()
         logger.debug("Now forwarding remote port %d to local port %d", remote_port, self.local_port)
 
         if self.asynchronous:
@@ -51,6 +52,25 @@ class _ReverseForwardContext:
             self.thread.start()
         else:
             self._transport_thread()
+
+    def _request_port_forward(self):
+        # Note: due to a bug in paramiko, we need to explicitly
+        # set the _tcp_handler BEFORE requesting port forwarding.
+        # A race condition may occur, because of the faulty request
+        # forwarding implementation in paramiko:
+        #   1. request tcpip-forward
+        #   2. wait for server response
+        #   3. read the allocated port
+        #   4. set the channel handler
+        # If the server manages to start a channel before 4, it gets
+        # rejected because no handler is present.
+        # That's why we have to manually set the handler even before
+        # invoking the request_port_forward method.
+        self.transport._tcp_handler = lambda channel, src_addr, dest_addr_port: \
+            self.transport._queue_incoming_channel(channel)
+
+        remote_port = self.transport.request_port_forward("127.0.0.1", 0)
+        return remote_port
 
     def _transport_thread(self):
         channel = None
