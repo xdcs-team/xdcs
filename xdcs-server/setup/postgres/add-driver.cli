@@ -1,0 +1,8 @@
+embed-server --std-out=echo
+
+/subsystem=datasources/jdbc-driver=postgresql:add( \
+    driver-name=postgresql, \
+    driver-module-name=org.postgresql, \
+    driver-class-name=org.postgresql.Driver)
+
+stop-embedded-server
