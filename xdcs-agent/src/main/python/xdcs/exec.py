@@ -13,13 +13,14 @@ class ExecFailedException(Exception):
     pass
 
 
-def exec_cmd(args: [str], env: Mapping[str, bytes], log_handler: LogHandler = None):
+def exec_cmd(args: [str], env: Mapping[str, bytes], log_handler: LogHandler = None, cwd=None):
     command = ', '.join(args)
     logger.info("Executing: " + command)
     proc = subprocess.Popen(args,
                             stdout=subprocess.PIPE,
                             stderr=subprocess.PIPE,
-                            env=env)
+                            env=env,
+                            cwd=cwd)
 
     if log_handler is not None:
         barrier = threading.Barrier(3)

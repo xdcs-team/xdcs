@@ -162,7 +162,7 @@ class RunScriptTaskCmd(_RunDeploymentBasedTaskCmd):
         env = dict(os.environ)
         env.update(self._agent_env_variables)
 
-        exec_cmd([script_path], env, self._log_handler)
+        exec_cmd([script_path], env, self._log_handler, cwd=self._workspace_path)
 
         artifact_root = self._gather_artifacts()
         xdcs().execute(ReportTaskCompletionCmd(self._task_id, self._log_handler, artifact_root))
@@ -181,7 +181,9 @@ class RunScriptTaskCmd(_RunDeploymentBasedTaskCmd):
 
             for artifact in artifacts:
                 dest = os.path.join(artifacts_root, artifact)
-                shutil.copy(artifact, dest)
+                artifact_path = os.path.join(self._workspace_path, artifact)
+                os.makedirs(os.path.dirname(dest))
+                shutil.copy(artifact_path, dest)
 
             root_id, all_objects = MaterializeTreeToObjectRepositoryCmd(artifacts_root).execute()
             UploadObjectsCmd(all_objects).execute()
