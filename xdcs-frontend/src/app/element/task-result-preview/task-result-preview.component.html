@@ -25,8 +25,11 @@
     </tbody>
   </table>
   <ng-container *ngIf="selectedNodes; else loading">
-    <app-multiselect-menu (selectionChange)="changeAgents($event)" [dropdownList]="nodes" [idField]="'id'"
-                          [textField]="'id'" [selectAll]="true"></app-multiselect-menu>
+    <div class="mb-3">
+      <app-multiselect-menu (selectionChange)="changeAgents($event)"
+                            [dropdownList]="nodes" idField="id"
+                            textField="id" [selectAll]="true"></app-multiselect-menu>
+    </div>
     <tabset>
       <tab heading="Logs">
         <app-log-preview [lines]="logLines" [tagWidth]="tagWidth"></app-log-preview>

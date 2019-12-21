@@ -37,8 +37,7 @@ export class TaskResultPreviewComponent implements OnInit, OnChanges {
   private changeLogs() {
     this.loggingService.getTaskLogs({
       taskId: this.task.id,
-      agents: this.getNodeNames(),
-      queryAgents: true,
+      nodes: this.getNodeNames(),
     }).pipe(first()).subscribe(logs => {
       this.currentLineNumber = 0;
       this.logLines = logs.items.map(item => {

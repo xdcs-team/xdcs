@@ -31,10 +31,10 @@ export class MultiselectMenuComponent implements OnInit, OnChanges {
       singleSelection: false,
       idField: this.idField,
       textField: this.textField,
-      selectAllText: 'Select All',
-      unSelectAllText: 'Unselect All',
+      selectAllText: 'Select all',
+      unSelectAllText: 'Deselect all',
       itemsShowLimit: 10,
-      allowSearchFilter: true,
+      allowSearchFilter: false,
     };
   }
 

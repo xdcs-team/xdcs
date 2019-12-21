@@ -12,7 +12,6 @@ import pl.edu.agh.xdcs.restapi.TasksApi;
 import pl.edu.agh.xdcs.restapi.mapper.AgentEntityMapper;
 import pl.edu.agh.xdcs.restapi.mapper.LogLineMapper;
 import pl.edu.agh.xdcs.restapi.mapper.ResourcePatternMapper;
-import pl.edu.agh.xdcs.restapi.mapper.ResourceTypeMapper;
 import pl.edu.agh.xdcs.restapi.mapper.TaskMapper;
 import pl.edu.agh.xdcs.restapi.model.ArtifactDto;
 import pl.edu.agh.xdcs.restapi.model.LogsDto;
@@ -30,7 +29,6 @@ import pl.edu.agh.xdcs.ws.impl.LogsWebSocket;
 
 import javax.inject.Inject;
 import javax.transaction.Transactional;
-import javax.validation.constraints.NotNull;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
@@ -131,42 +129,21 @@ public class TasksApiImpl implements TasksApi {
     }
 
     @Override
-    public Response getTaskLogs(String taskId, @NotNull Boolean queryAgents, OffsetDateTime from, OffsetDateTime to, List<String> agents) {
+    public Response getTaskLogs(String taskId, OffsetDateTime from, OffsetDateTime to, List<String> nodes) {
         Task task = taskService.getTaskById(taskId)
                 .orElseThrow(() -> new NotFoundException("Task not found: " + taskId));
-        LogsDto logs = getLogs(taskId, from, to, agents, queryAgents, task);
-        return Response.ok(logs).build();
-    }
-
-    private LogsDto getLogs(String taskId, OffsetDateTime from, OffsetDateTime to, List<String> agents, boolean queryAgents, Task task) {
         LogsDto logs = new LogsDto();
         logs.setWebsocketUrl(wsUriResolver.of(LogsWebSocket.class, uriInfo, taskId).toString());
-        List<LogLineEntity> lines = getLogLines(queryAgents, agents, task, from, to);
+
+        List<LogLineEntity> lines = taskService.getLogs(task,
+                from == null ? null : from.toInstant(),
+                to == null ? null : to.toInstant(),
+                agentEntityMapper.toAgentEntities(nodes));
+
         if (lines != null) {
             logs.setItems(logLineMapper.toRestEntities(lines));
         }
-        return logs;
-    }
-
-    private List<LogLineEntity> getLogLines(boolean queryAgents, List<String> agents, Task task, OffsetDateTime from, OffsetDateTime to) {
-        if (queryAgents) {
-            return getLogLines(task, agents);
-        }
-        return getLogLines(task, from, to);
-    }
-
-    private List<LogLineEntity> getLogLines(Task task, List<String> agents) {
-        if (agents.isEmpty()) {
-            return null;
-        }
-        return taskService.getLogs(task, agentEntityMapper.toAgentEntities(agents));
-    }
-
-    private List<LogLineEntity> getLogLines(Task task, OffsetDateTime from, OffsetDateTime to) {
-        return taskService.getLogs(
-                task,
-                from == null ? null : from.toInstant(),
-                to == null ? null : to.toInstant());
+        return Response.ok(logs).build();
     }
 
     @Override

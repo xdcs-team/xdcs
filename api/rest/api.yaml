@@ -527,13 +527,7 @@ paths:
             format: 'date-time'
           description: Return logs logged before the specified time (inclusive)
         - in: query
-          name: queryAgents
-          required: true
-          schema:
-            type: boolean
-          description: Query for logs for agents specified in 'agents' parameter
-        - in: query
-          name: agents
+          name: nodes
           required: false
           schema:
             type: array

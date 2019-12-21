@@ -13,20 +13,25 @@ pre.log-output {
   display: flex;
 
   .line-number {
-    user-select: none;
-    margin-right: 10px;
     text-align: right;
     min-width: 4ch;
-    filter: brightness(50%);
   }
 
   .line-tag {
-    margin-right: 10px;
     text-align: left;
+  }
+
+  .line-number, .line-tag {
+    user-select: none;
+    margin-right: 10px;
     filter: brightness(50%);
   }
 
   .line-contents {
     flex-grow: 1;
   }
+}
+
+:host /deep/ .tooltip-inner {
+  white-space: nowrap;
 }
