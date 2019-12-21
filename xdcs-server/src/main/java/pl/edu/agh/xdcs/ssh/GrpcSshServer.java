@@ -104,7 +104,7 @@ public class GrpcSshServer {
         try {
             server.start();
         } catch (IOException e) {
-            throw new RuntimeException("Could not start GRPC server", e);
+            throw new RuntimeException("Could not start SSH server", e);
         }
     }
 
