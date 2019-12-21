@@ -1,0 +1,14 @@
+embed-server --std-out=echo
+
+/subsystem=logging/logger=pl.edu.agh.xdcs:add
+/subsystem=logging/logger=pl.edu.agh.xdcs:write-attribute(name=level, value=DEBUG)
+/subsystem=logging/console-handler=CONSOLE:write-attribute(name=level, value=DEBUG)
+
+/subsystem=datasources/data-source=xdcs:add( \
+    jndi-name=java:jboss/datasources/xdcs, \
+    driver-name=postgresql, \
+    connection-url=${env.XDCS_DB_JDBC_URL}, \
+    user-name=xdcs, \
+    password=xdcs)
+
+stop-embedded-server

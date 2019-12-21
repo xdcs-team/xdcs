@@ -7,13 +7,16 @@ EXPOSE 9990
 EXPOSE 8787
 
 USER root
-RUN yum install -y wget nano less
+RUN yum install -y nano less
 USER jboss
 
 ARG as_root=/opt/jboss/wildfly
 ARG configure_cli_path=${as_root}/configure.cli
 
-COPY dev/setup ${as_root}/setup
+ARG DEPLOY_USER_NAME=deploy
+ARG DEPLOY_USER_PASS=deploy
+
+COPY setup ${as_root}/setup
 RUN ${as_root}/setup/setup.sh
 
 COPY dev/xdcs-config.xml ${as_root}/
@@ -26,5 +29,7 @@ ENV JAVA_OPTS="-server \
     -XX:MetaspaceSize=512M -XX:MaxMetaspaceSize=1G \
     -Djava.net.preferIPv4Stack=true \
     -agentlib:jdwp=transport=dt_socket,address=*:8787,server=y,suspend=n"
+
+ENV XDCS_DB_JDBC_URL="jdbc:postgresql://xdcs-db:5432/xdcs"
 
 CMD ["/opt/jboss/wildfly/bin/standalone.sh", "-b", "0.0.0.0", "-bmanagement", "0.0.0.0"]

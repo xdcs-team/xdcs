@@ -1,18 +1,11 @@
 version: "3.7"
 services:
-  xdcs-frontend:
-    build:
-      dockerfile: Dockerfile.frontend
-      context: .
-    ports:
-      - "31080:8080"
-    depends_on:
-      - xdcs-server
-
   xdcs-server:
     build:
-      dockerfile: Dockerfile.server
+      dockerfile: Dockerfile
       context: .
+    environment:
+      - XDCS_DB_JDBC_URL=jdbc:postgresql://localhost:5432/xdcs
     ports:
       - "32080:8080"
       - "32081:8081"

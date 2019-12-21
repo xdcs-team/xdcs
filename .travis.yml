@@ -51,15 +51,10 @@ jobs:
         - pyb -X run_unit_tests
         - pyb -X publish
 
-    - name: "Build Dockerfile for server"
+    - name: "Build Dockerfile for server & frontend"
       stage: Docker
       script:
-        - docker build . -f Dockerfile.server
-
-    - name: "Build Dockerfile for frontend"
-      stage: Docker
-      script:
-        - docker build . -f Dockerfile.frontend
+        - docker build . -f Dockerfile
 
     - name: "Build Dockerfile for agent"
       stage: Docker
