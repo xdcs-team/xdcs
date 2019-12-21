@@ -118,12 +118,8 @@ public class TaskService {
                 .build());
     }
 
-    public List<LogLineEntity> getLogs(Task task, Instant from, Instant to) {
-        return logLineDao.findByPeriod(task.getId(), from, to);
-    }
-
-    public List<LogLineEntity> getLogs(Task task, List<AgentEntity> agentEntities) {
-        return logLineDao.findByAgents(task.getId(), agentEntities);
+    public List<LogLineEntity> getLogs(Task task, Instant from, Instant to, List<AgentEntity> agentEntities) {
+        return logLineDao.query(task.getId(), from, to, agentEntities);
     }
 
     public void setArtifactTree(Task task, String artifactTree) {

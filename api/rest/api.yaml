@@ -526,6 +526,14 @@ paths:
             type: string
             format: 'date-time'
           description: Return logs logged before the specified time (inclusive)
+        - in: query
+          name: nodes
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+          description: Return logs for selected nodes
       responses:
         200:
           description: OK

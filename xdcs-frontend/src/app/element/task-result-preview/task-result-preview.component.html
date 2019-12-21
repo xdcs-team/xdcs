@@ -24,14 +24,24 @@
     </tr>
     </tbody>
   </table>
-  <tabset>
-    <tab heading="Logs">
-      <app-log-preview [lines]="logLines" [tagWidth]="tagWidth"></app-log-preview>
-    </tab>
-    <tab heading="Artifacts">
-      <ng-container [ngTemplateOutlet]="artifactsTemplate"></ng-container>
-    </tab>
-  </tabset>
+  <ng-container *ngIf="selectedNodes; else loading">
+    <div class="mb-3">
+      <app-multiselect-menu (selectionChange)="changeAgents($event)"
+                            [dropdownList]="nodes" idField="id"
+                            textField="id" [selectAll]="true"></app-multiselect-menu>
+    </div>
+    <tabset>
+      <tab heading="Logs">
+        <app-log-preview [lines]="logLines" [tagWidth]="tagWidth"></app-log-preview>
+      </tab>
+      <tab heading="Artifacts">
+        <ng-container [ngTemplateOutlet]="artifactsTemplate"></ng-container>
+      </tab>
+    </tabset>
+  </ng-container>
+  <ng-template #loading>
+    <app-loading></app-loading>
+  </ng-template>
 </div>
 
 <ng-template #artifactsTemplate>

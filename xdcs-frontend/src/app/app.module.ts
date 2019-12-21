@@ -67,6 +67,8 @@ import { TasksComponent } from './view/tasks/tasks.component';
 import { TaskResultPreviewComponent } from './element/task-result-preview/task-result-preview.component';
 import { TabsModule } from 'ngx-bootstrap/tabs';
 import { TaskStatusIconComponent } from './element/task-status-icon/task-status-icon.component';
+import { MultiselectMenuComponent } from './element/multiselect-menu/multiselect-menu.component';
+import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
 import { SliceOrIdPipe } from './pipes/slice-or-id.pipe';
 import { NodeDetailsComponent } from './element/node-details/node-details.component';
 import { NodeDetailsPreviewComponent } from './element/node-details-preview/node-details-preview.component';
@@ -124,6 +126,7 @@ import { RenameFileComponent } from './modal/rename-file/rename-file.component';
     TasksComponent,
     TaskResultPreviewComponent,
     NodeBasicInfoComponent,
+    MultiselectMenuComponent,
     SliceOrIdPipe,
     NodeDetailsComponent,
     NodeDetailsPreviewComponent,
@@ -172,6 +175,7 @@ import { RenameFileComponent } from './modal/rename-file/rename-file.component';
     TooltipModule.forRoot(),
     ngfModule,
     TypeaheadModule.forRoot(),
+    NgMultiSelectDropDownModule.forRoot(),
   ],
   providers: [
     HttpClientModule,

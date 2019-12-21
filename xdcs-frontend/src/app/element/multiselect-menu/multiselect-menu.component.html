@@ -1,0 +1,15 @@
+<ng-container *ngIf="dropdownList; else loading">
+  <ng-multiselect-dropdown
+    (onDeSelect)="emit()"
+    (onDeSelectAll)="emitEmpty()"
+    (onSelect)="emit()"
+    (onSelectAll)="emitAll()"
+    [(ngModel)]="selectedItems"
+    [data]="dropdownList"
+    placeholder="Select agents"
+    [settings]="dropdownSettings"
+  ></ng-multiselect-dropdown>
+</ng-container>
+<ng-template #loading>
+  <app-loading></app-loading>
+</ng-template>

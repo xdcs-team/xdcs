@@ -9,9 +9,9 @@ import pl.edu.agh.xdcs.or.ObjectRepository;
 import pl.edu.agh.xdcs.or.types.Tree;
 import pl.edu.agh.xdcs.or.util.ObjectRepositoryUtils;
 import pl.edu.agh.xdcs.restapi.TasksApi;
+import pl.edu.agh.xdcs.restapi.mapper.AgentEntityMapper;
 import pl.edu.agh.xdcs.restapi.mapper.LogLineMapper;
 import pl.edu.agh.xdcs.restapi.mapper.ResourcePatternMapper;
-import pl.edu.agh.xdcs.restapi.mapper.ResourceTypeMapper;
 import pl.edu.agh.xdcs.restapi.mapper.TaskMapper;
 import pl.edu.agh.xdcs.restapi.model.ArtifactDto;
 import pl.edu.agh.xdcs.restapi.model.LogsDto;
@@ -49,9 +49,6 @@ public class TasksApiImpl implements TasksApi {
     private TaskService taskService;
 
     @Inject
-    private ResourceTypeMapper resourceTypeMapper;
-
-    @Inject
     private UriResolver resolver;
 
     @Inject
@@ -65,6 +62,9 @@ public class TasksApiImpl implements TasksApi {
 
     @Inject
     private WsUriResolver wsUriResolver;
+
+    @Inject
+    private AgentEntityMapper agentEntityMapper;
 
     @Inject
     private ObjectRepositoryUtils objectRepositoryUtils;
@@ -129,18 +129,20 @@ public class TasksApiImpl implements TasksApi {
     }
 
     @Override
-    public Response getTaskLogs(String taskId, OffsetDateTime from, OffsetDateTime to) {
+    public Response getTaskLogs(String taskId, OffsetDateTime from, OffsetDateTime to, List<String> nodes) {
         Task task = taskService.getTaskById(taskId)
                 .orElseThrow(() -> new NotFoundException("Task not found: " + taskId));
         LogsDto logs = new LogsDto();
         logs.setWebsocketUrl(wsUriResolver.of(LogsWebSocket.class, uriInfo, taskId).toString());
 
-        List<LogLineEntity> lines = taskService.getLogs(
-                task,
+        List<LogLineEntity> lines = taskService.getLogs(task,
                 from == null ? null : from.toInstant(),
-                to == null ? null : to.toInstant());
+                to == null ? null : to.toInstant(),
+                agentEntityMapper.toAgentEntities(nodes));
 
-        logs.setItems(logLineMapper.toRestEntities(lines));
+        if (lines != null) {
+            logs.setItems(logLineMapper.toRestEntities(lines));
+        }
         return Response.ok(logs).build();
     }
 
@@ -152,7 +154,6 @@ public class TasksApiImpl implements TasksApi {
         List<Task> tasks = taskService.queryTasks(from, maxResults);
         return prepareResponse(from, tasks);
     }
-
 
     @Override
     public Response getActiveTasks(BigDecimal fromParam, BigDecimal maxResultsParam) {

@@ -7,7 +7,9 @@
           [{{ line.tag }}]
         </div>
        </ng-container>
-      <div class="line-number" tooltip="{{ line.time | date:timePopupFormat }}">
+      <div class="line-number"
+           tooltip="{{ line.time | date:timePopupFormat }}"
+           placement="right">
         {{ line.lineNumber }}
       </div>
       <div class="line-contents">

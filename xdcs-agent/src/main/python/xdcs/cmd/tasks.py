@@ -182,7 +182,7 @@ class RunScriptTaskCmd(_RunDeploymentBasedTaskCmd):
             for artifact in artifacts:
                 dest = os.path.join(artifacts_root, artifact)
                 artifact_path = os.path.join(self._workspace_path, artifact)
-                os.makedirs(os.path.dirname(dest))
+                os.makedirs(os.path.dirname(dest), exist_ok=True)
                 shutil.copy(artifact_path, dest)
 
             root_id, all_objects = MaterializeTreeToObjectRepositoryCmd(artifacts_root).execute()
