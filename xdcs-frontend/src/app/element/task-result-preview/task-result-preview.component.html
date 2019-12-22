@@ -49,6 +49,7 @@
   <ng-container *ngIf="!!artifacts">
     <ul *ngIf="artifacts.length > 0" class="list-group artifact-list">
       <li class="list-group-item" *ngFor="let artifact of artifacts">
+        <span class="badge badge-secondary badge-pill mr-3">{{ artifact.nodeId }}</span>
         <a href="{{ artifact.href }}">{{ artifact.path }}</a>
       </li>
     </ul>

@@ -553,6 +553,13 @@ paths:
           required: true
           schema:
             type: string
+        - in: query
+          name: nodeIds
+          required: true
+          schema:
+            type: array
+            items:
+              type: string
       responses:
         200:
           description: OK
@@ -563,7 +570,7 @@ paths:
                 items:
                   $ref: '#/components/schemas/ArtifactDto'
 
-  /tasks/{taskId}/artifacts/content:
+  /tasks/{taskId}/artifacts/{nodeId}/content:
     get:
       tags:
         - Tasks
@@ -571,6 +578,11 @@ paths:
       parameters:
         - in: path
           name: taskId
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: nodeId
           required: true
           schema:
             type: string
@@ -1001,4 +1013,6 @@ components:
         path:
           type: string
         href:
+          type: string
+        nodeId:
           type: string

@@ -1,5 +1,6 @@
 package pl.edu.agh.xdcs.services;
 
+import pl.edu.agh.xdcs.db.dao.ArtifactTreeDao;
 import pl.edu.agh.xdcs.db.dao.DeploymentDescriptorDao;
 import pl.edu.agh.xdcs.db.dao.HistoricalTaskDao;
 import pl.edu.agh.xdcs.db.dao.LogLineDao;
@@ -9,6 +10,7 @@ import pl.edu.agh.xdcs.db.dao.ResourcePatternDao;
 import pl.edu.agh.xdcs.db.dao.RuntimeTaskDao;
 import pl.edu.agh.xdcs.db.dao.TaskDao;
 import pl.edu.agh.xdcs.db.entity.AgentEntity;
+import pl.edu.agh.xdcs.db.entity.ArtifactTreeEntity;
 import pl.edu.agh.xdcs.db.entity.DeploymentDescriptorEntity;
 import pl.edu.agh.xdcs.db.entity.HistoricalTaskEntity;
 import pl.edu.agh.xdcs.db.entity.LogLineEntity;
@@ -69,6 +71,9 @@ public class TaskService {
     @Inject
     private ResourceDao resourceDao;
 
+    @Inject
+    private ArtifactTreeDao artifactTreeDao;
+
     public Optional<Task> getTaskById(String taskId) {
         return taskDao.findById(taskId);
     }
@@ -122,11 +127,13 @@ public class TaskService {
         return logLineDao.query(task.getId(), from, to, agentEntities);
     }
 
-    public void setArtifactTree(Task task, String artifactTree) {
-        objectRepository.validate(artifactTree, Tree.class);
-        task.asHistorical()
-                .setArtifactTree(ObjectRefEntity.of(artifactTree, Tree.class));
-        historicalTaskDao.merge(task.asHistorical());
+    public void addArtifactTree(Task task, AgentEntity agent, String artifactTreeId) {
+        objectRepository.validate(artifactTreeId, Tree.class);
+        ArtifactTreeEntity artifactTree = new ArtifactTreeEntity();
+        artifactTree.setUploadedBy(agent);
+        artifactTree.setRoot(ObjectRefEntity.of(artifactTreeId, Tree.class));
+        artifactTree.setTask(task.asHistorical());
+        artifactTreeDao.persist(artifactTree);
     }
 
     public class TaskCreationWizard {

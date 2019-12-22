@@ -1,7 +1,10 @@
 package pl.edu.agh.xdcs.restapi.impl;
 
+import pl.edu.agh.xdcs.db.dao.AgentDao;
+import pl.edu.agh.xdcs.db.dao.ArtifactTreeDao;
+import pl.edu.agh.xdcs.db.entity.AgentEntity;
+import pl.edu.agh.xdcs.db.entity.ArtifactTreeEntity;
 import pl.edu.agh.xdcs.db.entity.LogLineEntity;
-import pl.edu.agh.xdcs.db.entity.ObjectRefEntity;
 import pl.edu.agh.xdcs.db.entity.QueuedTaskEntity;
 import pl.edu.agh.xdcs.db.entity.ResourcePatternEntity;
 import pl.edu.agh.xdcs.db.entity.Task;
@@ -36,7 +39,6 @@ import javax.ws.rs.core.UriInfo;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -72,6 +74,12 @@ public class TasksApiImpl implements TasksApi {
     @Inject
     private ObjectRepository objectRepository;
 
+    @Inject
+    private ArtifactTreeDao artifactTreeDao;
+
+    @Inject
+    private AgentDao agentDao;
+
     @Context
     private UriInfo uriInfo;
 
@@ -83,10 +91,13 @@ public class TasksApiImpl implements TasksApi {
     }
 
     @Override
-    public Response getTaskArtifactContent(String taskId, String path) {
+    public Response getTaskArtifactContent(String taskId, String nodeId, String path) {
         Task task = taskService.getTaskById(taskId)
                 .orElseThrow(() -> new NotFoundException("Task not found"));
-        String artifactTree = task.asHistorical().getArtifactTree().getReferencedObjectId();
+        AgentEntity agent = agentDao.findByName(nodeId)
+                .orElseThrow(() -> new NotFoundException("Node not found"));
+        String artifactTree = artifactTreeDao.find(task, agent)
+                .getRoot().getReferencedObjectId();
         Tree.Entry artifactEntry = objectRepositoryUtils.getChildEntry(artifactTree, path)
                 .orElseThrow(() -> new NotFoundException("Artifact not found"));
         return Response.ok(objectRepository.cat(artifactEntry.getObjectId()))
@@ -95,21 +106,23 @@ public class TasksApiImpl implements TasksApi {
     }
 
     @Override
-    public Response getTaskArtifacts(String taskId) {
+    public Response getTaskArtifacts(String taskId, List<String> nodeIds) {
         Task task = taskService.getTaskById(taskId)
                 .orElseThrow(() -> new NotFoundException("Task not found"));
-        ObjectRefEntity artifactTreeRef = task.asHistorical().getArtifactTree();
-        if (artifactTreeRef == null) {
-            return Response.ok(Collections.emptyList()).build();
-        }
+        List<AgentEntity> agents = agentEntityMapper.toAgentEntities(nodeIds);
+        List<ArtifactTreeEntity> artifactTrees = artifactTreeDao.query(task, agents);
 
-        String artifactTree = artifactTreeRef.getReferencedObjectId();
         List<ArtifactDto> artifacts = new ArrayList<>();
-        objectRepositoryUtils.walkTree(artifactTree, (path, entry) -> {
-            artifacts.add(new ArtifactDto()
-                    .path(path)
-                    .href(resolver.of(TasksApi::getTaskArtifactContent, taskId) +
-                            "?path=" + resolver.escapeQueryParam(path)));
+        artifactTrees.forEach(tree -> {
+            String treeId = tree.getRoot().getReferencedObjectId();
+            objectRepositoryUtils.walkTree(treeId, (path, entry) -> {
+                String nodeId = tree.getUploadedBy().getName();
+                artifacts.add(new ArtifactDto()
+                        .path(path)
+                        .href(resolver.of(TasksApi::getTaskArtifactContent, taskId, nodeId) +
+                                "?path=" + resolver.escapeQueryParam(path))
+                        .nodeId(nodeId));
+            });
         });
         return Response.ok(artifacts).build();
     }
