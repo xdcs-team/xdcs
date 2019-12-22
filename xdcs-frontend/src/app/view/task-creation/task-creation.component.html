@@ -82,44 +82,34 @@
 </ng-template>
 
 <ng-template #parametersKernel>
-  <h2>Parameters</h2>
-  <ng-container *ngFor="let param of deployment.config.kernelparams">
-    <ng-container
-      [ngTemplateOutletContext]="{param: param}"
-      [ngTemplateOutlet]="kernelParamTemplate"></ng-container>
-  </ng-container>
-  <ng-template #kernelParamTemplate let-param="param">
-    <ng-container *ngIf="param.direction != 'out'">
-      <div class="row">
-        <div class="col-md-3">
-          <label>{{param.name}}</label>
-        </div>
-        <div class="col-md-2">
-          <p>{{param.type}}</p>
-        </div>
-        <div class="col-md-2">
-          <p>{{param.direction}}</p>
-        </div>
-        <ng-container *ngIf="param.type=='simple'">
-          <div class="col-md-4">
-            <input [(ngModel)]="param.value"
-                   class="form-control mb-3"
-                   id="conf-simple-param-value"
-                   placeholder="Value"
-                   required="required"
-                   type="text"/>
-          </div>
+  <table class="table w-100" *ngIf="!!deployment.config.kernelparams">
+    <tbody>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Direction</th>
+      <th>Value</th>
+    </tr>
+    <tr *ngFor="let param of deployment.config.kernelparams">
+      <td>{{param.name}}</td>
+      <td>{{param.type}}</td>
+      <td>{{param.direction}}</td>
+      <td>
+        <ng-container *ngIf="param.type == 'simple'">
+          <input class="form-control"
+                 placeholder="Value"
+                 required="required"
+                 type="text"/>
         </ng-container>
-        <ng-container *ngIf="param.type=='pointer'">
-          <div class="col-md-4">
-            <app-upload-file
-              [(file)]="this.files[param.name]"
-              label="Enter param file"></app-upload-file>
-          </div>
+        <ng-container *ngIf="param.type == 'pointer'">
+          <app-upload-file
+            [(file)]="this.files[param.name]"
+            label="Enter param file"></app-upload-file>
         </ng-container>
-      </div>
-    </ng-container>
-  </ng-template>
+      </td>
+    </tr>
+    </tbody>
+  </table>
   <ng-container *ngIf="!deployment.config.kernelparams">
     <app-no-data message="No parameters" size="1em"></app-no-data>
   </ng-container>
