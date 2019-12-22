@@ -36,12 +36,16 @@
         <h2.version>1.4.199</h2.version>
         <bouncycastle.provider.version>1.46</bouncycastle.provider.version>
         <commons-io.version>2.6</commons-io.version>
+        <concordion.version>2.2.0</concordion.version>
+        <testcontainers.version>1.12.4</testcontainers.version>
+        <rest-assured.version>4.1.2</rest-assured.version>
     </properties>
 
     <modules>
         <module>xdcs-agent-api</module>
         <module>xdcs-server</module>
         <module>xdcs-rest-api</module>
+        <module>xdcs-integration-tests</module>
     </modules>
 
     <dependencyManagement>
@@ -126,6 +130,11 @@
             <dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-api</artifactId>
+                <version>${slf4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-simple</artifactId>
                 <version>${slf4j.version}</version>
             </dependency>
             <dependency>
@@ -245,6 +254,30 @@
                 <groupId>commons-io</groupId>
                 <artifactId>commons-io</artifactId>
                 <version>${commons-io.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.concordion</groupId>
+                <artifactId>concordion</artifactId>
+                <version>${concordion.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.testcontainers</groupId>
+                <artifactId>testcontainers</artifactId>
+                <version>${testcontainers.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.testcontainers</groupId>
+                <artifactId>junit-jupiter</artifactId>
+                <version>${testcontainers.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>io.rest-assured</groupId>
+                <artifactId>rest-assured</artifactId>
+                <version>${rest-assured.version}</version>
+                <scope>test</scope>
             </dependency>
         </dependencies>
     </dependencyManagement>

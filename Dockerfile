@@ -6,6 +6,7 @@ COPY pom.xml /var/xdcs/
 COPY xdcs-agent-api /var/xdcs/xdcs-agent-api
 COPY xdcs-rest-api /var/xdcs/xdcs-rest-api
 COPY xdcs-server /var/xdcs/xdcs-server
+COPY xdcs-integration-tests/pom.xml /var/xdcs/xdcs-integration-tests/pom.xml
 RUN mvn -T 2C -DskipTests=true clean install
 
 ################################################################################
