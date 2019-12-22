@@ -86,7 +86,7 @@ public class TaskReportingService {
         }
 
         if (!Strings.isNullOrEmpty(request.getArtifactTree())) {
-            taskService.setArtifactTree(task, request.getArtifactTree());
+            taskService.addArtifactTree(task, currentAgentEntity, request.getArtifactTree());
         }
 
         responseObserver.onNext(OkResponse.newBuilder().build());

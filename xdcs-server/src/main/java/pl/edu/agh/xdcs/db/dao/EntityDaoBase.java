@@ -4,6 +4,7 @@ import pl.edu.agh.xdcs.db.entity.BaseEntity;
 
 import javax.persistence.Entity;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -12,6 +13,10 @@ import java.util.Optional;
  */
 public abstract class EntityDaoBase<T extends BaseEntity> extends DaoBase {
     private final String entityName = getEntityClass().getAnnotation(Entity.class).name();
+
+    protected  <Y> List<Y> dummyList() {
+        return Collections.singletonList(null);
+    }
 
     protected abstract Class<T> getEntityClass();
 

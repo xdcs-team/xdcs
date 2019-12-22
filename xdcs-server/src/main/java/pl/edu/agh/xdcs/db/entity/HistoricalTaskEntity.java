@@ -39,10 +39,6 @@ public class HistoricalTaskEntity extends BaseEntity implements Task {
     @Enumerated(EnumType.STRING)
     private Result result;
 
-    @JoinColumn(name = "ARTIFACT_TREE_")
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    private ObjectRefEntity artifactTree;
-
     @Override
     public Type getType() {
         return Type.HISTORICAL;

@@ -60,6 +60,7 @@ export class TaskResultPreviewComponent implements OnInit, OnChanges {
 
     this.tasksService.getTaskArtifacts({
       taskId: this.task.id,
+      nodeIds: this.getNodeNames(),
     }).pipe(first()).subscribe(artifacts => this.artifacts = artifacts);
   }
 

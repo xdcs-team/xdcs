@@ -18,10 +18,6 @@ public class LogLineDao extends EntityDaoBase<LogLineEntity> {
         return LogLineEntity.class;
     }
 
-    private <T> List<T> dummyList() {
-        return Collections.singletonList(null);
-    }
-
     @SuppressWarnings("unchecked")
     public List<LogLineEntity> query(String taskId, Instant from, Instant to, List<AgentEntity> agents) {
         return entityManager.createQuery("select ll from LogLine ll " +
