@@ -36,7 +36,7 @@ services:
       - xdcs-ldap
 
   xdcs-db:
-    image: postgres
+    image: postgres:12
     ports:
       - "35432:5432"
     environment:
@@ -47,7 +47,7 @@ services:
       - postgres-data:/var/lib/postgresql/data
 
   xdcs-db-admin:
-    image: dpage/pgadmin4
+    image: dpage/pgadmin4:4.16
     ports:
       - "34775:80"
     environment:
@@ -61,7 +61,7 @@ services:
       - ./xdcs-server/dev/ldap.ldif:/container/service/slapd/assets/config/bootstrap/ldif/custom/ldap.ldif
 
   xdcs-ldap-admin:
-    image: osixia/phpldapadmin
+    image: osixia/phpldapadmin:0.9.0
     environment:
       PHPLDAPADMIN_LDAP_HOSTS: "xdcs-ldap"
       PHPLDAPADMIN_HTTPS: "false"
