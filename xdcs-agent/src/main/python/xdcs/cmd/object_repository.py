@@ -194,4 +194,4 @@ class MaterializeTreeToObjectRepositoryCmd(Command):
 
     @staticmethod
     def _read_mode(fpath: str) -> str:
-        return '%06o' % os.stat(fpath)[ST_MODE]
+        return '%06o' % os.stat(fpath, follow_symlinks=False)[ST_MODE]
