@@ -1,5 +1,6 @@
 package pl.edu.agh.xdcs.restapi.impl;
 
+import com.google.common.base.Strings;
 import pl.edu.agh.xdcs.db.dao.DeploymentDescriptorDao;
 import pl.edu.agh.xdcs.db.entity.DeploymentDescriptorEntity;
 import pl.edu.agh.xdcs.db.entity.TaskDefinitionEntity;
@@ -109,7 +110,7 @@ public class TaskDefinitionsApiImpl implements TaskDefinitionsApi {
         try {
             TaskDefinitionEntity definition = findTaskDefinition(taskDefinitionId);
             FileDescription description = taskDefinitionService.getWorkspace(definition)
-                    .readFileDescription(path)
+                    .readFileDescription(path != null ? path : "/")
                     .orElseThrow(NotFoundException::new);
             return Response.ok(fileDescriptionMapper.toApiEntity(description)).build();
         } catch (NoSuchFileException e) {
@@ -123,9 +124,13 @@ public class TaskDefinitionsApiImpl implements TaskDefinitionsApi {
     public Response deleteTaskDefinitionWorkspaceFile(String taskDefinitionId, String path) {
         try {
             TaskDefinitionEntity definition = findTaskDefinition(taskDefinitionId);
+            if (Strings.isNullOrEmpty(path) || "/".equals(path)) {
+                throw RestUtils.throwBadRequest("Cannot delete the root directory");
+            }
+
             taskDefinitionService.getWorkspace(definition)
                     .deleteFile(path);
-            return Response.ok().build();
+            return Response.noContent().build();
         } catch (NoSuchFileException e) {
             return Response.status(Response.Status.NOT_FOUND).build();
         } catch (IOException e) {
@@ -167,9 +172,14 @@ public class TaskDefinitionsApiImpl implements TaskDefinitionsApi {
     public Response moveTaskDefinitionWorkspaceFile(String taskDefinitionId, String from, String to) {
         try {
             TaskDefinitionEntity definition = findTaskDefinition(taskDefinitionId);
-            taskDefinitionService.getWorkspace(definition)
-                    .moveFile(from, to);
-            return Response.ok().build();
+            Workspace workspace = taskDefinitionService.getWorkspace(definition);
+
+            if (workspace.readFileDescription(to).isPresent()) {
+                throw RestUtils.throwBadRequest("Destination exists");
+            }
+
+            workspace.moveFile(from, to);
+            return Response.noContent().build();
         } catch (NoSuchFileException e) {
             return Response.status(Response.Status.NOT_FOUND).build();
         } catch (IOException e) {
@@ -181,14 +191,14 @@ public class TaskDefinitionsApiImpl implements TaskDefinitionsApi {
     public Response updateTaskDefinition(String taskDefinitionId, TaskDefinitionDto taskDefinitionDto) {
         RestUtils.checkNotNull(taskDefinitionDto, "No body");
         RestUtils.checkNotNull(taskDefinitionId, "No task definition");
-        if (!taskDefinitionId.equals(taskDefinitionDto.getId())) {
+        if (taskDefinitionDto.getId() != null && !taskDefinitionId.equals(taskDefinitionDto.getId())) {
             return RestUtils.badRequest("Expected task definition with id: " + taskDefinitionId +
                     ", got: " + taskDefinitionDto.getId());
         }
 
         TaskDefinitionEntity definition = findTaskDefinition(taskDefinitionId);
         deploymentConfigMapper.updateModelEntity(taskDefinitionDto, definition);
-        return Response.noContent().build();
+        return getTaskDefinition(taskDefinitionId);
     }
 
     @Override
@@ -223,7 +233,7 @@ public class TaskDefinitionsApiImpl implements TaskDefinitionsApi {
             return RestUtils.serverError(e);
         }
 
-        return Response.noContent().build();
+        return getTaskDefinitionWorkspaceFile(taskDefinitionId, path);
     }
 
     @Override

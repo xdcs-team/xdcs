@@ -33,7 +33,7 @@ public class UriResolver {
     private static final Pattern CLASS_NAME_PATTERN = Pattern.compile(
             "class " + Pattern.quote(Absurd.class.getName()) + " cannot be cast to class (?<classname>[^ ]+).*");
     @Inject
-    private Instance<Application> applications;
+    Instance<Application> applications;
 
     private final LoadingCache<MethodReferenceIdentifier, UriBuilder> methodUriTemplateCache = CacheBuilder.newBuilder()
             .build(new CacheLoader<MethodReferenceIdentifier, UriBuilder>() {
@@ -113,9 +113,13 @@ public class UriResolver {
     private String getApplicationPath(Class<?> resourceClass) {
         Class<?> applicationClass = null;
         int matchedLength = 0;
+        String rPackage = resourceClass.getPackage().getName();
         for (Application app : applications) {
-            String rPackage = resourceClass.getPackage().getName();
             String aPackage = app.getClass().getPackage().getName();
+
+            if (!rPackage.startsWith(aPackage + ".") && !rPackage.equals(aPackage)) {
+                continue;
+            }
 
             int len = StringUtils.getCommonPrefix(aPackage, rPackage).length();
             if (len > matchedLength) {

@@ -114,16 +114,20 @@ class FilesystemWorkspace implements Workspace {
             path = path.substring(1);
         }
 
-        return FsUtils.resolveWithoutTraversal(root, path);
+        return FsUtils.resolveWithoutTraversal(root, path).normalize();
     }
 
     @Override
     public void deleteFile(String path) throws IOException {
         Path resolved = resolveWorkspacePath(path);
+        if (resolved.equals(root)) {
+            throw new IOException("Cannot delete the root workspace directory");
+        }
+
         if (Files.isDirectory(resolved)) {
             Files.walkFileTree(resolved, new DeletingFileVisitor());
         } else {
-            Files.deleteIfExists(resolved);
+            Files.delete(resolved);
         }
     }
 
