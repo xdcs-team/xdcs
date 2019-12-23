@@ -55,7 +55,7 @@ services:
       - PGADMIN_DEFAULT_PASSWORD=admin
 
   xdcs-ldap:
-    image: osixia/openldap
+    image: osixia/openldap:1.3.0
     command: ["--copy-service"]
     volumes:
       - ./xdcs-server/dev/ldap.ldif:/container/service/slapd/assets/config/bootstrap/ldif/custom/ldap.ldif

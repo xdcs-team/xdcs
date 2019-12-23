@@ -63,13 +63,13 @@ public class RestUtils {
 
     public static void checkNotNull(Object object, String message) {
         if (object == null) {
-            throw new BadRequestException(message, badRequest(message));
+            throw throwBadRequest(message);
         }
     }
 
     public static void check(boolean condition, String message) {
         if (!condition) {
-            throw new BadRequestException(message, badRequest(message));
+            throw throwBadRequest(message);
         }
     }
 }
