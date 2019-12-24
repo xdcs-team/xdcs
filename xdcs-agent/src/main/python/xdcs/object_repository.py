@@ -19,7 +19,7 @@ class ObjectRepository:
         self._path = path
 
     def import_object(self, path: str, required_id: str = None) -> str:
-        object_id = self.__hash(path)
+        object_id = self._hash(path)
 
         if required_id is not None and required_id != object_id:
             raise ObjectRepositoryException('Import failed: wrong checksum for {}'.format(path))
@@ -35,7 +35,7 @@ class ObjectRepository:
         return object_id
 
     def import_json(self, obj: object) -> str:
-        json_str = json.dumps(obj)
+        json_str = json.dumps(obj, separators=(',', ':'))
         sha1 = hashlib.sha1()
         sha1.update(json_str.encode('utf-8'))
         object_id = sha1.hexdigest()
@@ -47,11 +47,11 @@ class ObjectRepository:
 
         return object_id
 
-    def __hash(self, path: str) -> str:
+    def _hash(self, path: str) -> str:
         sha1 = hashlib.sha1()
 
         if os.path.islink(path):
-            sha1.update(os.readlink(path))
+            sha1.update(os.readlink(path).encode("utf-8"))
         else:
             with open(path, 'rb') as f:
                 while True:
