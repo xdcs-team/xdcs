@@ -50,7 +50,7 @@
     <ul *ngIf="artifacts.length > 0" class="list-group artifact-list">
       <li class="list-group-item" *ngFor="let artifact of artifacts">
         <span class="badge badge-secondary badge-pill mr-3">{{ artifact.nodeId }}</span>
-        <a href="{{ artifact.href }}">{{ artifact.path }}</a>
+        <a href="javascript:void(0)" (click)="downloadArtifact(artifact)">{{ artifact.path }}</a>
       </li>
     </ul>
     <app-no-data *ngIf="artifacts.length === 0" size="2em" message="No artifacts"></app-no-data>

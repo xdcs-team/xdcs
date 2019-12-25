@@ -6,6 +6,8 @@ import { LogLine } from '../log-preview/log-preview.component';
 import { LogHandlingService } from '../../../api/services/log-handling.service';
 import { TasksService } from '../../../api/services/tasks.service';
 import { NodesService } from '../../../api/services/nodes.service';
+import { BlobUtils } from '../../utils/blob-utils';
+import { PathUtils } from '../../utils/path-utils';
 
 @Component({
   selector: 'app-task-result-preview',
@@ -101,5 +103,16 @@ export class TaskResultPreviewComponent implements OnInit, OnChanges {
 
   ngOnChanges(changes: SimpleChanges) {
     this.initNodes();
+  }
+
+  downloadArtifact(artifact: ArtifactDto) {
+    this.tasksService.getTaskArtifactContent({
+      nodeId: artifact.nodeId,
+      path: artifact.path,
+      taskId: this.task.id,
+    }).pipe(first()).subscribe(blob => {
+      const filename = PathUtils.filename(artifact.path);
+      BlobUtils.downloadAsFile(blob, filename);
+    });
   }
 }
