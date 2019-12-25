@@ -47,6 +47,7 @@ public class DeploymentConfigMapper {
         dto.setKernelname(model.getKernelName());
         dto.setKernelparams(kernelParamsMapper.toRestEntities(model.getKernelParams()));
         dto.setArtifacts(model.getArtifacts());
+        dto.setMergingScript(model.getMergingScript());
         return dto;
     }
 
@@ -62,6 +63,7 @@ public class DeploymentConfigMapper {
                 .map(kernelParamsMapper::toRestEntity)
                 .orElse(null));
         deploymentConfigDto.setArtifacts(model.getArtifacts());
+        deploymentConfigDto.setMergingScript(model.getMergingScript());
         return deploymentConfigDto;
     }
 
@@ -105,6 +107,10 @@ public class DeploymentConfigMapper {
 
         if (config.getArtifacts() != null) {
             model.setArtifacts(config.getArtifacts());
+        }
+
+        if (config.getMergingScript() != null) {
+            model.setMergingScript(config.getMergingScript());
         }
     }
 }

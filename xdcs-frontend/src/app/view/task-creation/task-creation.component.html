@@ -104,6 +104,19 @@
         </td>
       </tr>
     </ng-container>
+    <tr *ngIf="!!deployment.config.mergingScript">
+      <th scope="row">Merging agent</th>
+        <td>
+          <input [(ngModel)]="mergingAgent"
+            [typeahead]="nodeIds"
+            [typeaheadIsFirstItemActive]="false"
+            [typeaheadScrollable]="true"
+            [typeaheadSelectFirstItem]="false"
+            class="form-control"
+            required="required"
+            placeholder="Select node"/>
+        </td>
+    </tr>
     </tbody>
   </table>
 </ng-template>

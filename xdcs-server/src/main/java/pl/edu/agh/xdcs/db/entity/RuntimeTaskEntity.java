@@ -50,6 +50,11 @@ public class RuntimeTaskEntity extends BaseEntity implements Task {
     }
 
     @Override
+    public Optional<Task> getOriginTask() {
+        return historicalTask.getOriginTask();
+    }
+
+    @Override
     public HistoricalTaskEntity asHistorical() {
         return historicalTask;
     }

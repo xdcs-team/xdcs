@@ -38,4 +38,14 @@ public class ArtifactTreeDao extends EntityDaoBase<ArtifactTreeEntity> {
                 .setParameter("agents", agents == null || agents.isEmpty() ? dummyList() : agents)
                 .getResultList();
     }
+
+    @SuppressWarnings("unchecked")
+    public List<ArtifactTreeEntity> queryAllForTask(Task task) {
+        return entityManager.createQuery("select a from ArtifactTree a " +
+                "where " +
+                "a.task = :task " +
+                "order by a.time")
+                .setParameter("task", task.asHistorical())
+                .getResultList();
+    }
 }

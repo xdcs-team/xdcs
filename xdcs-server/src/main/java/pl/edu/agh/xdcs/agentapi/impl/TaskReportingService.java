@@ -44,8 +44,6 @@ public class TaskReportingService {
 
     public void uploadLogs(Logs request, StreamObserver<OkResponse> responseObserver) {
         saveLogLines(request.getTaskId(), request.getLinesList());
-        responseObserver.onNext(OkResponse.newBuilder().build());
-        responseObserver.onCompleted();
     }
 
     private void saveLogLines(String taskId, List<Logs.LogLine> linesList) {
@@ -88,9 +86,6 @@ public class TaskReportingService {
         if (!Strings.isNullOrEmpty(request.getArtifactTree())) {
             taskService.addArtifactTree(task, currentAgentEntity, request.getArtifactTree());
         }
-
-        responseObserver.onNext(OkResponse.newBuilder().build());
-        responseObserver.onCompleted();
     }
 
     private AgentEntity getCurrentAgentEntity() {

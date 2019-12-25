@@ -38,6 +38,7 @@ export class TaskCreationComponent {
   globalWorkShape: number[] = [1, 1, 1];
   customLocalWorkShape = false;
   localWorkShape: number[] = [1, 1, 1];
+  mergingAgent: string;
 
   reservedParamNames: string[] = ['XDCS_AGENT_ID', 'XDCS_AGENT_COUNT'];
 
@@ -143,6 +144,7 @@ export class TaskCreationComponent {
         kernelArguments: this.prepareKernelArguments(),
         globalWorkShape: this.prepareGlobalWorkShape(),
         localWorkShape: this.prepareLocalWorkShape(),
+        mergingAgent: this.mergingAgent,
       } as TaskCreationDto,
     }).subscribe(() => {
       this.router.navigateByUrl('/');

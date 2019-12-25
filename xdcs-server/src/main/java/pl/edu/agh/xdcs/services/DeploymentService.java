@@ -76,6 +76,7 @@ public class DeploymentService {
                         .map(KernelParameters::getParameters)
                         .orElse(null))
                 .artifacts(definition.getArtifacts())
+                .mergingScript(definition.getMergingScript())
                 .build();
     }
 

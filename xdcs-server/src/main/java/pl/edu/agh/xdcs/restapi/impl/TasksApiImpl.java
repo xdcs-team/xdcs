@@ -177,6 +177,15 @@ public class TasksApiImpl implements TasksApi {
         return prepareResponse(from, tasks);
     }
 
+    @Override
+    public Response getMergingTaskForTask(String taskId) {
+        Task task = taskService.getTaskById(taskId)
+                .orElseThrow(() -> new NotFoundException("Task not found: " + taskId));
+        TaskDto mergingTask = taskService.getMergingTaskForTask(task)
+                .map(t -> taskMapper.toRestEntity(t)).orElse(null);
+        return Response.ok(mergingTask).build();
+    }
+
     private Response prepareResponse(int from, List<Task> tasks) {
         List<TaskDto> items = taskMapper.toRestEntities(tasks);
         return Response.ok(new TasksDto()
@@ -198,7 +207,8 @@ public class TasksApiImpl implements TasksApi {
 
         TaskService.TaskCreationWizard taskCreationWizard = taskService.newTask()
                 .name(taskCreation.getName())
-                .deploymentId(taskCreation.getDeploymentId());
+                .deploymentId(taskCreation.getDeploymentId())
+                .mergingAgent(taskCreation.getMergingAgent());
 
         if (taskCreation.getResources().isEmpty()) {
             return RestUtils.badRequest("No resources");

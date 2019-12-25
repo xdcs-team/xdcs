@@ -5,7 +5,7 @@ import { NavbarItem } from '../../services/navbar.service';
 import { NewTaskComponent } from 'src/app/modal/new-task/new-task.component';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { first } from 'rxjs/operators';
-import { forkJoin } from 'rxjs';
+import { forkJoin, Observable } from 'rxjs';
 import { FetchCallback } from '../../element/fullscreen-list/fullscreen-list.component';
 
 const taskIdParam = 'taskId';
@@ -22,6 +22,7 @@ export class TasksComponent implements OnInit {
   NewTaskComponent = NewTaskComponent;
   tasks: Array<TaskDto> = null;
   selected: TaskDto;
+  linkedTask: TaskDto;
 
   nextPage = 0;
   fetching = false;
@@ -34,6 +35,9 @@ export class TasksComponent implements OnInit {
 
   ngOnInit(): void {
     this.fetchNextPage();
+    this.route.params.subscribe(params => {
+      this.refreshSelection(params);
+    });
   }
 
   onSelectionChange(selected: TaskDto) {
@@ -89,7 +93,18 @@ export class TasksComponent implements OnInit {
     const found = this.tasks
       .find(def => def.id === params[taskIdParam]);
     if (found) {
-      this.selected = found;
+      this.findLinkedTaskForTask(found).subscribe(linkedTask => {
+        this.linkedTask = linkedTask;
+        this.selected = found;
+      });
+    }
+  }
+
+  private findLinkedTaskForTask(task: TaskDto): Observable<TaskDto> {
+    if (task.originTaskId) {
+      return this.tasksService.getTask({ taskId: task.originTaskId });
+    } else {
+      return this.tasksService.getMergingTaskForTask({ taskId: task.id });
     }
   }
 }

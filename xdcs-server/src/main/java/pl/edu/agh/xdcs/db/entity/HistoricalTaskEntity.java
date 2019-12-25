@@ -15,6 +15,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapKeyColumn;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import java.time.Instant;
 import java.util.Map;
@@ -55,6 +56,13 @@ public class HistoricalTaskEntity extends BaseEntity implements Task {
     @Convert(converter = WorkShape.Converter.class)
     private WorkShape localWorkShape;
 
+    @Column(name = "MERGING_AGENT_")
+    private String mergingAgent;
+
+    @OneToOne
+    @JoinColumn(name = "ORIGIN_TASK_")
+    private HistoricalTaskEntity originTask;
+
     @Override
     public Type getType() {
         return Type.HISTORICAL;
@@ -63,6 +71,11 @@ public class HistoricalTaskEntity extends BaseEntity implements Task {
     @Override
     public Optional<Result> getResult() {
         return Optional.ofNullable(result);
+    }
+
+    @Override
+    public Optional<Task> getOriginTask() {
+        return Optional.ofNullable(originTask);
     }
 
     @Override

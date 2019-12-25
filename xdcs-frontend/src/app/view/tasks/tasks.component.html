@@ -19,6 +19,6 @@
   </ng-template>
 
   <ng-template #details let-item="selected">
-    <app-task-result-preview [task]="item"></app-task-result-preview>
+    <app-task-result-preview [task]="item" [linkedTask]="linkedTask"></app-task-result-preview>
   </ng-template>
 </app-fullscreen-list>
