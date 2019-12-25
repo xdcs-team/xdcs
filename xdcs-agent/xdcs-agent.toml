@@ -8,7 +8,7 @@ send_path_executables = true
 host = "127.0.0.1"
 port.grpc = 32081
 port.ssh = 32082
-allow_unknown_hosts = false
+allow_unknown_hosts = true
 
 [server.auth]
 name = "agent-1"

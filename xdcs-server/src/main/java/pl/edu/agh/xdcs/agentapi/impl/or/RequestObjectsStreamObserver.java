@@ -1,5 +1,6 @@
 package pl.edu.agh.xdcs.agentapi.impl.or;
 
+import com.google.common.collect.Sets;
 import io.grpc.stub.StreamObserver;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -13,6 +14,8 @@ import pl.edu.agh.xdcs.or.ObjectRepository;
 import javax.enterprise.concurrent.ManagedThreadFactory;
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.stream.Collectors;
@@ -26,6 +29,7 @@ class RequestObjectsStreamObserver implements StreamObserver<ObjectIds> {
     private final BlockingQueue<Command> commands = new LinkedBlockingQueue<>();
     private final ZipOutputStream outputStream;
     private final ObjectRepository objectRepository;
+    private final Set<String> requestedObjects = new HashSet<>();
 
     RequestObjectsStreamObserver(
             ManagedThreadFactory threadFactory,
@@ -66,10 +70,16 @@ class RequestObjectsStreamObserver implements StreamObserver<ObjectIds> {
 
     @Override
     public void onNext(ObjectIds value) {
-        commands.addAll(value.getObjectIdsList()
-                .stream()
-                .map(Command::sendObject)
-                .collect(Collectors.toList()));
+        Set<String> ids = new HashSet<>(value.getObjectIdsList());
+        Set<String> newIds = Sets.difference(ids, requestedObjects);
+
+        if (!newIds.isEmpty()) {
+            commands.addAll(newIds.stream()
+                    .map(Command::sendObject)
+                    .collect(Collectors.toList()));
+        }
+
+        requestedObjects.addAll(ids);
     }
 
     @Override
