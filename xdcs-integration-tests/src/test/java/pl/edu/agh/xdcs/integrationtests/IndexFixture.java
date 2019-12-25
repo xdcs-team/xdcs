@@ -19,12 +19,16 @@ import java.io.File;
 @RunWith(ConcordionRunner.class)
 public class IndexFixture {
     private static final String SERVICE_SERVER = "xdcs-server";
+    private static final String SERVICE_DB = "xdcs-db";
+
     private static final Logger SERVER_LOGGER = LoggerFactory.getLogger(SERVICE_SERVER);
+    private static final Logger DB_LOGGER = LoggerFactory.getLogger(SERVICE_DB);
 
     private static DockerComposeContainer environment =
             new DockerComposeContainer(new File("../docker-compose.debug.yml"))
                     .withBuild(true)
                     .withServices(SERVICE_SERVER)
+                    .withLogConsumer(SERVICE_DB, new Slf4jLogConsumer(DB_LOGGER))
                     .withLogConsumer(SERVICE_SERVER, new Slf4jLogConsumer(SERVER_LOGGER))
                     .withExposedService(SERVICE_SERVER, 8080, Wait.forHttp("/xdcs/rest/healthcheck")
                             .forStatusCode(200)

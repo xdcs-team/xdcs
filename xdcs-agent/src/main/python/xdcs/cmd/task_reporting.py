@@ -28,15 +28,11 @@ class ReportTaskCompletionCmd(Command):
 
 class ReportTaskFailureCmd(Command):
     _task_id: str
-    _log_handler: LogHandler
 
-    def __init__(self, task_id: str, log_handler: LogHandler) -> None:
+    def __init__(self, task_id: str) -> None:
         self._task_id = task_id
-        self._log_handler = log_handler
 
     def execute(self):
-        self._log_handler.internal_log("Reporting task failure: " + self._task_id)
-
         stub, report = _prepare_reporting_data(self._task_id)
         report.result = TaskResultReport.Result.FAILED
         stub.ReportTaskResult(report)

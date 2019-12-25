@@ -1,21 +1,18 @@
-import logging
 import os
 import shutil
 import tempfile
 from os import path
 from typing import Optional
 
-from xdcs_api.agent_execution_pb2 import TaskSubmit
 from xdcs.app import xdcs
 from xdcs.cmd import Command
 from xdcs.cmd.object_repository import FetchDeploymentCmd, DumpObjectRepositoryTreeCmd, \
     MaterializeTreeToObjectRepositoryCmd, UploadObjectsCmd
-from xdcs.cmd.task_reporting import ReportTaskCompletionCmd, ReportTaskFailureCmd
+from xdcs.cmd.task_reporting import ReportTaskCompletionCmd
 from xdcs.docker import DockerCli
 from xdcs.exec import exec_cmd
-from xdcs.log_handling import UploadingLogHandler, PassThroughLogHandler, LogHandler, LogLevel
-
-logger = logging.getLogger(__name__)
+from xdcs.log_handling import LogHandler, LogLevel
+from xdcs_api.agent_execution_pb2 import TaskSubmit
 
 
 class TaskExecutionException(Exception):
@@ -26,20 +23,17 @@ class RunTaskCmd(Command):
     _deployment_id: str
     _task_id: str
     _agent_variables: TaskSubmit.AgentVariables
+    _log_handler: LogHandler
 
-    def __init__(self, deployment_id: str, task_id: str, agent_variables: TaskSubmit.AgentVariables) -> None:
+    def __init__(self, deployment_id: str, task_id: str, agent_variables: TaskSubmit.AgentVariables,
+                 log_handler) -> None:
         self._deployment_id = deployment_id
         self._task_id = task_id
         self._agent_variables = agent_variables
+        self._log_handler = log_handler
 
     def execute(self):
-        with UploadingLogHandler(self._task_id) as log_handler:
-            log_handler = log_handler.combine(PassThroughLogHandler(logger))
-            log_handler.internal_log("Running a deployment: " + self._deployment_id)
-
-            self._execute(log_handler)
-
-    def _execute(self, log_handler):
+        log_handler = self._log_handler
         with tempfile.TemporaryDirectory() as workspace_path:
             xdcs().execute(FetchDeploymentCmd(self._deployment_id))
             deployment: dict = xdcs().object_repository().cat_json(self._deployment_id)
@@ -48,18 +42,22 @@ class RunTaskCmd(Command):
             config_type = deployment['config']['type']
             agent_env_variables = RunTaskCmd.prepare_agent_env_variables(self._agent_variables)
 
+            log_handler.internal_log('Agent variables:', LogLevel.DEBUG)
+            for key, value in agent_env_variables.items():
+                log_handler.internal_log('    {}={}'.format(key, value), LogLevel.DEBUG)
+
             constructor_args = [workspace_path, deployment, self._deployment_id, self._task_id, agent_env_variables,
                                 log_handler]
             if config_type == 'docker':
-                xdcs().execute(HandleExceptionCmd(RunDockerTaskCmd(*constructor_args), self._task_id, log_handler))
+                xdcs().execute(RunDockerTaskCmd(*constructor_args))
             elif config_type == 'script':
-                xdcs().execute(HandleExceptionCmd(RunScriptTaskCmd(*constructor_args), self._task_id, log_handler))
+                xdcs().execute(RunScriptTaskCmd(*constructor_args))
             else:
                 raise Exception('Unsupported task type ' + config_type)
             log_handler.internal_log("Deployment finished: " + self._deployment_id)
 
     @staticmethod
-    def prepare_agent_env_variables(agent_variables: TaskSubmit.AgentVariables):
+    def prepare_agent_env_variables(agent_variables: TaskSubmit.AgentVariables) -> dict:
         agent_env_variables: dict = {
             'XDCS_AGENT_IPS': ','.join(agent_variables.agentIps),
             'XDCS_AGENT_IP_MINE': agent_variables.agentIpMine,
@@ -188,22 +186,3 @@ class RunScriptTaskCmd(_RunDeploymentBasedTaskCmd):
             root_id, all_objects = MaterializeTreeToObjectRepositoryCmd(artifacts_root).execute()
             UploadObjectsCmd(all_objects).execute()
             return root_id
-
-
-class HandleExceptionCmd(Command):
-    _delegate: Command
-    _task_id: str
-    _log_handler: LogHandler
-
-    def __init__(self, delegate: Command, task_id: str, log_handler: LogHandler) -> None:
-        self._delegate = delegate
-        self._task_id = task_id
-        self._log_handler = log_handler
-
-    def execute(self):
-        try:
-            self._delegate.execute()
-        except Exception as e:
-            self._log_handler.internal_log("Error while executing task: " + str(e), LogLevel.ERROR)
-            xdcs().execute(ReportTaskFailureCmd(self._task_id, self._log_handler))
-            raise e
