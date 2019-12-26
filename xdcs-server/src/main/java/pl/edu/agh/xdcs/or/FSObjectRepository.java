@@ -251,4 +251,16 @@ class FSObjectRepository implements ObjectRepository {
         ObjectRepositoryTypeHandler<T> handler = getHandler(type);
         return handler.dependencies(cat(objectId, type));
     }
+
+    @Override
+    public void delete(String objectId) {
+        Path objectPath = resolver.resolve(objectId);
+        try {
+            Files.delete(objectPath);
+        } catch (NoSuchFileException e) {
+            throw new ObjectRepositoryInconsistencyException(objectId, e);
+        } catch (IOException e) {
+            throw new ObjectRepositoryIOException(objectId, e);
+        }
+    }
 }

@@ -77,6 +77,8 @@ public interface ObjectRepository {
      */
     <T extends ObjectBase> Stream<ObjectKey> dependenciesFor(String objectId, Class<T> type);
 
+    void delete(String objectId);
+
     enum ObjectLookupResult {
         EXISTS,
         AMBIGUOUS,

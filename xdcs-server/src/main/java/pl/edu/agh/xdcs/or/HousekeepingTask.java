@@ -33,6 +33,8 @@ class HousekeepingTask implements Callable<Set<String>>, AutoCloseable {
     public Set<String> call() {
         Path lockFile = objectRepository.root().resolve(".housekeeping-lock");
         try (LockFile lf = LockFile.newLockFile(lockFile)) {
+            Files.createDirectories(this.reachableObjectsDir);
+
             Set<String> allObjects = objectRepository.allObjects().collect(Collectors.toSet());
             rootProvider.provideRoots(HousekeepingTask.this::markReachable);
 
@@ -40,6 +42,8 @@ class HousekeepingTask implements Callable<Set<String>>, AutoCloseable {
             return Sets.difference(allObjects, reachableObjects);
         } catch (LockFile.LockFailedException e) {
             throw new IllegalStateException("Housekeeping is already running", e);
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
         }
     }
 
