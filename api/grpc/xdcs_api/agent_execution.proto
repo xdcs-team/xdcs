@@ -34,6 +34,16 @@ message TaskSubmit {
          * Number of agents executing this task.
          */
         uint32 agentCount = 4;
+
+        /**
+         * Environment variables added by user with Docker or script type task.
+         */
+        repeated EnvironmentVariable environmentVariables = 5;
+
+        message EnvironmentVariable {
+            string name = 1;
+            string value = 2;
+        }
     }
 }
 

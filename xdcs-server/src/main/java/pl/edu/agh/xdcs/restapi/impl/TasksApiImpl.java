@@ -232,6 +232,10 @@ public class TasksApiImpl implements TasksApi {
             taskCreationWizard.addResourcePattern(agentPattern, keyPattern);
         });
 
+        taskCreation.getEnvironmentVariables().forEach(envVar -> {
+            taskCreationWizard.addEnvironmentVariable(envVar.getName(), envVar.getValue());
+        });
+
         if (taskCreation.getKernelArguments() != null) {
             taskCreationWizard.addKernelArguments(taskCreation.getKernelArguments());
         }

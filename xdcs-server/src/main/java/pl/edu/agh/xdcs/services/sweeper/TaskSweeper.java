@@ -163,6 +163,15 @@ public class TaskSweeper {
                                     .setAgentIpMine(agent.getAddress().getHostAddress())
                                     .setAgentCount(agents.size())
                                     .setAgentId(agentId)
+                                    .addAllEnvironmentVariables(task.getHistoricalTask()
+                                            .getEnvironmentVariables()
+                                            .getVariables()
+                                            .stream()
+                                            .map(v -> TaskSubmit.AgentVariables.EnvironmentVariable.newBuilder()
+                                                    .setName(v.getName())
+                                                    .setValue(v.getValue())
+                                                    .build())
+                                            .collect(Collectors.toList()))
                                     .build()
                     );
             if (task.isKernelExecutionTask()) {

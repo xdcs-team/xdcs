@@ -6,6 +6,7 @@ import { NodesDto } from '../../../api/models/nodes-dto';
 import { NodesService } from '../../../api/services/nodes.service';
 import {
   DeploymentDto,
+  EnvironmentVariableDto,
   NodeDto,
   ResourceDto,
   TaskCreationDto,
@@ -47,8 +48,13 @@ export class TaskCreationComponent {
     agent: '',
     key: '',
   };
-
   selectedResources: ResourceDto[] = [];
+
+  environmentVariableSchema: EnvironmentVariableDto = {
+    name: '',
+    value: '',
+  };
+  addedEnvironmentVariables: EnvironmentVariableDto[] = [];
 
   constructor(private taskDefinitionsService: TaskDefinitionsService,
               private route: ActivatedRoute,
@@ -56,7 +62,6 @@ export class TaskCreationComponent {
               private nodesService: NodesService,
               private deploymentService: DeploymentsService,
               private tasksService: TasksService) {
-
   }
 
   ngOnInit(): void {
@@ -141,6 +146,7 @@ export class TaskCreationComponent {
         name: this.taskName,
         deploymentId: this.deploymentId,
         resources: this.selectedResources,
+        environmentVariables: this.addedEnvironmentVariables,
         kernelArguments: this.prepareKernelArguments(),
         globalWorkShape: this.prepareGlobalWorkShape(),
         localWorkShape: this.prepareLocalWorkShape(),

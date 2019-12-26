@@ -122,10 +122,32 @@
 </ng-template>
 
 <ng-template #parameters>
-  <ng-container *ngIf="['opencl', 'cuda'].includes(deployment.config.type); else noParameters"
-                [ngTemplateOutlet]="parametersKernel"></ng-container>
-  <ng-template #noParameters>
-    <app-no-data message="No parameters" size="2em"></app-no-data>
+  <ng-container [ngSwitch]="true">
+    <ng-container *ngSwitchCase="['opencl', 'cuda'].includes(deployment.config.type)"
+                  [ngTemplateOutlet]="parametersKernel"></ng-container>
+    <ng-container *ngSwitchCase="['docker', 'script'].includes(deployment.config.type)"
+                  [ngTemplateOutlet]="addEnvVars"></ng-container>
+    <app-no-data *ngSwitchDefault message="No parameters" size="2em"></app-no-data>
+  </ng-container>
+</ng-template>
+
+<ng-template #addEnvVars>
+  <h4>Environment variables</h4>
+  <ng-container [ngTemplateOutlet]="envVariablesList"></ng-container>
+  <ng-template #envVariablesList>
+    <app-orderable-input-list
+      [orderable]="false"
+      [data]="addedEnvironmentVariables"
+      [emptyElement]="environmentVariableSchema">
+      <ng-template #content let-variable="element">
+        <input [(ngModel)]="variable.name"
+               placeholder="Name"
+               class="form-control"/>
+        <input class="form-control"
+               [(ngModel)]="variable.value"
+               placeholder="Value"/>
+      </ng-template>
+    </app-orderable-input-list>
   </ng-template>
 </ng-template>
 
