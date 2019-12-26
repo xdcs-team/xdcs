@@ -31,7 +31,7 @@ public class UriResolver {
     static final String CONTEXT_ROOT = "/xdcs";
     private static final Logger logger = LoggerFactory.getLogger(UriResolver.class);
     private static final Pattern CLASS_NAME_PATTERN = Pattern.compile(
-            "class " + Pattern.quote(Absurd.class.getName()) + " cannot be cast to class (?<classname>[^ ]+).*");
+            "(class )?" + Pattern.quote(Absurd.class.getName()) + " cannot be cast to (class )?(?<classname>[^ ]+).*");
     @Inject
     Instance<Application> applications;
 
