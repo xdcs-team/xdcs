@@ -93,4 +93,9 @@ public class ObjectRepositoryMock implements ObjectRepository {
     public <T extends ObjectBase> Stream<ObjectKey> dependenciesFor(String objectId, Class<T> type) {
         throw new AssertionError();
     }
+
+    @Override
+    public void delete(String objectId) {
+        throw new AssertionError();
+    }
 }

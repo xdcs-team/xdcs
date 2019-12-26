@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.BadRequestException;
+import javax.ws.rs.ServerErrorException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.net.URI;
@@ -29,6 +30,10 @@ public class RestUtils {
 
     public static BadRequestException throwBadRequest(String reason) {
         throw new BadRequestException(badRequest(reason));
+    }
+
+    public static BadRequestException throwServerError(Throwable cause) {
+        throw new ServerErrorException(serverError(cause));
     }
 
     public static Response unprocessableEntity(String reason) {

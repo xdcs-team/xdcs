@@ -8,7 +8,7 @@ import javax.inject.Inject;
 /**
  * @author Kamil Jarosz
  */
-class DatabaseRootProvider implements RootProvider {
+public class DatabaseRootProvider implements RootProvider {
     @Inject
     private ObjectRefDao objectRefDao;
 
