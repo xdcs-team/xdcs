@@ -70,6 +70,8 @@ class RunTaskCmd(Command):
             'XDCS_AGENT_COUNT': str(agent_variables.agentCount),
             'XDCS_AGENT_ID': str(agent_variables.agentId)
         }
+        for v in agent_variables.environmentVariables:
+            agent_env_variables[str(v.name)] = str(v.value)
         if len(agent_variables.agentIps) != agent_variables.agentCount:
             raise Exception('Inconsistent arguments: agent_count = %d, but number of received IPs = %d'
                             % (agent_variables.agentCount, len(agent_variables.agentIps)))

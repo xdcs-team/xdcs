@@ -1,0 +1,19 @@
+[app]
+executors = 10
+local_port = 25254
+fs_repo_path = "./data"
+
+[server]
+host = "127.0.0.1"
+port.grpc = 32081
+port.ssh = 32082
+
+[server.auth]
+name = "agent-1"
+key = "./dev/key"
+
+[agent]
+name = "Agent 1"
+
+[system]
+docker = "docker"
