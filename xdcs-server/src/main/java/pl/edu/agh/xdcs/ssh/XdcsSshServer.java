@@ -70,6 +70,7 @@ public class XdcsSshServer {
 
         server = SshServer.setUpDefaultServer();
         server.getProperties().put(SshServer.IDLE_TIMEOUT, 0);
+        server.getProperties().put(SshServer.NIO2_READ_TIMEOUT, 0);
         server.setPort(port);
         server.setHost(config.getBindHost());
         server.setScheduledExecutorService(scheduledExecutorService);

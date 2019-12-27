@@ -100,15 +100,21 @@ def _gather_cuda_resources() -> [Resource]:
     if importlib.util.find_spec("pycuda") is None:
         return []
 
-    import pycuda.autoinit
-    pycuda.autoinit
-    from pycuda.driver import Device
+    import pycuda
+    try:
+        import pycuda.autoinit
+        pycuda.autoinit
+        from pycuda.driver import Device
 
-    ret = []
-    for device_id in range(0, Device.count()):
-        ret += [_gather_cuda_resource(device_id)]
+        ret = []
+        for device_id in range(0, Device.count()):
+            ret += [_gather_cuda_resource(device_id)]
 
-    return ret
+        return ret
+    except pycuda._driver.Error as e:
+        logger.error('Error while gathering resources, assuming no CUDA devices are present')
+        logger.error(e)
+        return []
 
 
 def _gather_cuda_resource(device_id: int) -> Resource:
