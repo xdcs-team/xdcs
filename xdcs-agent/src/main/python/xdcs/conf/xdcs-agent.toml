@@ -1,6 +1,5 @@
 [app]
 executors = 10
-local_port = 25254
 fs_repo_path = "./data"
 send_path_executables = true
 
@@ -13,7 +12,7 @@ allow_unknown_hosts = false
 [server.auth]
 name = "agent-1"
 generate_keys = true
-key = "/etc/xdcs/agent-key/xdcs-agent"
+key = "/etc/xdcs/keys/xdcs-agent"
 
 [agent]
 name = "Agent 1"

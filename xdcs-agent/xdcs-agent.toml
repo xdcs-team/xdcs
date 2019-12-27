@@ -1,6 +1,5 @@
 [app]
 executors = 10
-local_port = 25254
 fs_repo_path = "./data"
 send_path_executables = true
 

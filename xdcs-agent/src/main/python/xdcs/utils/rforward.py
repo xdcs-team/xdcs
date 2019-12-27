@@ -1,8 +1,10 @@
 import logging
 import socket
 import threading
+from typing import Optional
 
 import paramiko
+from paramiko import Transport
 
 from xdcs.app import xdcs
 from xdcs.utils.sockutils import couple_socks
@@ -11,6 +13,8 @@ logger = logging.getLogger(__name__)
 
 
 class _ReverseForwardContext:
+    transport: Optional[Transport]
+
     def __init__(self,
                  local_port: int,
                  server_addr: str,
@@ -21,6 +25,7 @@ class _ReverseForwardContext:
         self.server_addr = server_addr
         self.server_port = server_port
         self.thread = None
+        self.transport = None
 
     def __enter__(self):
         logger.debug("Connecting to " + self.server_addr + ":" + str(self.server_port))
