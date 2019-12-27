@@ -12,6 +12,7 @@ allow_unknown_hosts = true
 
 [server.auth]
 name = "agent-1"
+generate_keys = false
 key = "./dev/key"
 
 [agent]

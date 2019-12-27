@@ -5,13 +5,15 @@ fs_repo_path = "./data"
 send_path_executables = true
 
 [server]
-host = "xdcs-server"
-port.grpc = 8081
-port.ssh = 8082
+host = "127.0.0.1"
+port.grpc = 32081
+port.ssh = 32082
+allow_unknown_hosts = false
 
 [server.auth]
-name = "admin"
-password = "admin"
+name = "agent-1"
+generate_keys = true
+key = "/etc/xdcs/agent-key/xdcs-agent"
 
 [agent]
 name = "Agent 1"
