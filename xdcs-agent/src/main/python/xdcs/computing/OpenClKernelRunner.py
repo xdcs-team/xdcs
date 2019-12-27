@@ -1,15 +1,15 @@
 import pyopencl as cl
 
-from xdcs.parameters import KernelParameters
 from xdcs.computing.KernelRunner import KernelRunner
 
 
 class OpenClKernelRunner(KernelRunner):
 
     @staticmethod
-    def run(program, func_name, threads, program_parameters: KernelParameters, ctx):
-        prg = cl.Program(ctx, program).build()
-        queue = cl.CommandQueue(ctx)
-        kernel = getattr(prg, func_name)
-        kernel(queue, threads, None, *program_parameters.get_params_values())
+    def run(kernel_program, kernel_name, ctx, global_work_shape, local_work_shape, kernel_arguments) -> cl.CommandQueue:
+        prg = cl.Program(ctx, kernel_program).build()
+        queue: cl.CommandQueue = cl.CommandQueue(ctx)
+        kernel = getattr(prg, kernel_name)
+        launch = kernel(queue, global_work_shape, local_work_shape, *kernel_arguments)
+        launch.wait()
         return queue

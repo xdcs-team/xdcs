@@ -273,6 +273,7 @@ function getModeFromPath(path: string): EditableMode {
     case 'cpp':
     case 'h':
     case 'hpp':
+    case 'cl':
       return EditableMode.C_CPP;
 
     case 'cs':

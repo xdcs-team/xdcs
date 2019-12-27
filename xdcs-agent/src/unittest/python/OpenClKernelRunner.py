@@ -4,10 +4,7 @@ import numpy as np
 import pyopencl as cl
 
 import xdcs.computing.OpenClKernelRunner as Compiler
-from xdcs.parameters import KernelParameters
-from xdcs.parameters import KernelParameter
-from xdcs.parameters import ParameterDirection
-from xdcs.parameters import ParameterType
+from xdcs.kernel import KernelArgument
 
 
 class KernelTest(unittest.TestCase):
@@ -50,18 +47,22 @@ class KernelTest(unittest.TestCase):
         b_buf = cl.Buffer(ctx, mf.READ_ONLY | mf.COPY_HOST_PTR, hostbuf=b)
         c_buf = cl.Buffer(ctx, mf.WRITE_ONLY, c.nbytes)
 
-        param2 = KernelParameter(ParameterDirection.IN, np.uint16(n), 1, ParameterType.SIMPLE, 'param2')
-        param3 = KernelParameter(ParameterDirection.IN, np.uint16(m), 2, ParameterType.SIMPLE, 'param3')
-        param4 = KernelParameter(ParameterDirection.IN, np.uint16(p), 3, ParameterType.SIMPLE, 'param4')
-        param5 = KernelParameter(ParameterDirection.IN, a_buf, 4, ParameterType.POINTER, 'param5')
-        param6 = KernelParameter(ParameterDirection.IN, b_buf, 5, ParameterType.POINTER, 'param6')
-        param7 = KernelParameter(ParameterDirection.IN, c_buf, 6, ParameterType.POINTER, 'param7')
+        arg1 = KernelArgument('arg1', 'obj_id_1', 1, KernelArgument.Direction.IN, KernelArgument.Type.SIMPLE)
+        arg1.value = np.uint16(n)
+        arg2 = KernelArgument('arg2', 'obj_id_2', 2, KernelArgument.Direction.IN, KernelArgument.Type.SIMPLE)
+        arg2.value = np.uint16(m)
+        arg3 = KernelArgument('arg3', 'obj_id_3', 3, KernelArgument.Direction.IN, KernelArgument.Type.SIMPLE)
+        arg3.value = np.uint16(p)
+        arg4 = KernelArgument('arg4', 'obj_id_4', 4, KernelArgument.Direction.IN, KernelArgument.Type.POINTER)
+        arg4.value = a_buf
+        arg5 = KernelArgument('arg5', 'obj_id_5', 5, KernelArgument.Direction.IN, KernelArgument.Type.POINTER)
+        arg5.value = b_buf
+        arg6 = KernelArgument('arg6', 'obj_id_6', 6, KernelArgument.Direction.OUT, KernelArgument.Type.POINTER)
+        arg6.value = c_buf
 
-        param_list = list()
-        param_list.extend((param2, param3, param4, param5, param6, param7))
-        parameters = KernelParameters(*param_list)
+        arg_list = [arg1.value, arg2.value, arg3.value, arg4.value, arg5.value, arg6.value]
 
-        queue = Compiler.OpenClKernelRunner.run(program, func_name, c.shape, parameters, ctx)
+        queue = Compiler.OpenClKernelRunner.run(program, func_name, ctx, c.shape, None, arg_list)
 
         a_mul_b = np.empty_like(c)
         cl.enqueue_copy(queue, a_mul_b, c_buf)

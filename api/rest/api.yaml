@@ -954,6 +954,22 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/ResourceDto'
+        kernelArguments:
+          description: List containing kernelArgument values
+          type: array
+          items:
+            type: string
+            format: byte
+        globalWorkShape:
+          description: List containing global work shape in format '[dim1,dim2,dim3]'
+          type: array
+          items:
+            type: integer
+        localWorkShape:
+          description: List containing local work shape in format '[dim1,dim2,dim3]'
+          type: array
+          items:
+            type: integer
 
     ResourceDto:
       type: object

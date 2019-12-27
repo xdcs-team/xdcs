@@ -4,6 +4,8 @@ import tempfile
 from os import path
 from typing import Optional
 
+from xdcs.kernel import KernelManager
+from xdcs_api.agent_execution_pb2 import KernelConfig
 from xdcs.app import xdcs
 from xdcs.cmd import Command
 from xdcs.cmd.object_repository import FetchDeploymentCmd, DumpObjectRepositoryTreeCmd, \
@@ -23,13 +25,15 @@ class RunTaskCmd(Command):
     _deployment_id: str
     _task_id: str
     _agent_variables: TaskSubmit.AgentVariables
+    _kernel_config: KernelConfig
     _log_handler: LogHandler
 
     def __init__(self, deployment_id: str, task_id: str, agent_variables: TaskSubmit.AgentVariables,
-                 log_handler) -> None:
+                 kernel_config: KernelConfig, log_handler: LogHandler) -> None:
         self._deployment_id = deployment_id
         self._task_id = task_id
         self._agent_variables = agent_variables
+        self._kernel_config = kernel_config
         self._log_handler = log_handler
 
     def execute(self):
@@ -52,6 +56,8 @@ class RunTaskCmd(Command):
                 xdcs().execute(RunDockerTaskCmd(*constructor_args))
             elif config_type == 'script':
                 xdcs().execute(RunScriptTaskCmd(*constructor_args))
+            elif config_type == 'opencl':
+                xdcs().execute(RunOpenClTaskCmd(*constructor_args, self._kernel_config))
             else:
                 raise Exception('Unsupported task type ' + config_type)
             log_handler.internal_log("Deployment finished: " + self._deployment_id)
@@ -91,16 +97,32 @@ class _RunDeploymentBasedTaskCmd(Command):
         self._agent_env_variables = agent_env_variables
         self._log_handler = log_handler
 
+    def _get_config_filepath(self, name: str):
+        config_path = self._deployment['config'].get(name)
+        filepath = self._join_paths(self._workspace_path, self._get_relative_path_part(config_path))
+
+        if filepath is None:
+            raise TaskExecutionException('%s path is empty' % name)
+        return filepath
+
+    @staticmethod
+    def _join_paths(prefix, suffix):
+        filepath = path.join(prefix, _RunDeploymentBasedTaskCmd._get_relative_path_part(suffix))
+        filepath = path.normpath(filepath)
+        if not filepath.startswith(prefix):
+            raise TaskExecutionException('Path traversal detected')
+        return filepath
+
+    @staticmethod
+    def _get_relative_path_part(filepath: str):
+        if filepath.startswith('/'):
+            return filepath[1:]
+        return filepath
+
 
 class RunDockerTaskCmd(_RunDeploymentBasedTaskCmd):
     def execute(self):
-        deployment = self._deployment
-        dockerfile = deployment['config'].get('dockerfile', None)
-
-        if dockerfile is None or len(dockerfile) == 0:
-            dockerfile = 'Dockerfile'
-
-        dockerfile = path.join(self._workspace_path, dockerfile)
+        dockerfile = self._get_config_filepath('dockerfile')
         image_id = DockerCli().build(self._workspace_path, dockerfile)
         self._log_handler.internal_log('Docker built, image ID: ' + image_id)
 
@@ -138,7 +160,7 @@ class RunDockerTaskCmd(_RunDeploymentBasedTaskCmd):
             return None
 
         for artifact in artifacts:
-            dest = os.path.join(artifacts_root, artifact)
+            dest = self._join_paths(artifacts_root, self._get_relative_path_part(artifact))
             DockerCli().cp(cid, artifact, dest)
 
         root_id, all_objects = MaterializeTreeToObjectRepositoryCmd(artifacts_root).execute()
@@ -148,14 +170,7 @@ class RunDockerTaskCmd(_RunDeploymentBasedTaskCmd):
 
 class RunScriptTaskCmd(_RunDeploymentBasedTaskCmd):
     def execute(self):
-        deployment = self._deployment
-        script_path = path.join(self._workspace_path, self._get_script_path(deployment))
-        script_path = path.normpath(script_path)
-        if not script_path.startswith(self._workspace_path):
-            raise TaskExecutionException('Path traversal detected')
-
-        if script_path is None:
-            raise TaskExecutionException('Script path is empty')
+        script_path = self._get_config_filepath('scriptfile')
 
         env = dict(os.environ)
         env.update(self._agent_env_variables)
@@ -165,21 +180,56 @@ class RunScriptTaskCmd(_RunDeploymentBasedTaskCmd):
         artifact_root = self._gather_artifacts()
         xdcs().execute(ReportTaskCompletionCmd(self._task_id, self._log_handler, artifact_root))
 
-    def _get_script_path(self, deployment):
-        scriptfile = deployment['config'].get('scriptfile')
-        if scriptfile.startswith('/'):
-            return scriptfile[1:]
-        return scriptfile
-
     def _gather_artifacts(self) -> Optional[str]:
-        with tempfile.TemporaryDirectory() as artifacts_root:
-            artifacts = self._deployment['config'].get('artifacts', [])
-            if len(artifacts) == 0:
-                return None
+        artifacts = self._deployment['config'].get('artifacts', [])
+        if len(artifacts) == 0:
+            return None
 
+        with tempfile.TemporaryDirectory() as artifacts_root:
             for artifact in artifacts:
-                dest = os.path.join(artifacts_root, artifact)
-                artifact_path = os.path.join(self._workspace_path, artifact)
+                relative_path = self._get_relative_path_part(artifact)
+                dest = self._join_paths(artifacts_root, relative_path)
+                artifact_path = self._join_paths(self._workspace_path, relative_path)
+                os.makedirs(os.path.dirname(dest), exist_ok=True)
+                shutil.copy(artifact_path, dest)
+
+            root_id, all_objects = MaterializeTreeToObjectRepositoryCmd(artifacts_root).execute()
+            UploadObjectsCmd(all_objects).execute()
+            return root_id
+
+
+class RunOpenClTaskCmd(_RunDeploymentBasedTaskCmd):
+    _kernel_manager: KernelManager
+
+    def __init__(self, workspace_path: str, deployment: dict, deployment_id: str, task_id: str,
+                 agent_env_variables: dict, log_handler: LogHandler, kernel_config: KernelConfig) -> None:
+        _RunDeploymentBasedTaskCmd.__init__(self, workspace_path, deployment, deployment_id, task_id,
+                                            agent_env_variables, log_handler)
+        self._kernel_manager = KernelManager.from_config(kernel_config, deployment['config']['kernelparams'])
+
+    def execute(self):
+        kernel_path = self._get_config_filepath('kernelfile')
+
+        with open(kernel_path) as kernel_file:
+            kernel_program: str = kernel_file.read()
+        kernel_name = self._deployment['config']['kernelname']
+
+        self._kernel_manager.prepare_execution(self._agent_env_variables)
+        self._kernel_manager.execute_kernel(kernel_program, kernel_name)
+        return_arguments = self._kernel_manager.read_output_arguments()
+
+        artifact_root = self._gather_artifacts(return_arguments)
+        xdcs().execute(ReportTaskCompletionCmd(self._task_id, self._log_handler, artifact_root))
+
+    def _gather_artifacts(self, return_arguments: [tuple]) -> Optional[str]:
+        if len(return_arguments) == 0:
+            return None
+        with tempfile.TemporaryDirectory() as artifacts_root:
+            for name, buffer in return_arguments:
+                dest = self._join_paths(artifacts_root, name)
+                artifact_path = self._join_paths(self._workspace_path, name)
+                with open(artifact_path, "w+b") as artifact:
+                    artifact.write(bytes(buffer))
                 os.makedirs(os.path.dirname(dest), exist_ok=True)
                 shutil.copy(artifact_path, dest)
 
