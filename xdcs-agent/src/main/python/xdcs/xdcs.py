@@ -41,13 +41,12 @@ class _XDCS:
         command.execute()
 
     def run(self) -> None:
-        local_port = self.config('app.local_port', 25254)
         server_host = self.config('server.host')
         server_port = self.config('server.port.ssh')
 
-        server = grpc.server(self.executor())
+        server = grpc.server(self.executor(), options=(('grpc.so_reuseport', 0),))
         Servicers.register_all(server)
-        server.add_insecure_port('0.0.0.0:' + str(local_port))
+        local_port = server.add_insecure_port('127.0.0.1:0')
         server.start()
         with rforward(local_port, server_host, server_port, False):
             pass
