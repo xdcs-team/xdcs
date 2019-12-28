@@ -18,6 +18,8 @@ public interface Task {
 
     DeploymentDescriptorEntity getDeploymentDescriptor();
 
+    Optional<Task> getOriginTask();
+
     HistoricalTaskEntity asHistorical();
 
     Optional<RuntimeTaskEntity> asRuntime();
@@ -30,6 +32,10 @@ public interface Task {
         return EnumSet.of(TaskType.CUDA, TaskType.OPENCL).contains(
                 this.getDeploymentDescriptor().getDefinition().getType()
         );
+    }
+
+    default boolean isMergingTask() {
+        return this.asHistorical().getOriginTask().isPresent();
     }
 
     enum Type {

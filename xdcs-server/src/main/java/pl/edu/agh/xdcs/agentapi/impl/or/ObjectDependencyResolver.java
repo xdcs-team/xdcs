@@ -23,17 +23,16 @@ public class ObjectDependencyResolver {
     @Inject
     private ObjectRepository objectRepository;
 
-    public void resolveDependencies(DependencyResolutionRequest request, StreamObserver<ObjectIds> responseObserver) {
+    public ObjectIds resolveDependencies(DependencyResolutionRequest request, StreamObserver<ObjectIds> responseObserver) {
         Set<String> dependencies = new HashSet<>();
 
         int depth = request.getDepth();
         request.getObjectKeysList()
                 .forEach(objectKey -> resolveDependencies(mapObjectKey(objectKey), dependencies, depth));
 
-        responseObserver.onNext(ObjectIds.newBuilder()
+        return ObjectIds.newBuilder()
                 .addAllObjectIds(dependencies)
-                .build());
-        responseObserver.onCompleted();
+                .build();
     }
 
     private void resolveDependencies(ObjectKey objectKey, Set<String> dependencies, int depth) {

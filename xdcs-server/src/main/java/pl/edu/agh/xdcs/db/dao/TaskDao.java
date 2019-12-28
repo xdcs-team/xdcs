@@ -52,6 +52,21 @@ public class TaskDao extends DaoBase {
         }
     }
 
+    public Optional<Task> findMergingTaskForTask(Task task) {
+        try {
+            Object result = entityManager
+                    .createQuery("select h " +
+                            "from HisTask h " +
+                            "where h.originTask = :task")
+                    .setParameter("task", task)
+                    .getSingleResult();
+
+            return Optional.of((HistoricalTaskEntity) result);
+        } catch (NoResultException e) {
+            return Optional.empty();
+        }
+    }
+
     @SuppressWarnings("unchecked")
     public List<Task> list(int firstResult, int maxResults) {
         Stream<Object[]> resultStream = entityManager

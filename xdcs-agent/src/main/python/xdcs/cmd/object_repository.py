@@ -2,6 +2,7 @@ import logging
 import os
 import shutil
 import tempfile
+from abc import abstractmethod
 from os import path
 from stat import ST_MODE
 from typing import IO, Generator, List
@@ -17,24 +18,44 @@ from xdcs_api.object_repository_pb2_grpc import ObjectRepositoryStub
 logger = logging.getLogger(__name__)
 
 
-class FetchDeploymentCmd(Command):
-    _deployment_id: str
+class FetchObjectWithDependenciesCmd(Command):
+    _object_id: str
 
-    def __init__(self, deployment_id: str):
-        self._deployment_id = deployment_id
+    def __init__(self, object_id: str):
+        self._object_id = object_id
 
     def execute(self):
         stub = ObjectRepositoryStub(xdcs().channel())
         req = DependencyResolutionRequest()
-        deployment_key = ObjectKey()
-        deployment_key.objectId = self._deployment_id
-        deployment_key.objectType = ObjectType.DEPLOYMENT
-        req.objectKeys.extend([deployment_key])
+        object_key = ObjectKey()
+        object_key.objectId = self._object_id
+        object_key.objectType = self.get_type()
+        req.objectKeys.extend([object_key])
         req.depth = 2 ** 32 - 1
         object_ids = stub.ResolveDependencies(req).objectIds
-        object_ids.append(self._deployment_id)
+        object_ids.append(self._object_id)
 
         xdcs().execute(RetrieveObjectsCmd((ids for ids in [object_ids])))
+
+    @abstractmethod
+    def get_type(self) -> ObjectType:
+        pass
+
+
+class FetchTreeWithDependenciesCmd(FetchObjectWithDependenciesCmd):
+    def __init__(self, tree_id: str):
+        FetchObjectWithDependenciesCmd.__init__(self, tree_id)
+
+    def get_type(self) -> ObjectType:
+        return ObjectType.TREE
+
+
+class FetchDeploymentWithDependenciesCmd(FetchObjectWithDependenciesCmd):
+    def __init__(self, deployment_id: str):
+        FetchObjectWithDependenciesCmd.__init__(self, deployment_id)
+
+    def get_type(self) -> ObjectType:
+        return ObjectType.DEPLOYMENT
 
 
 class RetrieveObjectsCmd(Command):

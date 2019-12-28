@@ -1,18 +1,23 @@
 package pl.edu.agh.xdcs.services.sweeper;
 
+import com.google.common.collect.Iterables;
 import org.slf4j.Logger;
 import pl.edu.agh.xdcs.api.KernelConfig;
+import pl.edu.agh.xdcs.api.MergeSubmit;
 import pl.edu.agh.xdcs.api.TaskRunnerGrpc;
 import pl.edu.agh.xdcs.api.TaskSubmit;
+import pl.edu.agh.xdcs.db.dao.ArtifactTreeDao;
 import pl.edu.agh.xdcs.db.dao.QueuedTaskDao;
 import pl.edu.agh.xdcs.db.dao.ResourceDao;
 import pl.edu.agh.xdcs.db.dao.ResourceDao.BoundResource;
 import pl.edu.agh.xdcs.db.dao.RuntimeTaskDao;
 import pl.edu.agh.xdcs.db.entity.AgentEntity;
+import pl.edu.agh.xdcs.db.entity.ArtifactTreeEntity;
 import pl.edu.agh.xdcs.db.entity.HistoricalTaskEntity;
 import pl.edu.agh.xdcs.db.entity.ObjectRefEntity;
 import pl.edu.agh.xdcs.db.entity.QueuedTaskEntity;
 import pl.edu.agh.xdcs.db.entity.RuntimeTaskEntity;
+import pl.edu.agh.xdcs.db.entity.Task;
 import pl.edu.agh.xdcs.grpc.session.GrpcSessionManager;
 
 import javax.ejb.Asynchronous;
@@ -24,9 +29,11 @@ import javax.inject.Inject;
 import java.net.InetAddress;
 import java.time.Duration;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 /**
@@ -45,6 +52,9 @@ public class TaskSweeper {
 
     @Inject
     private RuntimeTaskDao runtimeTaskDao;
+
+    @Inject
+    private ArtifactTreeDao artifactTreeDao;
 
     @Inject
     private GrpcSessionManager sessionManager;
@@ -97,12 +107,41 @@ public class TaskSweeper {
         logger.info("Starting task " + task.getId() + " on resources " + resources);
         Set<AgentEntity> agents = resources.stream()
                 .map(res -> res.getResource().getOwner())
-                .collect(Collectors.toSet());
+                .collect(Collectors.toCollection(() -> new TreeSet<>(Comparator.comparing(AgentEntity::getId))));
 
         runtimeTask.setHistoricalTask(task.getHistoricalTask());
         runtimeTaskDao.persist(runtimeTask);
         queuedTaskDao.remove(task);
 
+        if (task.isMergingTask()) {
+            startMergingTask(task, agents);
+        } else {
+            startNormalTask(task, agents);
+        }
+    }
+
+    private void startMergingTask(QueuedTaskEntity task, Set<AgentEntity> agents) {
+        Task originTask = task.getOriginTask().orElseThrow(() -> new AssertionError("This cannot happen."));
+        String deploymentId = task.getDeploymentDescriptor().getDeploymentRef().getReferencedObjectId();
+        AgentEntity agent = Iterables.getOnlyElement(agents);
+        TaskRunnerGrpc.TaskRunnerBlockingStub taskRunner = sessionManager.getStubProducer(agent)
+                .getTaskRunnerBlockingStub();
+        MergeSubmit.Builder mergeSubmit = MergeSubmit.newBuilder()
+                .setDeploymentId(deploymentId)
+                .setTaskId(task.getId())
+                .setOriginTaskId(originTask.getId())
+                .addAllArtifactTrees(
+                        artifactTreeDao.queryAllForTask(originTask).stream()
+                                .sorted(Comparator.comparing(at -> at.getUploadedBy().getId()))
+                                .map(ArtifactTreeEntity::getRoot)
+                                .map(ObjectRefEntity::getReferencedObjectId)
+                                .collect(Collectors.toList())
+                );
+
+        taskRunner.merge(mergeSubmit.build());
+    }
+
+    private void startNormalTask(QueuedTaskEntity task, Set<AgentEntity> agents) {
         String deploymentId = task.getDeploymentDescriptor().getDeploymentRef().getReferencedObjectId();
 
         KernelConfig kernelConfig = null;

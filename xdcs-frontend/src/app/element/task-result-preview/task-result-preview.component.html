@@ -1,10 +1,10 @@
 <div class="content">
-  <div class="headline">
+  <div class="headline mb-3">
     <h2>
       <app-task-status-icon [size]="'sm'" [task]="task"></app-task-status-icon>
       {{task.name}}</h2>
   </div>
-  <table class="table table-borderless">
+  <table class="table">
     <tbody>
     <tr>
       <th scope="row">ID</th>
@@ -21,6 +21,20 @@
     <tr>
       <th scope="row">State</th>
       <td>{{task.state}}</td>
+    </tr>
+    <tr *ngIf="!!task.originTaskId">
+      <th scope="row">Origin task</th>
+      <td>
+        <a class="text-info"
+           [routerLink]="['/', 'tasks', task.originTaskId]">{{task.originTaskId}}</a>
+      </td>
+    </tr>
+    <tr *ngIf="!!linkedTask && !task.originTaskId">
+      <th scope="row">Merging task</th>
+      <td>
+        <a class="text-info"
+           [routerLink]="['/', 'tasks', linkedTask.id]">{{linkedTask.id}}</a>
+      </td>
     </tr>
     </tbody>
   </table>

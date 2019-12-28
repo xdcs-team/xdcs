@@ -22,6 +22,8 @@ export class TaskResultPreviewComponent implements OnInit, OnChanges {
   logsWebSocket: WebSocketSubject<LogDto>;
   @Input()
   task: TaskDto;
+  @Input()
+  linkedTask: TaskDto;
   tagWidth = 0;
   nodes: Array<NodeDto> = null;
   selectedNodes: Array<NodeDto> = null;

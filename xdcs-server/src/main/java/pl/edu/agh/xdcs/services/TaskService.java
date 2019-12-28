@@ -1,5 +1,6 @@
 package pl.edu.agh.xdcs.services;
 
+import com.google.common.base.Strings;
 import pl.edu.agh.xdcs.db.dao.ArtifactTreeDao;
 import pl.edu.agh.xdcs.db.dao.DeploymentDescriptorDao;
 import pl.edu.agh.xdcs.db.dao.HistoricalTaskDao;
@@ -20,9 +21,11 @@ import pl.edu.agh.xdcs.db.entity.ResourcePatternEntity;
 import pl.edu.agh.xdcs.db.entity.Task;
 import pl.edu.agh.xdcs.db.entity.WorkShape;
 import pl.edu.agh.xdcs.events.AgentLoggedEvent;
+import pl.edu.agh.xdcs.events.TaskFinishedEvent;
 import pl.edu.agh.xdcs.or.ObjectRepository;
 import pl.edu.agh.xdcs.or.types.Blob;
 import pl.edu.agh.xdcs.or.types.Tree;
+import pl.edu.agh.xdcs.restapi.util.RestUtils;
 import pl.edu.agh.xdcs.util.WildcardPattern;
 
 import javax.enterprise.event.Event;
@@ -78,8 +81,15 @@ public class TaskService {
     @Inject
     private ArtifactTreeDao artifactTreeDao;
 
+    @Inject
+    private Event<TaskFinishedEvent> taskFinishedEvent;
+
     public Optional<Task> getTaskById(String taskId) {
         return taskDao.findById(taskId);
+    }
+
+    public Optional<Task> getMergingTaskForTask(Task task) {
+        return taskDao.findMergingTaskForTask(task);
     }
 
     public long countTasks() {
@@ -104,13 +114,18 @@ public class TaskService {
 
     public void finishTask(Task task, AgentEntity agentEntity, Task.Result result) {
         resourceDao.unlockResources(task.getId(), agentEntity);
-        if (!resourceDao.hasAnyLocks(task.getId())) {
-            runtimeTaskDao.removeById(task.getId());
-        }
 
         Optional<Task.Result> currentResult = task.asHistorical().getResult();
         if (result == Task.Result.ERRORED || !currentResult.isPresent()) {
             task.asHistorical().setResult(result);
+        }
+
+        boolean isFinished = !resourceDao.hasAnyLocks(task.getId());
+        if (isFinished) {
+            runtimeTaskDao.removeById(task.getId());
+            taskFinishedEvent.fire(TaskFinishedEvent.builder()
+                    .task(task.asHistorical())
+                    .build());
         }
     }
 
@@ -143,6 +158,7 @@ public class TaskService {
     public class TaskCreationWizard {
         private String deploymentDescriptorId;
         private String name;
+        private String mergingAgent;
         private Set<ResourcePatternEntity> resourcePatterns = new HashSet<>();
         private Map<Integer, ObjectRefEntity> kernelArguments;
         private WorkShape globalWorkShape;
@@ -156,6 +172,11 @@ public class TaskService {
         public TaskCreationWizard deploymentId(String deploymentId) {
             this.deploymentDescriptorId = deploymentService.getDeployment(deploymentId)
                     .getDescriptorId();
+            return this;
+        }
+
+        public TaskCreationWizard mergingAgent(String mergingAgent) {
+            this.mergingAgent = mergingAgent;
             return this;
         }
 
@@ -192,9 +213,12 @@ public class TaskService {
             DeploymentDescriptorEntity descriptor = deploymentDescriptorDao.find(deploymentDescriptorId)
                     .orElseThrow(() -> new TaskCreationException("Unknown descriptor: " + deploymentDescriptorId));
 
+            validateMergingConfigConsistency(descriptor);
+
             HistoricalTaskEntity historicalTask = new HistoricalTaskEntity();
             historicalTask.setName(name);
             historicalTask.setDeploymentDescriptor(descriptor);
+            historicalTask.setMergingAgent(mergingAgent);
             historicalTask.setKernelArguments(kernelArguments);
             historicalTask.setGlobalWorkShape(globalWorkShape);
             historicalTask.setLocalWorkShape(localWorkShape);
@@ -208,6 +232,14 @@ public class TaskService {
             resourcePatternDao.bulkPersist(resourcePatterns);
 
             return queuedTask;
+        }
+
+        private void validateMergingConfigConsistency(DeploymentDescriptorEntity descriptor) {
+            boolean isMergingScriptProvided = !Strings.isNullOrEmpty(this.mergingAgent);
+            boolean isMergingAgentProvided = !Strings.isNullOrEmpty(descriptor.getDefinition().getMergingScript());
+            if (isMergingScriptProvided != isMergingAgentProvided) {
+                throw RestUtils.throwBadRequest("Inconsistent merging configuration.");
+            }
         }
     }
 }

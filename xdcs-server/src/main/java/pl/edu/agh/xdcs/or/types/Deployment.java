@@ -79,6 +79,10 @@ public class Deployment implements ObjectBase {
         @JsonProperty("artifacts")
         @JsonInclude(JsonInclude.Include.NON_EMPTY)
         private List<String> artifacts;
+
+        @JsonProperty("mergingscript")
+        @JsonInclude(JsonInclude.Include.NON_EMPTY)
+        private String mergingScript;
     }
 
 }

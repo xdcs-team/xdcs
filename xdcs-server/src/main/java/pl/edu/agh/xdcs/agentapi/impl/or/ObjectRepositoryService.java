@@ -34,7 +34,9 @@ public class ObjectRepositoryService extends ObjectRepositoryGrpc.ObjectReposito
 
     @Override
     public void resolveDependencies(DependencyResolutionRequest request, StreamObserver<ObjectIds> responseObserver) {
-        objectDependencyResolver.resolveDependencies(request, responseObserver);
+        ObjectIds objectIds = objectDependencyResolver.resolveDependencies(request, responseObserver);
+        responseObserver.onNext(objectIds);
+        responseObserver.onCompleted();
     }
 
     @Override

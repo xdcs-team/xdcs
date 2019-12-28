@@ -23,19 +23,19 @@
         </tr>
       </ng-container>
 
-      <ng-container *ngIf="['docker'].includes(definition.config.type)">
-        <tr>
-          <th scope="row">Dockerfile</th>
-          <td><span [outerHTML]="definition.config.dockerfile | noValue: 'Dockerfile'"></span></td>
-        </tr>
-      </ng-container>
+      <tr *ngIf="['docker'].includes(definition.config.type)">
+        <th scope="row">Dockerfile</th>
+        <td><span [outerHTML]="definition.config.dockerfile | noValue: 'Dockerfile'"></span></td>
+      </tr>
 
-      <ng-container *ngIf="['script'].includes(definition.config.type)">
-        <tr>
-          <th scope="row">Scriptfile</th>
-          <td><span [outerHTML]="definition.config.scriptfile | noValue"></span></td>
-        </tr>
-      </ng-container>
+      <tr *ngIf="['script'].includes(definition.config.type)">
+        <th scope="row">Scriptfile</th>
+        <td><span [outerHTML]="definition.config.scriptfile | noValue"></span></td>
+      </tr>
+      <tr *ngIf="!!definition.config.mergingScript">
+        <th scope="row">Merging script</th>
+        <td>{{definition.config.mergingScript}}</td>
+      </tr>
       </tbody>
     </table>
   </div>

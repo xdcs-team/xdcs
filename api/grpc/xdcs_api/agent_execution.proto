@@ -54,6 +54,13 @@ message KernelConfig {
     repeated uint32 localWorkShape = 3;
 }
 
+message MergeSubmit {
+    string deploymentId = 1;
+    string taskId = 2;
+    string originTaskId = 3;
+    repeated string artifactTrees = 4;
+}
+
 message TaskResultReport {
     string taskId = 1;
     string artifactTree = 2;
@@ -84,6 +91,10 @@ message Logs {
 
 service TaskRunner {
     rpc Submit (TaskSubmit) returns (OkResponse) {
+
+    }
+
+    rpc Merge (MergeSubmit) returns (OkResponse) {
 
     }
 }

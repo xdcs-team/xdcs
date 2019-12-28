@@ -28,6 +28,9 @@ public class TaskDefinitionEntity extends BaseEntity {
     @Column(name = "NAME_")
     private String name;
 
+    @Column(name = "MERGING_SCRIPT_")
+    private String mergingScript;
+
     @Column(name = "TYPE_", length = 10)
     @Enumerated(value = EnumType.STRING)
     private TaskType type;

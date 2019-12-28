@@ -32,6 +32,7 @@ public class TaskMapper {
         dto.setName(model.getName());
         dto.setState(stateMapper.map(model));
         dto.setDeploymentId(model.getDeploymentDescriptor().getDeploymentRef().getReferencedObjectId());
+        model.getOriginTask().ifPresent(originTask -> dto.setOriginTaskId(originTask.getId()));
         dto.setTimeCreated(model.getTimeCreated().atOffset(userContext.getCurrentZoneOffset()));
         return dto;
     }

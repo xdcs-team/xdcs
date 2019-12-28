@@ -21,10 +21,14 @@ public class TaskReportingGrpcImpl extends TaskReportingGrpc.TaskReportingImplBa
     @Override
     public void uploadLogs(Logs request, StreamObserver<OkResponse> responseObserver) {
         taskReportingService.uploadLogs(request, responseObserver);
+        responseObserver.onNext(OkResponse.newBuilder().build());
+        responseObserver.onCompleted();
     }
 
     @Override
     public void reportTaskResult(TaskResultReport request, StreamObserver<OkResponse> responseObserver) {
         taskReportingService.reportTaskResult(request, responseObserver);
+        responseObserver.onNext(OkResponse.newBuilder().build());
+        responseObserver.onCompleted();
     }
 }

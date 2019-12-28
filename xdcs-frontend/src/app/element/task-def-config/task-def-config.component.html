@@ -153,6 +153,16 @@
     </app-orderable-input-list>
   </div>
 
+  <div class="mb-3" *ngIf="!!taskDefinition.config.type">
+    <label for="merging-script">Merging script</label>
+    <input type="text"
+           class="form-control"
+           id="merging-script"
+           placeholder="Merging script"
+           [(ngModel)]="taskDefinition.config.mergingScript"
+           name="mergingScript"/>
+  </div>
+
   <button
     class="btn btn-primary float-right mt-3"
     [disabled]="form.invalid"
