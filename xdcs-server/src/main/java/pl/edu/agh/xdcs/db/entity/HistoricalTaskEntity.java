@@ -1,5 +1,6 @@
 package pl.edu.agh.xdcs.db.entity;
 
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -30,6 +31,8 @@ import java.util.Optional;
 @Entity(name = "HisTask")
 @Table(name = "XDCS_HIS_TASK_")
 public class HistoricalTaskEntity extends BaseEntity implements Task {
+    private static final EnvironmentVariables.Converter ENV_VARS_CONVERTER = new EnvironmentVariables.Converter();
+
     @JoinColumn(name = "DEPLOYMENT_DESC_", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     private DeploymentDescriptorEntity deploymentDescriptor;
@@ -43,6 +46,10 @@ public class HistoricalTaskEntity extends BaseEntity implements Task {
     @Column(name = "RESULT_")
     @Enumerated(EnumType.STRING)
     private Result result;
+
+    @Column(name = "ENV_VARIABLES_")
+    @Getter(AccessLevel.NONE)
+    private byte[] environmentVariables;
 
     @MapKeyColumn(name="POSITION_")
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
@@ -91,5 +98,13 @@ public class HistoricalTaskEntity extends BaseEntity implements Task {
     @Override
     public Optional<QueuedTaskEntity> asQueued() {
         return Optional.empty();
+    }
+
+    public EnvironmentVariables getEnvironmentVariables() {
+        return ENV_VARS_CONVERTER.convertToEntityAttribute(environmentVariables);
+    }
+
+    public void setEnvironmentVariables(EnvironmentVariables vars) {
+        environmentVariables = ENV_VARS_CONVERTER.convertToDatabaseColumn(vars);
     }
 }

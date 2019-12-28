@@ -977,6 +977,10 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/ResourceDto'
+        environmentVariables:
+          type: array
+          items:
+            $ref: '#/components/schemas/EnvironmentVariableDto'
         mergingAgent:
           type: string
         kernelArguments:
@@ -1064,4 +1068,12 @@ components:
         href:
           type: string
         nodeId:
+          type: string
+
+    EnvironmentVariableDto:
+      type: object
+      properties:
+        name:
+          type: string
+        value:
           type: string

@@ -13,6 +13,7 @@ import pl.edu.agh.xdcs.db.dao.TaskDao;
 import pl.edu.agh.xdcs.db.entity.AgentEntity;
 import pl.edu.agh.xdcs.db.entity.ArtifactTreeEntity;
 import pl.edu.agh.xdcs.db.entity.DeploymentDescriptorEntity;
+import pl.edu.agh.xdcs.db.entity.EnvironmentVariables;
 import pl.edu.agh.xdcs.db.entity.HistoricalTaskEntity;
 import pl.edu.agh.xdcs.db.entity.LogLineEntity;
 import pl.edu.agh.xdcs.db.entity.ObjectRefEntity;
@@ -23,6 +24,7 @@ import pl.edu.agh.xdcs.db.entity.WorkShape;
 import pl.edu.agh.xdcs.events.AgentLoggedEvent;
 import pl.edu.agh.xdcs.events.TaskFinishedEvent;
 import pl.edu.agh.xdcs.or.ObjectRepository;
+import pl.edu.agh.xdcs.or.types.EnvironmentVariable;
 import pl.edu.agh.xdcs.or.types.Blob;
 import pl.edu.agh.xdcs.or.types.Tree;
 import pl.edu.agh.xdcs.restapi.util.RestUtils;
@@ -39,6 +41,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.ArrayList;
 
 /**
  * @author Kamil Jarosz
@@ -160,6 +163,7 @@ public class TaskService {
         private String name;
         private String mergingAgent;
         private Set<ResourcePatternEntity> resourcePatterns = new HashSet<>();
+        private List<EnvironmentVariable> environmentVariables = new ArrayList<>();
         private Map<Integer, ObjectRefEntity> kernelArguments;
         private WorkShape globalWorkShape;
         private WorkShape localWorkShape;
@@ -187,6 +191,11 @@ public class TaskService {
             pattern.setAgentNameLike(agentPattern.toSqlLike());
             pattern.setResourceKeyLike(keyPattern.toSqlLike());
             resourcePatterns.add(pattern);
+            return this;
+        }
+
+        public TaskCreationWizard addEnvironmentVariable(String name, String value) {
+            environmentVariables.add(new EnvironmentVariable(name, value));
             return this;
         }
 
@@ -218,6 +227,7 @@ public class TaskService {
             HistoricalTaskEntity historicalTask = new HistoricalTaskEntity();
             historicalTask.setName(name);
             historicalTask.setDeploymentDescriptor(descriptor);
+            historicalTask.setEnvironmentVariables(new EnvironmentVariables(environmentVariables));
             historicalTask.setMergingAgent(mergingAgent);
             historicalTask.setKernelArguments(kernelArguments);
             historicalTask.setGlobalWorkShape(globalWorkShape);
