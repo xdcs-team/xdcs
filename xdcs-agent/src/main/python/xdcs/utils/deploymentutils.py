@@ -3,8 +3,10 @@ from os import path
 from xdcs.cmd.tasks import TaskExecutionException
 
 
-def get_config_filepath(name: str, workspace_path: str, deployment: dict):
+def get_config_filepath(name: str, workspace_path: str, deployment: dict, default_value=None):
     config_path = deployment['config'].get(name)
+    if config_path is None:
+        config_path = default_value
     filepath = join_paths(workspace_path, get_relative_path_part(config_path))
 
     if filepath is None:
