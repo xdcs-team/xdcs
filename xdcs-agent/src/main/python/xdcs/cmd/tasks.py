@@ -70,6 +70,8 @@ class RunTaskCmd(Command):
             'XDCS_AGENT_COUNT': str(agent_variables.agentCount),
             'XDCS_AGENT_ID': str(agent_variables.agentId)
         }
+        for variable in agent_variables.environmentVariables:
+            agent_env_variables[variable.name] = variable.value
         if len(agent_variables.agentIps) != agent_variables.agentCount:
             raise Exception('Inconsistent arguments: agent_count = %d, but number of received IPs = %d'
                             % (agent_variables.agentCount, len(agent_variables.agentIps)))
@@ -97,13 +99,14 @@ class _RunDeploymentBasedTaskCmd(Command):
         self._agent_env_variables = agent_env_variables
         self._log_handler = log_handler
 
-    def get_config_filepath(self, name: str):
-        return deploymentutils.get_config_filepath(name, self._workspace_path, self._deployment)
+    def get_config_filepath(self, name: str, default_value=None):
+        return deploymentutils.get_config_filepath(name, self._workspace_path,
+                                                   self._deployment, default_value=default_value)
 
 
 class RunDockerTaskCmd(_RunDeploymentBasedTaskCmd):
     def execute(self):
-        dockerfile = self.get_config_filepath('dockerfile')
+        dockerfile = self.get_config_filepath('dockerfile', 'Dockerfile')
         image_id = DockerCli().build(self._workspace_path, dockerfile)
         self._log_handler.internal_log('Docker built, image ID: ' + image_id)
 
