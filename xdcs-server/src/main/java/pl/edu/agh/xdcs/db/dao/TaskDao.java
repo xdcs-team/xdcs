@@ -58,7 +58,7 @@ public class TaskDao extends DaoBase {
                     .createQuery("select h " +
                             "from HisTask h " +
                             "where h.originTask = :task")
-                    .setParameter("task", task)
+                    .setParameter("task", task.asHistorical())
                     .getSingleResult();
 
             return Optional.of((HistoricalTaskEntity) result);
