@@ -2,9 +2,11 @@ import logging
 from concurrent.futures import Executor, ThreadPoolExecutor
 
 import grpc
+import time
 from grpc._interceptor import _Channel
 
 from xdcs import object_repository
+from xdcs.app import xdcs
 from xdcs.cmd import Command
 from xdcs.config import load_config, MissingConfigurationException
 from xdcs.object_repository import ObjectRepository
@@ -48,8 +50,20 @@ class _XDCS:
         Servicers.register_all(server)
         local_port = server.add_insecure_port('127.0.0.1:0')
         server.start()
-        with rforward(local_port, server_host, server_port, False):
-            pass
+
+        reconnect_delay_secs = xdcs().config('app.reconnect_delay', 10)
+        while True:
+            try:
+                logger.info('Connecting to the server {}:{}'.format(server_host, server_port))
+                with rforward(local_port, server_host, server_port, False):
+                    pass
+
+                logger.info('Disconnected with the server')
+            except Exception:
+                logger.exception('Error while connecting with the server')
+
+            logger.info('Retrying connection in {} seconds'.format(reconnect_delay_secs))
+            time.sleep(reconnect_delay_secs)
 
     def set_token(self, token: str) -> None:
         self._token = token
