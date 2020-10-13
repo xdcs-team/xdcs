@@ -17,7 +17,7 @@
         <grpc.version>1.20.0</grpc.version>
         <protobuf.version>3.7.1</protobuf.version>
         <protoc.version>3.7.1</protoc.version>
-        <junit.version>4.12</junit.version>
+        <junit.version>4.13.1</junit.version>
         <mockito.version>3.0.0</mockito.version>
         <guava.version>27.1-jre</guava.version>
         <lombok.version>1.18.8</lombok.version>
