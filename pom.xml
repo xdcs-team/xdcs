@@ -35,7 +35,7 @@
         <hibernate.version>5.4.7.Final</hibernate.version>
         <h2.version>1.4.199</h2.version>
         <bouncycastle.provider.version>1.46</bouncycastle.provider.version>
-        <commons-io.version>2.6</commons-io.version>
+        <commons-io.version>2.7</commons-io.version>
         <concordion.version>2.2.0</concordion.version>
         <testcontainers.version>1.12.4</testcontainers.version>
         <rest-assured.version>4.1.2</rest-assured.version>
