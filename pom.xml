@@ -24,7 +24,7 @@
         <slf4j.version>1.7.26</slf4j.version>
         <swagger-annotations.version>1.5.21</swagger-annotations.version>
         <jackson.version>2.10.1</jackson.version>
-        <sshd.version>2.3.0</sshd.version>
+        <sshd.version>2.7.0</sshd.version>
         <javassist.version>3.25.0-GA</javassist.version>
         <jaxb.version>2.1</jaxb.version>
         <commons-codec.version>1.13</commons-codec.version>
